@@ -1,0 +1,30 @@
+{
+  "name": "self-checkin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.6.3",
+    "bootstrap": "^5.3.2",
+    "bootstrap-vue": "^2.23.1",
+    "jquery": "^3.7.1",
+    "sweetalert2": "^11.10.2",
+    "vue": "^3.4.5",
+    "vue-axios": "^3.5.2",
+    "vue-cookies": "^1.8.3",
+    "vue-html-to-paper": "^2.0.3",
+    "vue-loading-overlay": "6.0",
+    "vue-router": "^4.2.5",
+    "vue3-cookies": "^1.0.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "sass": "^1.69.7",
+    "vite": "^5.0.10"
+  }
+}
