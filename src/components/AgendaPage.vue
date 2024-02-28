@@ -156,7 +156,7 @@
             this.createCookie("track_id", this.track_id);
             this.createCookie("session_id", this.session_id);
             this.createCookie("agenda_id", this.agenda_id);
-            this.$router.push("/scanpage");
+            this.$router.push("/eventdetailpage");
           } else {
             Swal.fire({
               title: "Failed",

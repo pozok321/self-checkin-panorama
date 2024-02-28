@@ -4,21 +4,22 @@
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
                     <div class="col-sm-6">
-                        <img :src=" 'https://private.undangin.id/' + session.event_poster" alt="event banner"
-                            width="100%" height="100%">
+                        <img :src=" 'https://corp.undangin.com/' + session.event_poster" alt="event banner" width="100%"
+                            height="100%">
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
                         <div class="card-body">
                             <h3 class="mt-5">you can choose for check in or registration</h3>
                             <div class="row">
                                 <div class="checkin mt-5">
-                                    <span class="mx-2"><img src="../assets/image/check-in.png" alt="checkin-icon"></span>
+                                    <span class="mx-2"><img src="../assets/image/check-in.png"
+                                            alt="checkin-icon"></span>
                                     <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
                                 </div>
-                                <div class="registration mt-3 mb-5">
+                                <!-- <div class="registration mt-3 mb-5">
                                     <span class="mx-2"><img src="../assets/image/registration.png" alt="registration-icon"></span>
                                     <button class="w-50 btn-registration"> Registration </button>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -42,13 +43,15 @@
                 venue_id: "",
                 agenda_id: "",
                 session_id: "",
+                track_id: "",
                 agenda_name: "",
                 track_id: "",
                 session_topic: "",
                 session: "",
                 agenda: "",
+                track: "",
                 multiple_session_entry: "",
-                qr_setting:""
+                qr_setting: ""
             };
         },
         components: {
@@ -68,10 +71,12 @@
             checkinPage() {
                 this.$router.push("/scanpage");
             },
+
             getSession() {
                 axios({
                         method: "GET",
-                        url: "/event/" + this.events_id + "/agenda/" + this.agenda_id + "/session/" + this.session_id,
+                        url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this
+                            .track_id + "/session/" + this.session_id,
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -82,12 +87,13 @@
                         this.qr_setting = this.session.qr_setting;
                         this.createCookie("multiple_session_entry", this.multiple_session_entry);
                         this.createCookie("qr_setting", this.qr_setting);
+                        this.createCookie("event_poster", this.event_poster);
                     })
             },
             getAgenda() {
                 axios({
                         method: "GET",
-                        url: "/event/" + this.events_id + "/agenda",
+                        url: "/selfsvc/event/" + this.events_id + "/agenda",
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -95,6 +101,20 @@
                     .then(res => {
                         this.agenda = res.data;
                     })
+            },
+            getTrack() {
+                axios({
+                    method: "GET",
+                    url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track",
+                    headers: {
+                        "Content-Type": "text/plain",
+                        "x-api-key": this.token,
+                    },
+                }).then((res) => {
+                    this.track = res.data;
+                    console.log("track", this.track);
+                });
+
             },
             getCookie(name) {
                 var nameEQ = name + "=";

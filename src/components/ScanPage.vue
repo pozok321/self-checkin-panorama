@@ -4,13 +4,15 @@
       <div class="col-12 col-md-6 col-lg-8 col-xl-8">
         <div class="text-center">
           <div class="col-md-12 bg-white container-border-bottom align-items-center row">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <input type="text" id="scanner" class="text-none" />
               <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
+              <h4>Tap your QR to scanner</h4>
+              <p> Please wait till your QR show the details information </p>
             </div>
-            <div class="col-md-6 border-left">
-              <h1>Tap your QR to scanner</h1>
-              <span> Please wait till your QR show the details information </span>
+            <div class="col-md-7 border-left">
+              <img :src=" parentUrl + session.event_poster" alt="event banner" width="100%"
+                height="100%">
             </div>
           </div>
         </div>
@@ -19,26 +21,31 @@
   </section>
   <section class="vh-100 bg-guest-detail" style="background-color: #f1f1f1" v-else>
     <div class="d-flex justify-content-center align-items-center h-100">
-      <div class="col-12 col-md-6 col-lg-6 col-xl-8">
+      <div class="col-12 col-md-6">
         <div class="row text-center">
-          <div class="col-sm-6 d-flex align-items-stretch">
+          <div class="col-sm-6 d-flex">
             <div class="card bg-profile container-border-profile h-100 w-100">
               <div class="card-body">
                 <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-2" />
                 <div class="row">
-                  <div class="checkin mb-4 text-center"  id="areaprint">
-                    <h1>{{ scanner_data.guest.fullname }}</h1>
-                    <p>Ticket Name : {{ scanner_data.guest.ticketclass_name }}</p>
-                    <p>Email : {{ scanner_data.guest.email }} </p>
-                    <div class="registration">
-                    <img src="../assets/image/qr.png" alt="guest" class="img-print" />
+                  <div class="checkin mb-4 text-center align-center">
+                    <h4 class="text-center">{{ scanner_data.guest.fullname }}</h4>
+                    <p class="text-center">Ticket Name : {{ scanner_data.guest.ticketclass_name }}</p>
+                    <p class="text-center">Email : {{ scanner_data.guest.email }} </p>
+                    <img :src=" parentUrl + scanner_data.guest.guest_qr" alt="guest"
+                      class="img-print text-center" />
                   </div>
+                  <div class="printable" id="areaprint">
+                    <img :src=" parentUrl + scanner_data.guest.guest_qr" width="100%" alt="guest"
+                      class="img-print" />
+                    <h4 class="text-center">{{ scanner_data.guest.fullname }}</h4>
+                    <p class="text-center">{{ scanner_data.guest.ticketclass_name }}</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-sm-6 d-flex align-items-stretch">
+          <div class="col-sm-6 d-flex">
             <div class="card container-border-details h-100 w-100">
               <div class="card-body">
                 <h2 class="mt-3 mx-5">{{ scanner_data.message }}</h2>
@@ -65,7 +72,7 @@
             <div class="col-md-6"><img src="../assets/image/thankyou.png" alt="thankyou" width="100" /><span
                 class="thankyou">Thankyou !!</span></div>
             <div class="col-md-6">
-              <button class="button-finish mt-4 w-100" @click="on_print();">Print</button>
+              <button class="button-finish mt-4 w-100" @click="on_print()">Finish</button>
             </div>
           </div>
         </div>
@@ -78,20 +85,23 @@
   import Swal from "sweetalert2";
   import axios from "axios";
   import $ from "jquery";
-  import { HtmlToPaper } from "vue-html-to-paper";
+  import {
+    HtmlToPaper
+  } from "vue-html-to-paper";
 
   export default {
     data() {
       return {
         checkin_status: false,
+        session: "",
         obj: {
+          events_id: "",
           agenda_id: "",
+          track_id: "",
           session_id: "",
           guests_token: "",
-          scanner_name:"A",
+          scanner_name: "A",
           scan_source: "SS",
-          events_id: "",
-          track_id:""
         },
       };
     },
@@ -113,7 +123,6 @@
           url: "/selfsvc/event/" + this.events_id + "/agenda",
           headers: {
             "Content-Type": "text/plain",
-            "x-api-key": this.token,
           },
         }).then((res) => {
           this.agenda = res.data;
@@ -126,22 +135,20 @@
           url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track",
           headers: {
             "Content-Type": "text/plain",
-            "x-api-key": this.token,
           },
         }).then((res) => {
           this.track = res.data;
-          console.log("track", this.track);
         });
-        
+
       },
 
       getSession() {
         axios({
           method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id + "/session",
+          url: "/selfsvc/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/track/" + this.obj
+            .track_id + "/session/" + this.obj.session_id,
           headers: {
             "Content-Type": "text/plain",
-            "x-api-key": this.token,
           },
         }).then((res) => {
           this.session = res.data;
@@ -177,7 +184,7 @@
           }
         });
       },
-      
+
       checkin_withScanner(value) {
         this.obj.guests_token = value;
         axios({
@@ -193,45 +200,56 @@
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
             this.checkin_status = true;
-            
+            this.on_print();
+          } else if (this.scanner_data.message === "Hello again") {
+            this.checkin_status == false;
+            Swal.fire({
+              title: "You're Checkin Already!, Please Contact the Organizer",
+              icon: "warning",
+            });
           } else {
-            this.checkin_status = false;
+            Swal.fire({
+              title: "You're Not Registered!, Please Contact the Organizer",
+              icon: "error",
+            });
           }
         });
       },
 
       finishScan() {
-        this.$router.push("/scanpage");
+        window.location.href("scanpage");
       },
 
       on_print() {
         setTimeout(function () {
           var contents = document.getElementById("areaprint").innerHTML;
-            var frame1 = document.createElement('iframe');
-           frame1.name = "frame1";
-           frame1.style.position = "absolute";
-           frame1.style.top = "-1000000px";
-           document.body.appendChild(frame1);
-            var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
-           frameDoc.document.open();
-           frameDoc.document.write('<html><head><title>DIV Contents</title>');
-           frameDoc.document.write('</head><body>');
-           frameDoc.document.write(contents);
-           frameDoc.document.write('</body></html>');
-           frameDoc.document.close();
-           setTimeout(function () {
-               window.frames["frame1"].focus();
-               window.frames["frame1"].print();
-               document.body.removeChild(frame1);
-           }, 500);
-           window.onload=function(){self.print();} 
-            return false;
+          var frame1 = document.createElement('iframe');
+          frame1.name = "frame1";
+          frame1.style.position = "absolute";
+          frame1.style.top = "-1000000px";
+          document.body.appendChild(frame1);
+          var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
+          frameDoc.document.open();
+          frameDoc.document.write('<html><head><title>DIV Contents</title>');
+          frameDoc.document.write('</head><body>');
+          frameDoc.document.write(contents);
+          frameDoc.document.write('</body></html>');
+          frameDoc.document.close();
+          setTimeout(function () {
+            window.frames["frame1"].focus();
+            window.frames["frame1"].print();
+            document.body.removeChild(frame1);
+          }, 500);
+          window.onload = function () {
+            self.print();
+          }
+          return false;
         }, 500);
         // HtmlToPaper.on_print(this.$areaprint);
       },
-     
+
     },
-    directives:{
+    directives: {
       HtmlToPaper
     },
 
@@ -240,6 +258,7 @@
       this.obj.session_id = $cookies.get("session_id");
       this.obj.agenda_id = $cookies.get("agenda_id");
       this.obj.track_id = $cookies.get("track_id");
+      this.getSession();
       if (this.obj.events_id == null) {
         Swal.fire({
           title: "Your Session is Expired!",
@@ -285,10 +304,6 @@
 
   .img-qr {
     padding: 4rem;
-  }
-  .img-print{
-    max-width: inherit;
-    width: inherit;
   }
 
   .thankyou {
@@ -403,5 +418,29 @@
     flex-wrap: wrap;
     align-items: stretch;
   }
-  
+    .img-print{
+      width: 100%;
+    }
+
+    .printable{
+      display: none;
+    }
+
+    @media print {
+      .printable {
+        display: block;
+        align: 0 auto;
+        text-align: center;
+        width: 200px;
+        background-color: #fff;
+        clear: both;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+      }
+    }
 </style>
