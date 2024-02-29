@@ -151,18 +151,17 @@
             "Content-Type": "text/plain",
           },
         }).then((res) => {
-          console.log(res.data);
-          if (res.data !== "") {
+          if (this.track_id == "" || this.session_id == "" || this.agenda_id == "" ) {
+            Swal.fire({
+              title: "Please Select the Agenda/Track/Session",
+              text: res.data.msg,
+              icon: "warning",
+            });
+          } else {
             this.createCookie("track_id", this.track_id);
             this.createCookie("session_id", this.session_id);
             this.createCookie("agenda_id", this.agenda_id);
             this.$router.push("/eventdetailpage");
-          } else {
-            Swal.fire({
-              title: "Failed",
-              text: res.data.msg,
-              icon: "warning",
-            });
           }
         });
       },

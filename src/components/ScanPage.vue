@@ -11,7 +11,7 @@
               <p> Please wait till your QR show the details information </p>
             </div>
             <div class="col-md-7 border-left">
-              <img :src=" parentUrl + session.event_poster" alt="event banner" width="100%"
+              <img :src=" 'https://corp.undangin.com/' + session.event_poster" alt="event banner" width="100%"
                 height="100%">
             </div>
           </div>
@@ -29,17 +29,17 @@
                 <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-2" />
                 <div class="row">
                   <div class="checkin mb-4 text-center align-center">
-                    <h4 class="text-center">{{ scanner_data.guest.fullname }}</h4>
-                    <p class="text-center">Ticket Name : {{ scanner_data.guest.ticketclass_name }}</p>
-                    <p class="text-center">Email : {{ scanner_data.guest.email }} </p>
-                    <img :src=" parentUrl + scanner_data.guest.guest_qr" alt="guest"
-                      class="img-print text-center" />
+                    <h4 class="text-center h4">{{ scanner_data.guest.fullname }}</h4>
+                    <p class="text-center email">Email : {{ scanner_data.guest.email }} </p>
+                    <img :src=" 'https://corp.undangin.com/' + scanner_data.guest.guest_qr" alt="guest" width="50%"
+                      class="text-center" />
                   </div>
                   <div class="printable" id="areaprint">
-                    <img :src=" parentUrl + scanner_data.guest.guest_qr" width="100%" alt="guest"
-                      class="img-print" />
-                    <h4 class="text-center">{{ scanner_data.guest.fullname }}</h4>
-                    <p class="text-center">{{ scanner_data.guest.ticketclass_name }}</p>
+                    <img :src=" 'https://corp.undangin.com/' + scanner_data.guest.guest_qr" width="100%" alt="guest" />
+                    <center>
+                      <h4 class="text-center">{{ scanner_data.guest.fullname }}</h4>
+                      <p class="text-center">{{ scanner_data.guest.ticketclass_name }}</p>
+                    </center>
                   </div>
                 </div>
               </div>
@@ -228,7 +228,8 @@
           frame1.style.position = "absolute";
           frame1.style.top = "-1000000px";
           document.body.appendChild(frame1);
-          var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
+          var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1
+            .contentDocument.document : frame1.contentDocument;
           frameDoc.document.open();
           frameDoc.document.write('<html><head><title>DIV Contents</title>');
           frameDoc.document.write('</head><body>');
@@ -278,9 +279,19 @@
     text-decoration: none;
   }
 
+
   span {
     color: #888888;
     font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .h4 {
+    color: #fff;
+  }
+
+  .email {
+    font-size: 10px;
+    color: #fff;
   }
 
   h1 {
@@ -361,6 +372,7 @@
 
   .text-center {
     text-align: center;
+    align-items: center;
   }
 
   .align-center {
@@ -418,29 +430,33 @@
     flex-wrap: wrap;
     align-items: stretch;
   }
-    .img-print{
+
+  .img-print {
+    width: 100%;
+  }
+
+  .printable {
+    display: none;
+  }
+
+  @media print {
+    .printable {
+      display: block;
+      align: 0 auto;
+      text-align: center;
+      width: 200px;
+      background-color: #fff;
+      clear: both;
+      font-size: 12px;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0 auto;
+    }
+
+    html,
+    body {
+      height: 100%;
       width: 100%;
     }
-
-    .printable{
-      display: none;
-    }
-
-    @media print {
-      .printable {
-        display: block;
-        align: 0 auto;
-        text-align: center;
-        width: 200px;
-        background-color: #fff;
-        clear: both;
-        font-size: 12px;
-        font-weight: bold;
-      }
-      html,
-      body {
-        height: 100%;
-        width: 100%;
-      }
-    }
+  }
 </style>

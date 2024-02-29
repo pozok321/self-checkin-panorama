@@ -13,7 +13,7 @@
           </div>
           <p class="text-center mb-5">Welcome to Check In Self Service</p>
           <div class="otp-input-wrapper">
-            <input type="text" maxlength="6" pattern="[0-9]*" autocomplete="off" id="input_otp" v-model="obj.events_key" v-on:keyup="login_page()">
+            <input type="text" maxlength="6" pattern="[0-9]*" autocomplete="off" autofocus="autofocus" id="input_otp" v-model="obj.events_key" v-on:keyup="login_page()">
             <svg viewBox="0 0 240 1" xmlns="http://www.w3.org/2000/svg">
               <line x1="0" y1="0" x2="240" y2="0" stroke="#3e3e3e" stroke-width="2" stroke-dasharray="20,22" />
             </svg>
