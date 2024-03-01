@@ -87,7 +87,6 @@
                         this.qr_setting = this.session.qr_setting;
                         this.createCookie("multiple_session_entry", this.multiple_session_entry);
                         this.createCookie("qr_setting", this.qr_setting);
-                        this.createCookie("event_poster", this.event_poster);
                     })
             },
             getAgenda() {

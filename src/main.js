@@ -11,7 +11,6 @@ import "bootstrap/dist/js/bootstrap.js";
 
 
 axios.defaults.baseURL = "https://apicorp.undangin.com/v1/";
-axios.defaults.parentUrl = "https://corp.undangin.com/";
 
 const app = createApp(App);
 app.use(router);

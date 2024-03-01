@@ -74,7 +74,6 @@
         track: [],
         token: "",
         events_key: "",
-        event_poster: "",
         multiple_session_entry: "",
       };
     },

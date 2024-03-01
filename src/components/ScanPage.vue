@@ -21,10 +21,10 @@
   </section>
   <section class="vh-100 bg-guest-detail" style="background-color: #f1f1f1" v-else>
     <div class="d-flex justify-content-center align-items-center h-100">
-      <div class="col-12 col-md-6">
-        <div class="row text-center">
-          <div class="col-sm-6 d-flex">
-            <div class="card bg-profile container-border-profile h-100 w-100">
+      <div class="col col-md-6">
+        <div class="row">
+          <div class="col mb-3 d-flex align-items-stretch text-center">
+            <div class="card bg-profile container-border-profile w-100">
               <div class="card-body">
                 <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-2" />
                 <div class="row">
@@ -37,43 +37,41 @@
                   <div class="printable" id="areaprint">
                     <img :src=" 'https://corp.undangin.com/' + scanner_data.guest.guest_qr" width="100%" alt="guest" />
                     <center>
-                      <h4 class="text-center">{{ scanner_data.guest.fullname }}</h4>
-                      <p class="text-center">{{ scanner_data.guest.ticketclass_name }}</p>
+                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif;">
+                        {{ scanner_data.guest.fullname }}</h4>
+                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif;">
+                        {{ scanner_data.guest.ticketclass_name }}</p>
                     </center>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-sm-6 d-flex">
-            <div class="card container-border-details h-100 w-100">
+          <div class="col mb-3 d-flex align-items-stretch text-center">
+            <div class="card container-border-details w-100">
               <div class="card-body">
                 <h2 class="mt-3 mx-5">{{ scanner_data.message }}</h2>
                 <div class="account-details mx-4">
-                  <h4>Mobile Phone</h4>
-                  <p>{{ scanner_data.guest.phone_full }}</p>
+                  <h4>Email</h4>
+                  <p>{{ scanner_data.guest.email }}</p>
                 </div>
                 <div class="account-details mx-4">
-                  <h4>Group</h4>
-                  <p>{{ scanner_data.guest.group_name }}</p>
+                  <h4>Division</h4>
+                  <p>{{ scanner_data.guest.division_id }}</p>
                 </div>
                 <div class="account-details mx-4">
-                  <h4>Max Pax</h4>
-                  <p>{{ scanner_data.guest.max_pax }}</p>
-                </div>
-                <div class="account-details mx-4">
-                  <h4>Table Seat</h4>
-                  <p>{{ scanner_data.guest.tableseat_name }}</p>
+                  <h4>Ticket Type</h4>
+                  <p>{{ scanner_data.guest.ticketclass_name }}</p>
                 </div>
               </div>
             </div>
           </div>
-          <div class="row text-center align-center p-2">
-            <div class="col-md-6"><img src="../assets/image/thankyou.png" alt="thankyou" width="100" /><span
-                class="thankyou">Thankyou !!</span></div>
-            <div class="col-md-6">
-              <button class="button-finish mt-4 w-100" @click="on_print()">Finish</button>
-            </div>
+        </div>
+        <div class="row text-center align-center p-2">
+          <div class="col-md-6"><img src="../assets/image/thankyou.png" alt="thankyou" width="80" /><span
+              class="thankyou">Thankyou !!</span></div>
+          <div class="col-md-6">
+            <button class="button-finish w-100" @click="on_print()">Finish</button>
           </div>
         </div>
       </div>
@@ -188,7 +186,7 @@
       checkin_withScanner(value) {
         this.obj.guests_token = value;
         axios({
-          method: "post",
+          method: "POST",
           url: "/guest/scan/checkin",
           data: this.obj,
           headers: {
@@ -217,7 +215,7 @@
       },
 
       finishScan() {
-        window.location.href("scanpage");
+        this.$router.push("/scanpage");
       },
 
       on_print() {
@@ -452,11 +450,11 @@
       font-family: Arial, Helvetica, sans-serif;
       margin: 0 auto;
     }
+  }
 
-    html,
-    body {
-      height: 100%;
-      width: 100%;
+  @media print and (width: 58mm) and (height: 80mm) {
+    @page {
+      margin: 1cm;
     }
   }
 </style>
