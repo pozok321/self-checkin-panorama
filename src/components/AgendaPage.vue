@@ -24,7 +24,6 @@
               </div>
             </div>
             <div class="input-group mt-3">
-              <!-- @change="getTrack()" -->
               <select class="form-select" id="selectTrack" v-model="track_id" @change="getSession()">
                 <option v-for="trackData in track" v-bind:value="trackData.id">
                   {{ trackData.track_name }}
@@ -124,7 +123,6 @@
           },
         }).then((res) => {
           this.track = res.data;
-          console.log("track", this.track);
         });
         
       },

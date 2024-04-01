@@ -10,7 +10,7 @@ module.exports = {
       assetsPublicPath: "/",
       proxyTable: {
         "/api": {
-          target: "https://private.undangin.id/",
+          target: "https://ss.undangin.id/",
           changeOrigin: true,
         },
       },

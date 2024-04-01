@@ -1,12 +1,10 @@
 <template>
-  <section class="vh-100" style="background-color: #f1f1f1">
+  <section class="vh-100">
     <!-- <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" /> -->
-    <div class="d-flex justify-content-center align-items-center h-100">
-      <img src="../assets/image/circle-left.png" alt="circle-left" class="rounded-top-left" />
-      <img src="../assets/image/circle-right.png" alt="circle-right" class="rounded-bottom-right" />
+    <div class="d-flex text-center h-100 bg-login">
       <div class="col-12 col-md-6 col-lg-6 col-xl-4">
         <div class="card">
-          <div class="justify-content-center d-md-flex">
+          <div class="justify-content-center d-flex">
             <img src="../assets/image/logo-undangin-blue.svg" alt="logo undangin" class="logo-undangin" />
             <img src="../assets/image/line1.svg" alt="line 1" width="2" class="spacing-line" />
             <p class="login">Log in</p>
@@ -163,6 +161,12 @@
     margin-bottom: 0px;
   }
 
+  .bg-login{
+    background-image: url(../assets/image/bg-login.svg);
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
   .login {
     font-size: 3rem;
     color: #163c56;
@@ -188,6 +192,11 @@
     margin-left: 2px;
     letter-spacing: 30px;
     font-family: sans-serif !important;
+  }
+
+  .text-center{
+    align-items: center;
+    justify-content: center;
   }
 
   .otp-input-wrapper input:focus {

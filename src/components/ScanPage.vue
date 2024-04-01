@@ -5,7 +5,7 @@
         <div class="text-center">
           <div class="col-md-12 bg-white container-border-bottom align-items-center row">
             <div class="col-md-5">
-              <input type="text" id="scanner" class="text-none" />
+              <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
               <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
               <h4>Tap your QR to scanner</h4>
               <p> Please wait till your QR show the details information </p>
@@ -35,11 +35,12 @@
                       class="text-center" />
                   </div>
                   <div class="printable" id="areaprint">
-                    <img :src=" 'https://corp.undangin.com/' + scanner_data.guest.guest_qr" width="100%" alt="guest" />
                     <center>
-                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif;">
+                      <img :src=" 'https://corp.undangin.com/' + scanner_data.guest.guest_qr" width="25%" alt="guest"
+                        style="margin-top:10px" />
+                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 20px;">
                         {{ scanner_data.guest.fullname }}</h4>
-                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif;">
+                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 20px;">
                         {{ scanner_data.guest.ticketclass_name }}</p>
                     </center>
                   </div>
@@ -71,7 +72,7 @@
           <div class="col-md-6"><img src="../assets/image/thankyou.png" alt="thankyou" width="80" /><span
               class="thankyou">Thankyou !!</span></div>
           <div class="col-md-6">
-            <button class="button-finish w-100" @click="on_print()">Finish</button>
+            <button class="button-finish w-100" @click="finishScan()">Finish</button>
           </div>
         </div>
       </div>
@@ -195,27 +196,42 @@
         }).then((res) => {
           this.on_scanner();
           this.scanner_data = res.data;
+          // console.log("respon", res.data);
+          this.status = res.status;
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
             this.checkin_status = true;
-            this.on_print();
-          } else if (this.scanner_data.message === "Hello again") {
-            this.checkin_status == false;
-            Swal.fire({
-              title: "You're Checkin Already!, Please Contact the Organizer",
-              icon: "warning",
-            });
-          } else {
-            Swal.fire({
-              title: "You're Not Registered!, Please Contact the Organizer",
-              icon: "error",
-            });
+          }
+          switch (this.status) {
+            case 200:
+              this.checkin_status = true;
+              this.on_print();
+              break;
+            case 202:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "info",
+              });
+              break;
+            case 203:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "warning",
+              });
+            default:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "warning",
+              });
           }
         });
       },
 
       finishScan() {
-        this.$router.push("/scanpage");
+        this.$router.go("/scanpage");
       },
 
       on_print() {
@@ -244,7 +260,6 @@
           }
           return false;
         }, 500);
-        // HtmlToPaper.on_print(this.$areaprint);
       },
 
     },
@@ -301,9 +316,11 @@
   }
 
   .text-none {
+    /* position: absolute; */
     border: none;
     color: #fff;
     outline-style: none;
+    z-index: -99;
   }
 
   #scanner:focus {
@@ -312,7 +329,9 @@
   }
 
   .img-qr {
+    max-width: 400px;
     padding: 4rem;
+    margin: auto;
   }
 
   .thankyou {
@@ -438,9 +457,8 @@
   }
 
   @media print {
-    .printable {
+    /* .printable {
       display: block;
-      align: 0 auto;
       text-align: center;
       width: 200px;
       background-color: #fff;
@@ -448,7 +466,19 @@
       font-size: 12px;
       font-weight: bold;
       font-family: Arial, Helvetica, sans-serif;
-      margin: 0 auto;
+      margin: auto;
+    } */
+
+    .printable {
+      position: absolute;
+      text-align: center;
+      width: 200px;
+      background-color: #fff;
+      clear: both;
+      font-size: 12px;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+      bottom: 100;
     }
   }
 

@@ -6,8 +6,10 @@ import Swal from 'sweetalert2';
 import VueCookies from "vue-cookies";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap";
 import "bootstrap/dist/js/bootstrap.js";
+// import "bootstrap/dist/js/bootstrap.bundle";
+// import "bootstrap/dist/js/bootstrap.bundle.min";
+import "bootstrap/dist/js/bootstrap";
 
 
 axios.defaults.baseURL = "https://apicorp.undangin.com/v1/";

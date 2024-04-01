@@ -1,5 +1,15 @@
 <template>
     <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
+        <!-- <div class="btn-group dropend top-left">
+            <select class="form-select icon-setting" id="selectAgenda" v-model="agenda_id" @change="getTrack()">
+                <option v-for="agendaData in agenda" v-bind:value="agendaData.id">
+                    {{ agendaData.agenda_name }}
+                </option>
+            </select>
+            <button @click="simpanData()">simpan</button>
+            <button @click="hapusData()">hapus</button>
+            <button class="icon-setting" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+        </div> -->
         <div class="d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
@@ -11,7 +21,7 @@
                         <div class="card-body">
                             <h3 class="mt-5">you can choose for check in or registration</h3>
                             <div class="row">
-                                <div class="checkin mt-5">
+                                <div class="checkin mt-5 mb-3">
                                     <span class="mx-2"><img src="../assets/image/check-in.png"
                                             alt="checkin-icon"></span>
                                     <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
@@ -37,6 +47,8 @@
         data() {
             return {
                 url: '',
+                zpl_printer:"",
+                thermal_printer:"",
                 events_id: "",
                 prime_agenda: "",
                 showOnMedia: "",
@@ -101,6 +113,7 @@
                         this.agenda = res.data;
                     })
             },
+            
             getTrack() {
                 axios({
                     method: "GET",
@@ -111,7 +124,6 @@
                     },
                 }).then((res) => {
                     this.track = res.data;
-                    console.log("track", this.track);
                 });
 
             },
@@ -125,11 +137,28 @@
                 }
                 return null;
             },
+
+            simpanData(){
+                localStorage.zpl_printer = this.zpl_printer;
+                localStorage.thermal_printer = this.thermal_printer;
+                console.log("data berhasil disimpan");
+            },
+            hapusData(){
+                localStorage.removeItem = this.zpl_printer;
+                localStorage.removeItem = this.thermal_printer;
+            }
         },
         mounted() {
             this.events_id = $cookies.get("events_id");
             this.session_id = $cookies.get("session_id");
             this.agenda_id = $cookies.get("agenda_id");
+            if (localStorage.zpl_printer) {
+                this.zpl_printer = localStorage.zpl_printer;
+            }
+            if (localStorage.thermal_printer) {
+                this.thermal_printer = localStorage.thermal_printer;
+            }
+
             if (this.events_id == null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
@@ -204,5 +233,20 @@
         background-position: center;
         background-repeat: no-repeat;
         background: url(../assets/image/bg-agenda-session.png)
+    }
+
+    .top-left {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .icon-setting {
+        background: url(../assets/image/icon-setting.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        min-width: 8rem;
+        min-height: 8rem;
+        border: 0px;
     }
 </style>
