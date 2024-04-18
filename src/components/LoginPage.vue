@@ -1,7 +1,7 @@
 <template>
   <section class="vh-100">
-    <!-- <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" /> -->
     <div class="d-flex text-center h-100 bg-login">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
       <div class="col-12 col-md-6 col-lg-6 col-xl-4">
         <div class="card">
           <div class="justify-content-center d-flex">
@@ -11,7 +11,8 @@
           </div>
           <p class="text-center mb-5">Welcome to Check In Self Service</p>
           <div class="otp-input-wrapper">
-            <input type="text" maxlength="6" pattern="[0-9]*" autocomplete="off" autofocus="autofocus" id="input_otp" v-model="obj.events_key" v-on:keyup="login_page()">
+            <input type="text" maxlength="6" pattern="[0-9]*" autocomplete="off" autofocus="autofocus" id="input_otp"
+              v-model="obj.events_key" v-on:keyup="login_page()">
             <svg viewBox="0 0 240 1" xmlns="http://www.w3.org/2000/svg">
               <line x1="0" y1="0" x2="240" y2="0" stroke="#3e3e3e" stroke-width="2" stroke-dasharray="20,22" />
             </svg>
@@ -26,10 +27,10 @@
 </template>
 
 <script>
-  import Loading from "vue-loading-overlay";
-  import "vue-loading-overlay/dist/css/index.css";
   import Swal from "sweetalert2";
   import axios from "axios";
+  import Loading from 'vue-loading-overlay';
+  import 'vue-loading-overlay/dist/css/index.css';
   export default {
     data() {
       return {
@@ -48,6 +49,13 @@
     },
     components: {
       Loading
+    },
+    mounted() {
+      this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
     },
     methods: {
       toggle_full_screen() {
@@ -107,39 +115,40 @@
         if (this.obj.events_key.length == 6) {
           this.isLoading = true;
           axios({
-          method: "post",
-          url: "/selfsvc/login",
-          data: this.obj,
-          headers: {
-            "Content-Type": "text/plain",
-          },
-        }).then((res) => {
-          if (res.data != false) {
+            method: "post",
+            url: "/selfsvc/login",
+            data: this.obj,
+            headers: {
+              "Content-Type": "text/plain",
+            },
+          }).then((res) => {
+            if (res.data != false) {
+              Swal.fire({
+                title: "Login Success!",
+                text: res.data.msg,
+                icon: "success",
+              });
+              this.createCookie("token", res.data.token);
+              this.createCookie("events_id", res.data.events_id);
+              var is = this
+              setTimeout(() => {
+                is.$router.push("/agendapage");
+                // this.isLoading = false
+              }, 500)
+              this.toggle_full_screen();
+            } else if (res.data == "") {
             setTimeout(() => {
-                    this.isLoading = false
-                }, 100)
-            Swal.fire({
-              title: "Login Success!",
-              text: res.data.msg,
-              icon: "success",
-            });
-            this.createCookie("token", res.data.token);
-            this.createCookie("events_id", res.data.events_id);
-            this.$router.push("/agendapage");
-            this.toggle_full_screen();
-          } else if (res.data == "") {
-            Swal.fire({
-              title: "Incorrect Event Key / Event ID",
-              text: res.data.msg,
-              icon: "warning",
-            });
-          }
-        });
+                this.isLoading = false
+              }, 500)
+              Swal.fire({
+                title: "Incorrect Event Key / Event ID",
+                text: res.data.msg,
+                icon: "warning",
+              });
+            }
+          });
         }
       },
-    },
-    mounted() {
-    
     },
   };
 </script>
@@ -161,7 +170,7 @@
     margin-bottom: 0px;
   }
 
-  .bg-login{
+  .bg-login {
     background-image: url(../assets/image/bg-login.svg);
     background-size: cover;
     background-repeat: no-repeat;
@@ -194,7 +203,7 @@
     font-family: sans-serif !important;
   }
 
-  .text-center{
+  .text-center {
     align-items: center;
     justify-content: center;
   }

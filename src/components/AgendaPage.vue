@@ -1,6 +1,7 @@
 <template>
   <section class="vh-100 bg-agenda-session" style="background-color: #f1f1f1">
     <div class="d-flex justify-content-center align-items-center h-100">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
       <div class="col-12 col-md-6 col-lg-6 col-xl-8">
         <div class="row text-center">
           <div class="col-sm-4">
@@ -57,7 +58,8 @@
 <script>
   import Swal from "sweetalert2";
   import axios from "axios";
-
+  import Loading from 'vue-loading-overlay';
+  import 'vue-loading-overlay/dist/css/index.css';
   export default {
     data() {
       return {
@@ -65,7 +67,7 @@
         agenda_id: "",
         session_id: "",
         track_id: "",
-        track_name:"",
+        track_name: "",
         agenda_name: "",
         session_topic: "",
         session: "",
@@ -74,9 +76,13 @@
         token: "",
         events_key: "",
         multiple_session_entry: "",
+        isLoading: false,
+        fullPage: true,
       };
     },
-    components: {},
+    components: {
+      Loading
+    },
     methods: {
       getCookie(name) {
         var nameEQ = name + "=";
@@ -124,13 +130,14 @@
         }).then((res) => {
           this.track = res.data;
         });
-        
+
       },
 
       getSession() {
         axios({
           method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id + "/session",
+          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id +
+            "/session",
           headers: {
             "Content-Type": "text/plain",
             "x-api-key": this.token,
@@ -143,27 +150,39 @@
       confirmAgendaSession() {
         axios({
           method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id + "/session",
+          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id +
+            "/session",
           headers: {
             "Content-Type": "text/plain",
           },
         }).then((res) => {
-          if (this.track_id == "" || this.session_id == "" || this.agenda_id == "" ) {
+          if (this.track_id == "" || this.session_id == "" || this.agenda_id == "") {
             Swal.fire({
               title: "Please Select the Agenda/Track/Session",
               text: res.data.msg,
               icon: "warning",
             });
           } else {
-            this.createCookie("track_id", this.track_id);
-            this.createCookie("session_id", this.session_id);
-            this.createCookie("agenda_id", this.agenda_id);
-            this.$router.push("/eventdetailpage");
+            this.isLoading = true;
+            var is = this
+            setTimeout(() => {
+              this.createCookie("track_id", this.track_id);
+              this.createCookie("session_id", this.session_id);
+              this.createCookie("agenda_id", this.agenda_id);
+              this.$router.push("/eventdetailpage");
+              this.isLoading = false
+            }, 1000)
+
           }
         });
       },
     },
     mounted() {
+      this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 1000)
       this.events_id = $cookies.get("events_id");
       this.token = $cookies.get("token");
       this.getAgenda();

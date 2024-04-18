@@ -11,7 +11,7 @@
               <p> Please wait till your QR show the details information </p>
             </div>
             <div class="col-md-7 border-left">
-              <img :src=" 'https://corp.undangin.com/' + session.event_poster" alt="event banner" width="100%"
+              <img :src=" 'https://panorama.undangin.com/' + session.event_poster" alt="event banner" width="100%"
                 height="100%">
             </div>
           </div>
@@ -31,16 +31,15 @@
                   <div class="checkin mb-4 text-center align-center">
                     <h4 class="text-center h4">{{ scanner_data.guest.fullname }}</h4>
                     <p class="text-center email">Email : {{ scanner_data.guest.email }} </p>
-                    <img :src=" 'https://corp.undangin.com/' + scanner_data.guest.guest_qr" alt="guest" width="50%"
+                    <img :src=" 'https://panorama.undangin.com/' + scanner_data.guest.guest_qr" alt="guest" width="50%"
                       class="text-center" />
                   </div>
-                  <div class="printable" id="areaprint">
+                  <div class="printable" id="areaprint" style="margin-left: -50px;">
                     <center>
-                      <img :src=" 'https://corp.undangin.com/' + scanner_data.guest.guest_qr" width="25%" alt="guest"
-                        style="margin-top:10px" />
-                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 20px;">
+                      <img :src=" 'https://panorama.undangin.com/' + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 200px;margin-left: -30px;" />
+                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;margin-left: -30px;">
                         {{ scanner_data.guest.fullname }}</h4>
-                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 20px;">
+                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;margin-left: -30px;">
                         {{ scanner_data.guest.ticketclass_name }}</p>
                     </center>
                   </div>
@@ -472,7 +471,8 @@
     .printable {
       position: absolute;
       text-align: center;
-      width: 200px;
+      height: 491px;
+      width: 377px;
       background-color: #fff;
       clear: both;
       font-size: 12px;
