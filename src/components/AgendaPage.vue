@@ -172,7 +172,6 @@
               this.$router.push("/eventdetailpage");
               this.isLoading = false
             }, 1000)
-
           }
         });
       },

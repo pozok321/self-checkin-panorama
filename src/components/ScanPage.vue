@@ -1,6 +1,7 @@
 <template>
   <section class="vh-100 bg-agenda-session" style="background-color: #f1f1f1" v-if="checkin_status == false">
     <div class="d-flex justify-content-center align-items-center h-100">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
       <div class="col-12 col-md-6 col-lg-8 col-xl-8">
         <div class="text-center">
           <div class="col-md-12 bg-white container-border-bottom align-items-center row">
@@ -34,12 +35,13 @@
                     <img :src=" 'https://panorama.undangin.com/' + scanner_data.guest.guest_qr" alt="guest" width="50%"
                       class="text-center" />
                   </div>
-                  <div class="printable" id="areaprint" style="margin-left: -50px;">
+                  <div class="printable" id="areaprint" style="border: 1px solid;">
                     <center>
-                      <img :src=" 'https://panorama.undangin.com/' + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 200px;margin-left: -30px;" />
-                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;margin-left: -30px;">
+                      <img :src=" 'https://panorama.undangin.com/' + scanner_data.guest.guest_qr" width="40%"
+                        alt="guest" style="margin-top: 150px" />
+                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
                         {{ scanner_data.guest.fullname }}</h4>
-                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px;margin-left: -30px;">
+                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
                         {{ scanner_data.guest.ticketclass_name }}</p>
                     </center>
                   </div>
@@ -83,9 +85,8 @@
   import Swal from "sweetalert2";
   import axios from "axios";
   import $ from "jquery";
-  import {
-    HtmlToPaper
-  } from "vue-html-to-paper";
+  import Loading from 'vue-loading-overlay';
+  import 'vue-loading-overlay/dist/css/index.css';
 
   export default {
     data() {
@@ -101,9 +102,13 @@
           scanner_name: "A",
           scan_source: "SS",
         },
+        isLoading: false,
+        fullPage: true,
       };
     },
-    components: {},
+    components: {
+      Loading
+    },
     methods: {
       getCookie(name) {
         var nameEQ = name + "=";
@@ -157,6 +162,11 @@
         setTimeout(function () {
           $("#scanner").trigger("focus");
         }, 500);
+        this.isLoading = true;
+            // simulate AJAX
+            setTimeout(() => {
+              this.isLoading = false
+            }, 500)
         let is_event = false; // for check just one event declaration
         let input = document.getElementById("scanner");
         var this_is = this;
@@ -194,12 +204,21 @@
           },
         }).then((res) => {
           this.on_scanner();
+          this.isLoading = true;
+          setTimeout(() => {
+              this.isLoading = false
+            }, 500)
           this.scanner_data = res.data;
           // console.log("respon", res.data);
           this.status = res.status;
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
-            this.checkin_status = true;
+            this.isLoading = true;
+            // simulate AJAX
+            setTimeout(() => {
+              this.isLoading = false
+              this.checkin_status = true;
+            }, 500)
           }
           switch (this.status) {
             case 200:
@@ -262,11 +281,14 @@
       },
 
     },
-    directives: {
-      HtmlToPaper
-    },
 
     mounted() {
+      this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
+
       this.obj.events_id = $cookies.get("events_id");
       this.obj.session_id = $cookies.get("session_id");
       this.obj.agenda_id = $cookies.get("agenda_id");
@@ -291,6 +313,9 @@
     text-decoration: none;
   }
 
+  #printable {
+    border: 1px solid;
+  }
 
   span {
     color: #888888;
@@ -315,11 +340,11 @@
   }
 
   .text-none {
-    /* position: absolute; */
     border: none;
     color: #fff;
     outline-style: none;
     z-index: -99;
+    font-size: 1px;
   }
 
   #scanner:focus {
@@ -456,17 +481,6 @@
   }
 
   @media print {
-    /* .printable {
-      display: block;
-      text-align: center;
-      width: 200px;
-      background-color: #fff;
-      clear: both;
-      font-size: 12px;
-      font-weight: bold;
-      font-family: Arial, Helvetica, sans-serif;
-      margin: auto;
-    } */
 
     .printable {
       position: absolute;
