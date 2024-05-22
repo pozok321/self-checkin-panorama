@@ -8,12 +8,16 @@
             <div class="col-md-5">
               <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
               <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
-              <h4>Tap your QR to scanner</h4>
-              <p> Please wait till your QR show the details information </p>
+              <div class="checkin mb-3">
+                <button class="btn-camera-scanner">
+                  <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg"
+                      alt="checkin-icon"></span>Scan Your QR Code</button>
+              </div>
+              <!-- <h4>Tap your QR to scanner</h4>
+              <p> Please wait till your QR show the details information </p> -->
             </div>
             <div class="col-md-7 border-left">
-              <img :src=" 'https://panorama.undangin.com/' + session.event_poster" alt="event banner" width="100%"
-                height="100%">
+              <img :src=" global_url + session.event_poster" alt="event banner" width="100%" height="100%">
             </div>
           </div>
         </div>
@@ -32,16 +36,15 @@
                   <div class="checkin mb-4 text-center align-center">
                     <h4 class="text-center h4">{{ scanner_data.guest.fullname }}</h4>
                     <p class="text-center email">Email : {{ scanner_data.guest.email }} </p>
-                    <img :src=" 'https://panorama.undangin.com/' + scanner_data.guest.guest_qr" alt="guest" width="50%"
-                      class="text-center" />
+                    <img :src=" global_url + scanner_data.guest.guest_qr" alt="guest" width="50%" class="text-center" />
                   </div>
                   <div class="printable" id="areaprint" style="border: 1px solid;">
                     <center>
-                      <img :src=" 'https://panorama.undangin.com/' + scanner_data.guest.guest_qr" width="40%"
-                        alt="guest" style="margin-top: 150px" />
+                      <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest"
+                        style="margin-top: 145px" />
                       <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
                         {{ scanner_data.guest.fullname }}</h4>
-                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
+                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
                         {{ scanner_data.guest.ticketclass_name }}</p>
                     </center>
                   </div>
@@ -93,6 +96,7 @@
       return {
         checkin_status: false,
         session: "",
+        global_url: this.$globalURL,
         obj: {
           events_id: "",
           agenda_id: "",
@@ -163,10 +167,10 @@
           $("#scanner").trigger("focus");
         }, 500);
         this.isLoading = true;
-            // simulate AJAX
-            setTimeout(() => {
-              this.isLoading = false
-            }, 500)
+        // simulate AJAX
+        setTimeout(() => {
+          this.isLoading = false
+        }, 500)
         let is_event = false; // for check just one event declaration
         let input = document.getElementById("scanner");
         var this_is = this;
@@ -206,8 +210,8 @@
           this.on_scanner();
           this.isLoading = true;
           setTimeout(() => {
-              this.isLoading = false
-            }, 500)
+            this.isLoading = false
+          }, 500)
           this.scanner_data = res.data;
           // console.log("respon", res.data);
           this.status = res.status;
@@ -347,14 +351,26 @@
     font-size: 1px;
   }
 
+  .btn-camera-scanner {
+    background-color: #EBEBEB;
+    color: #25516B;
+    border-radius: 20px;
+    font-size: 15px;
+    align-items: center;
+    text-align: center;
+    border: none;
+    padding: 10px;
+    width: 75%;
+  }
+
   #scanner:focus {
     border-color: #fff;
     color: #fff;
   }
 
   .img-qr {
-    max-width: 400px;
-    padding: 4rem;
+    max-width: 350px;
+    padding: 2rem;
     margin: auto;
   }
 

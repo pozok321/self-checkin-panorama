@@ -72,7 +72,7 @@
         session_topic: "",
         session: "",
         agenda: "",
-        track: [],
+        track: "",
         token: "",
         events_key: "",
         multiple_session_entry: "",

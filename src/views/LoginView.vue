@@ -4,5 +4,3 @@ import LoginPage from "../components/LoginPage.vue";
 <template>
   <LoginPage />
 </template>
-
-<style scoped></style>

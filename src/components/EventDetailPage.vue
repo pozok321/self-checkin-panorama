@@ -14,7 +14,7 @@
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
                     <div class="col-sm-6">
-                        <img :src=" 'https://panorama.undangin.com/' + session.event_poster" alt="event banner" width="100%"
+                        <img :src=" global_url + session.event_poster" alt="event banner" width="100%"
                             height="100%">
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
@@ -63,7 +63,8 @@
                 agenda: "",
                 track: "",
                 multiple_session_entry: "",
-                qr_setting: ""
+                qr_setting: "",
+                global_url : this.$globalURL,
             };
         },
         components: {
