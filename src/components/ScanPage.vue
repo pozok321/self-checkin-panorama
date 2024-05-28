@@ -1,82 +1,53 @@
 <template>
-  <section class="vh-100 bg-agenda-session" style="background-color: #f1f1f1" v-if="checkin_status == false">
+  <section class="vh-100 bg-scanpage" style="background-color: #f1f1f1" v-if="checkin_status == false">
     <div class="d-flex justify-content-center align-items-center h-100">
       <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-      <div class="col-12 col-md-6 col-lg-8 col-xl-8">
-        <div class="text-center">
-          <div class="col-md-12 bg-white container-border-bottom align-items-center row">
-            <div class="col-md-5">
-              <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
-              <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
-              <div class="checkin mb-3">
-                <button class="btn-camera-scanner">
-                  <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg"
-                      alt="checkin-icon"></span>Scan Your QR Code</button>
-              </div>
-              <!-- <h4>Tap your QR to scanner</h4>
-              <p> Please wait till your QR show the details information </p> -->
-            </div>
-            <div class="col-md-7 border-left">
-              <img :src=" global_url + session.event_poster" alt="event banner" width="100%" height="100%">
+      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
+        <div class="bg-white container-border-bottom align-items-center row">
+          <div class="col-md-5">
+            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
+            <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
+            <div class="checkin mb-3">
+              <button class="btn-camera-scanner" disabled>
+                <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg" alt="checkin-icon"></span>Scan the QR
+                Code</button>
             </div>
           </div>
+          <div class="col-md-7 border-left">
+            <img :src=" global_url + session.event_poster" alt="event banner" width="100%" height="100%">
+          </div>
+        </div>
+        <div class="row">
+          <h4>Tap Your QR to Scanner</h4>
+          <p>Please wait till your QR show the details information</p>
         </div>
       </div>
     </div>
   </section>
   <section class="vh-100 bg-guest-detail" style="background-color: #f1f1f1" v-else>
     <div class="d-flex justify-content-center align-items-center h-100">
-      <div class="col col-md-6">
-        <div class="row">
-          <div class="col mb-3 d-flex align-items-stretch text-center">
-            <div class="card bg-profile container-border-profile w-100">
-              <div class="card-body">
-                <img src="../assets/image/guest.png" alt="guest" width="100" class="mt-2" />
-                <div class="row">
-                  <div class="checkin mb-4 text-center align-center">
-                    <h4 class="text-center h4">{{ scanner_data.guest.fullname }}</h4>
-                    <p class="text-center email">Email : {{ scanner_data.guest.email }} </p>
-                    <img :src=" global_url + scanner_data.guest.guest_qr" alt="guest" width="50%" class="text-center" />
-                  </div>
-                  <div class="printable" id="areaprint" style="border: 1px solid;">
-                    <center>
-                      <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest"
-                        style="margin-top: 145px" />
-                      <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
-                        {{ scanner_data.guest.fullname }}</h4>
-                      <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
-                        {{ scanner_data.guest.ticketclass_name }}</p>
-                    </center>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col mb-3 d-flex align-items-stretch text-center">
-            <div class="card container-border-details w-100">
-              <div class="card-body">
-                <h2 class="mt-3 mx-5">{{ scanner_data.message }}</h2>
-                <div class="account-details mx-4">
-                  <h4>Email</h4>
-                  <p>{{ scanner_data.guest.email }}</p>
-                </div>
-                <div class="account-details mx-4">
-                  <h4>Division</h4>
-                  <p>{{ scanner_data.guest.division_id }}</p>
-                </div>
-                <div class="account-details mx-4">
-                  <h4>Ticket Type</h4>
-                  <p>{{ scanner_data.guest.ticketclass_name }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row text-center align-center p-2">
-          <div class="col-md-6"><img src="../assets/image/thankyou.png" alt="thankyou" width="80" /><span
-              class="thankyou">Thankyou !!</span></div>
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
+        <div class="bg-white container-border-bottom align-items-center row">
           <div class="col-md-6">
-            <button class="button-finish w-100" @click="finishScan()">Finish</button>
+            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
+            <img src="../assets/image/printer2.png" alt="qr code" width="100%" class="img-qr" />
+          </div>
+          <div class="col-md-6 border-left">
+            <div class="row">
+              <h3 class="mb-3">you can choose for check in or registration</h3>
+              <div class="border-bottom mt-1 mb-1"></div>
+              <h2 class="mt-2">"Please wait for your badges to finish printing"</h2>
+            </div>
+          </div>
+          <div class="printable" id="areaprint" style="border: 1px solid;">
+            <center>
+              <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 145px" />
+              <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
+                {{ scanner_data.guest.fullname }}</h4>
+              <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
+                {{ scanner_data.guest.ticketclass_name }}</p>
+            </center>
           </div>
         </div>
       </div>
@@ -213,7 +184,6 @@
             this.isLoading = false
           }, 500)
           this.scanner_data = res.data;
-          // console.log("respon", res.data);
           this.status = res.status;
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
@@ -343,6 +313,14 @@
     font-family: helvetica;
   }
 
+  .bg-scanpage {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background: url(../assets/image/bg-agenda-session.png)
+  }
+
   .text-none {
     border: none;
     color: #fff;
@@ -393,10 +371,8 @@
   .border-left {
     border-left: 10px solid;
     align-items: left;
-    height: 50;
-    padding-top: 50px;
-    padding-bottom: 50px;
     border-color: #163c56;
+    padding: 30px 0 30px 0;
   }
 
   .card-deck {
@@ -419,6 +395,10 @@
 
   .bg-profile {
     background-image: linear-gradient(#5697b2, #1b6476);
+  }
+
+  .border-bottom {
+    border-bottom: 1px solid #163c56;
   }
 
   .checkin h1,
