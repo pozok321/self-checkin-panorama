@@ -3,6 +3,7 @@ import ScanView from "../views/ScanView.vue";
 import LoginView from "../views/LoginView.vue";
 import AgendaView from "../views/AgendaView.vue";
 import EventDetailView from "../views/EventDetailView.vue";
+import CompletedView from "../views/CompletedView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: "/scanpage",
       name: "scanpage",
       component: ScanView,
+    },
+    {
+      path: "/completed",
+      name: "completed",
+      component: CompletedView,
     },
   ],
 });

@@ -17,8 +17,8 @@
             <img :src=" global_url + session.event_poster" alt="event banner" width="100%" height="100%">
           </div>
         </div>
-        <div class="row">
-          <h4>Tap Your QR to Scanner</h4>
+        <div class="row mt-3">
+          <h4 class="bg-darkblue">Tap Your QR to Scanner</h4>
           <p>Please wait till your QR show the details information</p>
         </div>
       </div>
@@ -31,13 +31,13 @@
         <div class="bg-white container-border-bottom align-items-center row">
           <div class="col-md-6">
             <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
-            <img src="../assets/image/printer2.png" alt="qr code" width="100%" class="img-qr" />
+            <img src="../assets/image/printer2.gif" alt="qr code" width="100%" class="img-qr" />
           </div>
           <div class="col-md-6 border-left">
             <div class="row">
-              <h3 class="mb-3">you can choose for check in or registration</h3>
+              <h2 class="mb-3">Welcome {{ scanner_data.guest.fullname }}</h2>
               <div class="border-bottom mt-1 mb-1"></div>
-              <h2 class="mt-2">"Please wait for your badges to finish printing"</h2>
+              <h3 class="mt-2">"Please wait for your badges to finish printing"</h3>
             </div>
           </div>
           <div class="printable" id="areaprint" style="border: 1px solid;">
@@ -179,18 +179,14 @@
           },
         }).then((res) => {
           this.on_scanner();
-          this.isLoading = true;
-          setTimeout(() => {
-            this.isLoading = false
-          }, 500)
           this.scanner_data = res.data;
           this.status = res.status;
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
-            this.isLoading = true;
+            // this.isLoading = true;
             // simulate AJAX
             setTimeout(() => {
-              this.isLoading = false
+              // this.isLoading = false
               this.checkin_status = true;
             }, 500)
           }
@@ -332,7 +328,7 @@
   .btn-camera-scanner {
     background-color: #EBEBEB;
     color: #25516B;
-    border-radius: 20px;
+    border-radius: 10px;
     font-size: 15px;
     align-items: center;
     text-align: center;
@@ -361,18 +357,23 @@
     background-color: #fff;
   }
 
+  .bg-darkblue{
+    color: #25516B;
+  }
+
   .container-border-bottom {
     border-width: thin;
     border-radius: 20px;
     border-bottom: 10px solid;
     border-color: #5697b2;
+    margin: 0 10px 0 10px;
   }
 
   .border-left {
     border-left: 10px solid;
     align-items: left;
     border-color: #163c56;
-    padding: 30px 0 30px 0;
+    padding: 30px;
   }
 
   .card-deck {
