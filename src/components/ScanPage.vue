@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="col-md-7 border-left">
-            <img :src=" global_url + session.event_poster" alt="event banner" width="100%" height="100%">
+            <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%" >
           </div>
         </div>
         <div class="row mt-3">
@@ -117,14 +117,12 @@
         }).then((res) => {
           this.track = res.data;
         });
-
       },
 
       getSession() {
         axios({
           method: "GET",
-          url: "/selfsvc/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/track/" + this.obj
-            .track_id + "/session/" + this.obj.session_id,
+          url: "/selfsvc/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/track/" + this.obj.track_id + "/session/" + this.obj.session_id,
           headers: {
             "Content-Type": "text/plain",
           },

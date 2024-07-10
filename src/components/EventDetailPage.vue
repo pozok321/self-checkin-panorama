@@ -14,7 +14,7 @@
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
                     <div class="col-sm-6">
-                        <img :src=" global_url + session.event_poster" alt="event banner" width="100%"
+                        <img :src=" global_url + session.poster" alt="event banner" width="100%"
                             height="100%">
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="registration mt-3 mb-5">
                                     <span class="mx-2"><img src="../assets/image/registration.png" alt="registration-icon"></span>
-                                    <button class="w-50 btn-registration"> Registration </button>
+                                    <button class="w-50 btn-registration" @click="registrationPage()"> Registration </button>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +55,6 @@
                 venue_id: "",
                 agenda_id: "",
                 session_id: "",
-                track_id: "",
                 agenda_name: "",
                 track_id: "",
                 session_topic: "",
@@ -81,27 +80,25 @@
                 }
                 document.cookie = name + "=" + value + ";" + expires + "; path=/";
             },
+            getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+
             checkinPage() {
                 this.$router.push("/scanpage");
             },
 
-            getSession() {
-                axios({
-                        method: "GET",
-                        url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this
-                            .track_id + "/session/" + this.session_id,
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                    })
-                    .then(res => {
-                        this.session = res.data;
-                        this.multiple_session_entry = this.session.multiple_session_entry;
-                        this.qr_setting = this.session.qr_setting;
-                        this.createCookie("multiple_session_entry", this.multiple_session_entry);
-                        this.createCookie("qr_setting", this.qr_setting);
-                    })
+            registrationPage() {
+                this.$router.push("/registrationpage");
             },
+
             getAgenda() {
                 axios({
                         method: "GET",
@@ -128,17 +125,25 @@
                 });
 
             },
-            getCookie(name) {
-                var nameEQ = name + "=";
-                var ca = document.cookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-                }
-                return null;
-            },
 
+            getSession() {
+                axios({
+                        method: "GET",
+                        url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id + "/session/" + this.session_id,
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                    })
+                    .then(res => {
+                        this.session = res.data;
+                        this.multiple_session_entry = this.session.multiple_session_entry;
+                        this.qr_setting = this.session.qr_setting;
+                        this.createCookie("multiple_session_entry", this.multiple_session_entry);
+                        this.createCookie("qr_setting", this.qr_setting);
+                    })
+
+            },
+           
             simpanData(){
                 localStorage.zpl_printer = this.zpl_printer;
                 localStorage.thermal_printer = this.thermal_printer;
@@ -153,6 +158,7 @@
             this.events_id = $cookies.get("events_id");
             this.session_id = $cookies.get("session_id");
             this.agenda_id = $cookies.get("agenda_id");
+            this.track_id = $cookies.get("track_id");
             if (localStorage.zpl_printer) {
                 this.zpl_printer = localStorage.zpl_printer;
             }
