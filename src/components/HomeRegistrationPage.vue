@@ -1,47 +1,22 @@
 <template>
     <section class="vh-100">
-        <div class="container">
-            <div class="text-center my-5">
-                <h1>Register</h1>
-                <span>Enter your full name, E-mail, and password to register</span>
-            </div>
-            <div id="input-data" class="w-75 m-auto">
-                <form>
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="fullname" aria-describedby="emailHelp"
-                            placeholder="Full Name">
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="email"  placeholder="Email">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="confirmationemail"  placeholder="Confirmation E-mail">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="countrycode"  placeholder="Country">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="province"  placeholder="Province">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="city"  placeholder="City">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="phone"  placeholder="Phone">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="company"  placeholder="Company">
-                        </div>
-                    </div>
-                </form>
-                <div class="form-group text-end">
-                    <button class="btn-back mt-4 mx-3" @click="confirmGetTicket()">Back</button>
-                    <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
+        <img :src=" global_url + obj.ticket_poster" alt="event banner" class="bg-registration-page">
+
+        <div class="centered container">
+            <div class="row m-auto w-50">
+                <h4 class="text-white">PLEASE CHOOSE TICKET DAY</h4>
+                <div class="input-group mt-3 text-center">
+                    <select class="form-select" id="selectTicket" v-model="obj.ticket_id" @change="ticketList()">
+                        <option v-for="ticketData in obj.ticket" v-bind:value="ticketData.id">
+                            {{ ticketData.class_name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn-get-ticket mt-4" @click="confirmGetTicket()">Get Ticket</button>
                 </div>
             </div>
         </div>
-        
     </section>
 </template>
 
@@ -60,10 +35,10 @@
                 session_topic: "",
                 prev_action: "",
                 ticket_id: "",
-                ticket_list: "",
+                ticket_list:"",
                 multiple_session_entry: "",
                 qr_setting: "",
-                ticket: "",
+                ticket:"",
                 global_url: this.$globalURL,
                 obj: {
                     prev_action: "",
@@ -107,7 +82,7 @@
                     })
                     .then(res => {
                         this.ticket = res.data;
-
+                        
                         // this.ticket_level = this.ticket.ticket_level;
                         // this.prev_action = this.ticket.prev_action;
                         console.log(this.ticket, "test123");
@@ -203,28 +178,16 @@
         font-weight: bold;
     }
 
-    .btn-back {
-        width: 25%;
-        background-color: #FFFFFF;
-        color: #2096C1;
-        font-family: Helvetica;
-        border-radius: 10px;
-        font-size: 16pt;
-        padding: 5px 0 5px 0;
-        font-weight: bold;
-        border-color: #2096C1;
-    }
-
-    .btn-next {
-        width: 25%;
-        background-color: #315568;
+    .btn-get-ticket {
+        width: 100%;
+        background-color: #2096C1;
         color: #fff;
         font-family: Helvetica;
-        border-radius: 10px;
+        border-radius: 50px;
+        padding-top: 10px;
+        padding-bottom: 10px;
         font-size: 16pt;
-        padding: 5px 0 5px 0;
         font-weight: bold;
-        border-color: #315568;
     }
 
     .bg-registration-page {

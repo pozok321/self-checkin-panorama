@@ -2,8 +2,8 @@
     <section class="vh-100">
         <div class="container">
             <div class="text-center my-5">
-                <h1>Register</h1>
-                <span>Enter your full name, E-mail, and password to register</span>
+                <h1>Questionnaire</h1>
+                <span>Tell us about you and your business</span>
             </div>
             <div id="input-data" class="w-75 m-auto">
                 <form>

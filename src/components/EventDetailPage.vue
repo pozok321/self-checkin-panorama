@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="registration mt-3 mb-5">
                                     <span class="mx-2"><img src="../assets/image/registration.png" alt="registration-icon"></span>
-                                    <button class="w-50 btn-registration" @click="registrationPage()"> Registration </button>
+                                    <button class="w-50 btn-registration" @click="homeRegistrationPage()"> Registration </button>
                                 </div>
                             </div>
                         </div>
@@ -95,8 +95,8 @@
                 this.$router.push("/scanpage");
             },
 
-            registrationPage() {
-                this.$router.push("/registrationpage");
+            homeRegistrationPage() {
+                this.$router.push("/homeregistrationpage");
             },
 
             getAgenda() {

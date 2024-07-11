@@ -3,9 +3,12 @@ import ScanView from "../views/ScanView.vue";
 import LoginView from "../views/LoginView.vue";
 import AgendaView from "../views/AgendaView.vue";
 import EventDetailView from "../views/EventDetailView.vue";
-import RegistrationView from "../views/RegistrationView.vue";
+import HomeRegistrationView from "../views/HomeRegistrationView.vue";
 import CompletedView from "../views/CompletedView.vue";
 import MyCartView from "../views/MyCartView.vue";
+import RegistrationView from "../views/RegistrationView.vue";
+import QuestionnaireView from "../views/QuestionnaireView.vue";
+import PaymentView from "../views/PaymentView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,9 +34,9 @@ const router = createRouter({
       component: ScanView,
     },
     {
-      path: "/registrationpage",
-      name: "registrationpage",
-      component: RegistrationView,
+      path: "/homeregistrationpage",
+      name: "homeregistrationpage",
+      component: HomeRegistrationView,
     },
     {
       path: "/completed",
@@ -45,6 +48,22 @@ const router = createRouter({
       name: "mycart",
       component: MyCartView,
     },
+    {
+      path: "/registrationpage",
+      name: "registrationpage",
+      component: RegistrationView,
+    },
+    {
+      path: "/questionnairepage",
+      name: "questionnairepage",
+      component: QuestionnaireView,
+    },
+    {
+      path: "/paymentpage",
+      name: "paymentpage",
+      component: PaymentView,
+    },
+
 
     // {
     //   path: '/ticketlist/:Eventsid',
