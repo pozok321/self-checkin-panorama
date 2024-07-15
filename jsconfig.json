@@ -1,0 +1,14 @@
+{"rewrites": [
+  {
+    "source": "**",
+    "destination": "/index.html"
+  }
+],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+  
+}

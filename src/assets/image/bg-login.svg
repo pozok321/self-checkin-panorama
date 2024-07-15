@@ -1,0 +1,58 @@
+<svg id="Group_178" data-name="Group 178" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1366" height="768" viewBox="0 0 1366 768">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_365" data-name="Rectangle 365" width="372" height="571" fill="#f1f1f1" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+    <filter id="Path_411" x="-638.872" y="-391.686" width="1017.372" height="1017.372" filterUnits="userSpaceOnUse">
+      <feOffset dy="17" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="9.5" result="blur"/>
+      <feFlood flood-color="#19526c" flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Ellipse_20" x="-359.872" y="-125.5" width="523" height="523" filterUnits="userSpaceOnUse">
+      <feOffset dy="17" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="9.5" result="blur-2"/>
+      <feFlood flood-color="#19526c" flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <clipPath id="clip-path-2">
+      <rect id="Rectangle_366" data-name="Rectangle 366" width="405" height="668" transform="translate(961 100)" fill="#f1f1f1" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+    <filter id="Path_410" x="956.128" y="101.314" width="1017.372" height="1017.372" filterUnits="userSpaceOnUse">
+      <feOffset dy="17" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="9.5" result="blur-3"/>
+      <feFlood flood-color="#19526c" flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-3"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Ellipse_19" x="1171.5" y="329.5" width="523" height="523" filterUnits="userSpaceOnUse">
+      <feOffset dy="17" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="9.5" result="blur-4"/>
+      <feFlood flood-color="#19526c" flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur-4"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Rectangle_362" data-name="Rectangle 362" fill="#f1f1f1" stroke="#707070" stroke-width="1">
+    <rect width="1366" height="768" stroke="none"/>
+    <rect x="0.5" y="0.5" width="1365" height="767" fill="none"/>
+  </g>
+  <g id="Mask_Group_2" data-name="Mask Group 2" clip-path="url(#clip-path)">
+    <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Path_411)">
+      <path id="Path_411-2" data-name="Path 411" d="M480.185,960.372c265.2,0,480.187-214.985,480.187-480.185S745.385,0,480.185,0,0,214.987,0,480.187,214.987,960.372,480.185,960.372m0-846.134c202.109,0,365.949,163.84,365.949,365.949S682.294,846.136,480.185,846.136,114.238,682.3,114.238,480.187s163.84-365.949,365.947-365.949" transform="translate(-610.37 -380.19)" fill="#f1f1f1"/>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Ellipse_20)">
+      <circle id="Ellipse_20-2" data-name="Ellipse 20" cx="233" cy="233" r="233" transform="translate(-331.37 -114)" fill="#f1f1f1"/>
+    </g>
+  </g>
+  <g id="Mask_Group_3" data-name="Mask Group 3" clip-path="url(#clip-path-2)">
+    <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Path_410)">
+      <path id="Path_410-2" data-name="Path 410" d="M480.187,0C214.987,0,0,214.985,0,480.185S214.987,960.372,480.187,960.372,960.372,745.385,960.372,480.185,745.385,0,480.187,0m0,846.134c-202.109,0-365.949-163.84-365.949-365.949s163.84-365.949,365.949-365.949,365.947,163.84,365.947,365.949S682.294,846.134,480.187,846.134" transform="translate(984.63 112.81)" fill="#f1f1f1"/>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Ellipse_19)">
+      <circle id="Ellipse_19-2" data-name="Ellipse 19" cx="233" cy="233" r="233" transform="translate(1200 341)" fill="#f1f1f1"/>
+    </g>
+  </g>
+</svg>
