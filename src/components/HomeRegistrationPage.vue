@@ -1,13 +1,13 @@
 <template>
     <section class="vh-100">
-        <img :src=" global_url + obj.ticket_poster" alt="event banner" class="bg-registration-page">
+        <img :src=" global_url +  form_getevent.poster" alt="event banner" class="bg-registration-page">
 
         <div class="centered container">
             <div class="row m-auto w-50">
                 <h4 class="text-white">PLEASE CHOOSE TICKET DAY</h4>
                 <div class="input-group mt-3 text-center">
-                    <select class="form-select" id="selectTicket" v-model="obj.ticket_id" @change="ticketList()">
-                        <option v-for="ticketData in obj.ticket" v-bind:value="ticketData.id">
+                    <select class="form-select" id="selectTicket" v-model="ticket_id" @change="ticketList()">
+                        <option v-for="ticketData in ticket" v-bind:value="ticketData.id">
                             {{ ticketData.class_name }}
                         </option>
                     </select>
@@ -40,11 +40,13 @@
                 qr_setting: "",
                 ticket:"",
                 global_url: this.$globalURL,
-                obj: {
-                    prev_action: "",
+                form_getevent: {
                     events_id: "",
-                    ticket_level: "MT",
-                }
+                    ticket_level: 'MT',
+                    prev_action: ""
+                },
+                // event_detail: JSON.parse(localStorage.getItem("event_details")),
+                // route_name: this.$route.name
             };
         },
         components: {
@@ -71,23 +73,24 @@
                 }
                 return null;
             },
-            ticketList() {
+
+            
+            getEvent() {
+                this.isLoading = true;
+                this.isLoadingProduct = true
                 axios({
-                        method: "POST",
                         url: "/rsvp/ticketlist",
-                        data: this.obj,
                         headers: {
                             "Content-Type": "text/plain"
                         },
+                        method: "POST",
+                        data: this.form_getevent,
                     })
                     .then(res => {
-                        this.ticket = res.data;
-                        
-                        // this.ticket_level = this.ticket.ticket_level;
-                        // this.prev_action = this.ticket.prev_action;
-                        console.log(this.ticket, "test123");
+                        this.isLoading = false;
+                        this.getEvent = res.data;
+                        console.log(this.getEvent, "test123")
                     })
-
             },
 
             simpanData() {
@@ -101,7 +104,8 @@
             }
         },
         mounted() {
-            this.events_id = $cookies.get("events_id");
+            this.form_getevent.events_id = $cookies.get("events_id");
+            // console.log(this.events_id, "events_id");
             if (localStorage.zpl_printer) {
                 this.zpl_printer = localStorage.zpl_printer;
             }
@@ -109,7 +113,7 @@
                 this.thermal_printer = localStorage.thermal_printer;
             }
 
-            if (this.events_id == null) {
+            if (this.form_getevent.events_id == null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
                     icon: "warning",
@@ -119,7 +123,7 @@
             } else {
                 this.getCookie()
             }
-            this.ticketList();
+            this.getEvent();
 
         },
     };

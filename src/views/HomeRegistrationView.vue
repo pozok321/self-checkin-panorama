@@ -1,5 +1,5 @@
 <script setup>
-import HomeRegistration from "../components/HomeRegistrationPage.vue";
+import HomeRegistrationPage from "../components/HomeRegistrationPage.vue";
 </script>
 <template>
   <HomeRegistrationPage />

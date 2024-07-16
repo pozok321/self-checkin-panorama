@@ -293,7 +293,7 @@
         display: flex
     }
 
-    .event-date{
+    .event-date {
         line-height: 10px
     }
 

@@ -9,6 +9,7 @@ import MyCartView from "../views/MyCartView.vue";
 import RegistrationView from "../views/RegistrationView.vue";
 import QuestionnaireView from "../views/QuestionnaireView.vue";
 import PaymentView from "../views/PaymentView.vue";
+import SuccessPageView from "../views/SuccessPageView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,7 +64,17 @@ const router = createRouter({
       name: "paymentpage",
       component: PaymentView,
     },
+    {
+      path: "/successpage",
+      name: "successpage",
+      component: SuccessPageView,
+    },
 
+    {
+      path: '/ticketlist/:Eventsid',
+      name: 'ticketlist',
+      component: () => import('../components/HomeRegistrationPage.vue') 
+    },
 
     // {
     //   path: '/ticketlist/:Eventsid',
