@@ -35,63 +35,17 @@
                 </div>
                 <div class="row">
                     <h4 class="text-start my-3">Term & Condition</h4>
-                    <div class="term-condition overflow-scroll">fdx
-                        E - TICKET INI TIDAK DAPAT DIPERJUALBELIKAN & HATI-HATI TERHADAP PENIPUAN!
-                        E-TICKET CANNOT BE RE-SOLD & BE CAREFUL OF FRAUD!
-                        HARGA TICKET YANG TERTERA SUDAH TERMASUK PAJAK 10%
-                        THE TICKET PRICE LISTED INCLUDES 10% TAX
-                        JANGAN MENGAMBIL FOTO -VOUCHER ANDA SECARA ONLINE KARENA ORANG DAPAT MENYALIN INI DAN
-                        MENGKLAIM TIKET ANDA.
-                        DO NOT TAKE PHOTO OF YOUR E-VOUCHER ONLINE AS PEOPLE MAY COPY THESE AND CLAIM YOUR TICKET.
-
-                        Kami tidak bertanggung jawab atas kehilangan E-Ticketini.
-                        We are NOT responsible for the lost of this E-Ticket.
-
-                        Mohon hadir 30 menit sebelum Jadwal Kedatangan Acara tersebut.
-                        Please arrive 30 minutes before the Schedule Arrival of the Event.
-                        Dilarang membawa senjata atau obat terlarang.
-                        No weapons or drugs are allowed.
-                        Penyelenggaran berhak untuk tidak memberikan izin untuk masuk ke dalam tempt acara apabila
-                        syarat dan ketentuan tidak dipenuhi.
-                        The Organiser has the right not to give permission to enter the event venue if the terms &
-                        conditions are not met.
-                        Penyelenggara MEWAJIBKAN pengunjung untuk:
-                        Organiser Requires visitors to:
-                        Sudah divaksin Covid-19 minimal 1 kali dan terdaftar di aplikasiPeduliLindungi
-                        Already vaccinated against Covid-19 at least once and registrated in the PeduliLindungi.
-                        Pengunjung yang datang berkelompok, saling menjaga dan waspada satu sama lain. Usia di bawah
-                        12 tahun dan di atas 65 tahun tidak diperkenankan mengunjungi pameran.
-                        Already Visitor who come in groups, look after each other and be wart of each other.\
-                        Especially those under 12 years old and the elderly more than 65 years old are prohibited to
-                        come to the event.
-                        Bersedia dicek suhu tubuh oleh pihak penyelenggara dengan batas maksimal suhu tubuh 37,20C.
-                        Jika ditemukan suhu tubuh melebihi batas maksimal, maka dilakukan pengulangan pemeriksaan
-                        hingga 3 kali. Jika suhu tetap tinggi, penyelenggara berhak untuk menolak Anda beserta
-                        rombongan masuk ke acara dan Pengunjung berhak mendapatkan kesempatan untuk datang di hari
-                        berikutnya, selama acara in berlangsung.
-                        Willing to have his body temperature checked by organizer, with a maximum body temperature
-                        of 37,20C. If it is found that the body temperature exceeds the maximum limit, then the
-                        examination is repeated up to 3 times. If the body temperature remains high, Organizer
-                        reserves the right to refuse you and your entourage entry to the event and Visitors have the
-                        right to have the opportunity to come the next day, during this event.
-                        Membawa dan menggunakan masker dan dihimbau untuk menambahkan dengan menggunakan face
-                        shield.
-                        Bring and use a mask and are encourage to add the use of a face shield.
-                        Membawa dan menggunakan hand sanitizer untuk dapat digunakan setiap sat dibutuhkan.
-                        Bring and use hand sanitizer to be used whenever needed.
-                        Memenuhi semua arahan dan aturan yang diberlakukan oleh petugas di lapangan. Petugas berhak
-                        menegur pengunjung melakukan kegiatan mencurigakan di dalam
-                        rung acara berlangsung.
-                        Comply with all directions and rules imposed by officers in the field. Officers have the
-                        right to reprimand visitors who carry out suspicious activities at the event venue.
+                    <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
+                        {{ this.event_declaration.event_declaration }}
                     </div>
-                    <div class="button-understand">
-                        <div class="form-check">
 
+                    <div class="form-check">
+                        <div class="row">
                             <label class="form-check-label" for="flexCheckChecked">
                                 YES, I AGREE, I WANT TO BUY TICKET
-                            </label>
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                            </label></div>
+                        <div class="row">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
                             <p class="additional-font">I do understand</p>
                         </div>
                     </div>
@@ -113,7 +67,7 @@
                     <h4 class="text-start">Add On Ticket (Optional)</h4>
                     <div class="justify-content-between flex mt-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
                             <label class="form-check-label" for="flexCheckChecked">
                                 Additional Ticket 1
                             </label>
@@ -189,23 +143,13 @@
         data() {
             return {
                 url: '',
-                zpl_printer: "",
-                thermal_printer: "",
-                showOnMedia: "",
-                venue_id: "",
-                session_topic: "",
-                prev_action: "",
-                ticket_id: "",
-                ticket_list: "",
-                multiple_session_entry: "",
-                qr_setting: "",
-                ticket: "",
-                global_url: this.$globalURL,
-                obj: {
-                    prev_action: "",
-                    events_id: "",
-                    ticket_level: "MT",
-                }
+                event_declaration: "",
+                declareget: {
+                    events_id: this.$route.params.Eventsid,
+                    ip_address: "10.10.10.10",
+                    prev_action: "getcart",
+                },
+                global_url: this.$globalURL
             };
         },
         components: {
@@ -213,41 +157,44 @@
         },
         methods: {
 
-            ticketList() {
+            createCookie(name, value, day) {
+                if (day) {
+                    let currentDate = new Date();
+                    currentDate.setTime(currentDate.getTime() + (day * 24 * 60 * 60 * 1000));
+                    var expires = "expires=" + currentDate.toGMTString();
+                } else {
+                    var expires = "";
+                }
+                document.cookie = name + "=" + value + ";" + expires + "; path=/";
+            },
+            getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+
+            declareGet() {
                 axios({
                         method: "POST",
-                        url: "/rsvp/ticketlist",
-                        data: this.obj,
+                        url: "/rsvp/declareget",
                         headers: {
                             "Content-Type": "text/plain"
                         },
+                        data: this.declareget
                     })
                     .then(res => {
-                        this.ticket = res.data;
-                        console.log(this.ticket, "test123");
+                        this.event_declaration = res.data;
+                        this.createCookie("prev_action", this.prev_action);
                     })
-
             },
-
-            simpanData() {
-                localStorage.zpl_printer = this.zpl_printer;
-                localStorage.thermal_printer = this.thermal_printer;
-                console.log("data berhasil disimpan");
-            },
-            hapusData() {
-                localStorage.removeItem = this.zpl_printer;
-                localStorage.removeItem = this.thermal_printer;
-            }
         },
         mounted() {
             this.events_id = $cookies.get("events_id");
-            if (localStorage.zpl_printer) {
-                this.zpl_printer = localStorage.zpl_printer;
-            }
-            if (localStorage.thermal_printer) {
-                this.thermal_printer = localStorage.thermal_printer;
-            }
-
             if (this.events_id == null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
@@ -258,8 +205,7 @@
             } else {
                 this.getCookie()
             }
-            this.ticketList();
-
+            this.declareGet();
         },
     };
 </script>

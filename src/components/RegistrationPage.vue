@@ -104,32 +104,16 @@
           },
         }).then((res) => {
           this.ticket = res.data;
-  
+          
           // this.ticket_level = this.ticket.ticket_level;
           // this.prev_action = this.ticket.prev_action;
           console.log(this.ticket, "test123");
         });
       },
   
-      simpanData() {
-        localStorage.zpl_printer = this.zpl_printer;
-        localStorage.thermal_printer = this.thermal_printer;
-        console.log("data berhasil disimpan");
-      },
-      hapusData() {
-        localStorage.removeItem = this.zpl_printer;
-        localStorage.removeItem = this.thermal_printer;
-      },
     },
     mounted() {
       this.events_id = $cookies.get("events_id");
-      if (localStorage.zpl_printer) {
-        this.zpl_printer = localStorage.zpl_printer;
-      }
-      if (localStorage.thermal_printer) {
-        this.thermal_printer = localStorage.thermal_printer;
-      }
-  
       if (this.events_id == null) {
         Swal.fire({
           title: "Your Session is Expired!",

@@ -13,6 +13,6 @@ import "bootstrap/dist/js/bootstrap.bundle.js";
 axios.defaults.baseURL = "https://apidev.undangin.com/v1/";
 
 const app = createApp(App);
-app.config.globalProperties.$globalURL = "https://corp.undangin.com/"
+app.config.globalProperties.$globalURL = "https://corpdev.undangin.com/"
 app.use(router);
 app.mount("#app");

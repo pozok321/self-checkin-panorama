@@ -1,19 +1,18 @@
 <template>
     <section class="vh-100">
-        <img :src=" global_url +  form_getevent.poster" alt="event banner" class="bg-registration-page">
-
+        <img :src=" global_url +  this.getPoster.poster_mobile" alt="event banner" class="bg-registration-page">
         <div class="centered container">
             <div class="row m-auto w-50">
                 <h4 class="text-white">PLEASE CHOOSE TICKET DAY</h4>
                 <div class="input-group mt-3 text-center">
-                    <select class="form-select" id="selectTicket" v-model="ticket_id" @change="ticketList()">
+                    <select class="form-select" id="selectTicket" v-model="ticket_id">
                         <option v-for="ticketData in ticket" v-bind:value="ticketData.id">
                             {{ ticketData.class_name }}
                         </option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <button class="btn-get-ticket mt-4" @click="confirmGetTicket()">Get Ticket</button>
+                    <button class="btn-get-ticket mt-4" @click="confirmTicket()">Get Ticket</button>
                 </div>
             </div>
         </div>
@@ -28,22 +27,20 @@
         data() {
             return {
                 url: '',
-                zpl_printer: "",
-                thermal_printer: "",
-                showOnMedia: "",
-                venue_id: "",
-                session_topic: "",
-                prev_action: "",
                 ticket_id: "",
-                ticket_list:"",
-                multiple_session_entry: "",
-                qr_setting: "",
-                ticket:"",
+                ticket_list: "",
+                ticket: [],
                 global_url: this.$globalURL,
-                form_getevent: {
-                    events_id: "",
-                    ticket_level: 'MT',
+                poster_mobile: "",
+                form_getposter: {
+                    events_id: this.$route.params.Eventsid,
+                    ip_address: "10.10.10.10",
                     prev_action: ""
+                },
+                form_getevent: {
+                    events_id: this.$route.params.Eventsid,
+                    ticket_level: 'MT',
+                    prev_action: "p1home"
                 },
                 // event_detail: JSON.parse(localStorage.getItem("event_details")),
                 // route_name: this.$route.name
@@ -74,10 +71,22 @@
                 return null;
             },
 
-            
+            getPoster() {
+                axios({
+                        url: "/rsvp/p1home",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_getposter
+                    })
+                    .then(res => {
+                        this.getPoster = res.data;
+                        this.poster_mobile = this.getPoster.poster_mobile;
+                    })
+            },
+
             getEvent() {
-                this.isLoading = true;
-                this.isLoadingProduct = true
                 axios({
                         url: "/rsvp/ticketlist",
                         headers: {
@@ -89,30 +98,37 @@
                     .then(res => {
                         this.isLoading = false;
                         this.getEvent = res.data;
-                        console.log(this.getEvent, "test123")
+                        this.ticket = this.getEvent.ticket
                     })
             },
 
-            simpanData() {
-                localStorage.zpl_printer = this.zpl_printer;
-                localStorage.thermal_printer = this.thermal_printer;
-                console.log("data berhasil disimpan");
+            confirmTicket() {
+                axios({
+                    method: "POST",
+                    url: "/rsvp/ticketlist",
+                    headers: {
+                        "Content-Type": "text/plain",
+                    },
+                    data: this.form_getevent,
+                }).then((res) => {
+                    if (this.ticket == "") {
+                        Swal.fire({
+                            title: "Please Select Ticket",
+                            text: res.data.msg,
+                            icon: "warning",
+                        });
+                    } else {
+                        setTimeout(() => {
+                            this.createCookie("ticket", this.ticket);
+                            this.$router.push("/mycart/" + this.form_getevent.events_id);  
+                        }, 1000)
+                    }
+                });
             },
-            hapusData() {
-                localStorage.removeItem = this.zpl_printer;
-                localStorage.removeItem = this.thermal_printer;
-            }
         },
         mounted() {
             this.form_getevent.events_id = $cookies.get("events_id");
-            // console.log(this.events_id, "events_id");
-            if (localStorage.zpl_printer) {
-                this.zpl_printer = localStorage.zpl_printer;
-            }
-            if (localStorage.thermal_printer) {
-                this.thermal_printer = localStorage.thermal_printer;
-            }
-
+            this.form_getposter.events_id = $cookies.get("events_id");
             if (this.form_getevent.events_id == null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
@@ -121,10 +137,10 @@
                 setTimeout(1000);
                 this.$router.push("/");
             } else {
-                this.getCookie()
+                this.getCookie();
             }
             this.getEvent();
-
+            this.getPoster();
         },
     };
 </script>
@@ -186,6 +202,7 @@
         width: 100%;
         background-color: #2096C1;
         color: #fff;
+        border-color: #2096C1;
         font-family: Helvetica;
         border-radius: 50px;
         padding-top: 10px;
@@ -196,10 +213,11 @@
 
     .bg-registration-page {
         position: relative;
+        width: 100%;
+        height: 100%;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        height: 100%;
     }
 
     .centered {

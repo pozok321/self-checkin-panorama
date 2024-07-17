@@ -76,6 +76,12 @@ const router = createRouter({
       component: () => import('../components/HomeRegistrationPage.vue') 
     },
 
+    {
+      path: '/mycart/:Eventsid',
+      name: 'mycart',
+      component: () => import('../components/MyCartPage.vue') 
+    },
+
     // {
     //   path: '/ticketlist/:Eventsid',
     //   name: 'ticketlist',
