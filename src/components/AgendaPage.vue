@@ -166,11 +166,11 @@
             this.isLoading = true;
             var is = this
             setTimeout(() => {
-              this.createCookie("track_id", this.track_id);
-              this.createCookie("session_id", this.session_id);
-              this.createCookie("agenda_id", this.agenda_id);
-              this.$router.push("/eventdetailpage");
-              this.isLoading = false
+              is.createCookie("track_id", this.track_id);
+              is.createCookie("session_id", this.session_id);
+              is.createCookie("agenda_id", this.agenda_id);
+              is.$router.push("/eventdetailpage");
+              is.isLoading = false
             }, 1000)
           }
         });

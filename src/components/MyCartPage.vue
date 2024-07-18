@@ -34,19 +34,23 @@
                     <div class="col-md-1"></div>
                 </div>
                 <div class="row">
-                    <h4 class="text-start my-3">Term & Condition</h4>
+                    <h4 class="text-start my-3">Terms & Condition</h4>
                     <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
-                        {{ this.event_declaration.event_declaration }}
+                        {{ this.event_declaration }}
                     </div>
-
-                    <div class="form-check">
-                        <div class="row">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                YES, I AGREE, I WANT TO BUY TICKET
-                            </label></div>
-                        <div class="row">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                            <p class="additional-font">I do understand</p>
+                    <div v-if="isLoading">
+                        <div class="is-loading text-30"></div>
+                        <div class="is-loading text-30"></div>
+                        <div class="is-loading text-30"></div>
+                    </div>
+                    <div id="stylebar" class="scrollbar"v-else></div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="declare_checkbox"
+                                v-model="declare_checkbox" name="declare_checkbox" disabled>
+                            <label class="form-check-label" for="declare_checkbox">
+                                Yes, I understand and agree to comply.
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -125,9 +129,19 @@
                         <span class="span-total-ticket text-end">please check ticket before add to purchase</span>
                     </div>
                     <div class="total-payment bottom-0 end-0 ">
-                        <div class="form-group">
-                            <button class="btn-purchase mt-4">Purchase</button>
+                         <div class="row">
+                        <div class="col-lg-12 col-sm-12 col-12">
+                            <button class="btn btn-purchase" :disabled="declare_checkbox == false" @click="next_page()">
+                                <span v-if="LoadingButton">
+                                    <span class="loader loading-quarter"></span>
+                                    Processing
+                                </span>
+                                <span v-else>
+                                   Purchase
+                                </span>
+                            </button>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -144,12 +158,16 @@
             return {
                 url: '',
                 event_declaration: "",
+                declare_checkbox: false,
+                LoadingButton: false,
+                isLoading: false,
                 declareget: {
                     events_id: this.$route.params.Eventsid,
                     ip_address: "10.10.10.10",
                     prev_action: "getcart",
                 },
-                global_url: this.$globalURL
+                global_url: this.$globalURL,
+                titlePage: 'Terms & Condition'
             };
         },
         components: {
@@ -190,8 +208,55 @@
                     .then(res => {
                         this.event_declaration = res.data;
                         this.createCookie("prev_action", this.prev_action);
+                        this.js();
+                        this.js_showchecked();
                     })
             },
+            js() {
+                var mybutton = document.getElementById("myBtn");
+                window.onscroll = function () {
+                    scrollFunction()
+                };
+
+                function scrollFunction() {
+                    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                        mybutton.style.display = "block";
+                    } else {
+                        mybutton.style.display = "none";
+                    }
+                }
+            },
+            js_showchecked() {
+                setTimeout(function () {
+                    (function ($) {
+                        $.fn.hasScrollBar = function () {
+                            return this.get(0).scrollHeight > this.height();
+                        }
+                    })(jQuery);
+                    var scrollbar = $('#stylebar').hasScrollBar()
+
+                    var master_agreement = document.getElementById('stylebar');
+                    if (scrollbar == true) {
+                        jQuery(master_agreement).scroll(function (e) {
+                            if (isScrolledToBottom(master_agreement)) {
+                                jQuery('#declare_checkbox').prop('disabled', false);
+                            }
+                        });
+                    } else {
+                        jQuery('#declare_checkbox').prop('disabled', false);
+                    }
+
+                    function isScrolledToBottom(el) {
+                        var $el = $(el);
+                        // console.log("test ", el.scrollHeight - $el.scrollTop() - $el.outerHeight())
+                        return el.scrollHeight - $el.scrollTop() - $el.outerHeight() < 1000;
+                    }
+                }, 200);
+            },
+            next_page() {
+                this.LoadingButton = true
+                // this.$router.push("/register/" + this.form_getDeclare.events_id);
+            }
         },
         mounted() {
             this.events_id = $cookies.get("events_id");

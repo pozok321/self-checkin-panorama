@@ -1,6 +1,6 @@
 <template>
     <section class="vh-100">
-        <img :src=" global_url +  this.getPoster.poster_mobile" alt="event banner" class="bg-registration-page">
+        <img :src=" global_url +  this.poster_mobile" alt="event banner" class="bg-registration-page">
         <div class="centered container">
             <div class="row m-auto w-50">
                 <h4 class="text-white">PLEASE CHOOSE TICKET DAY</h4>
@@ -96,22 +96,22 @@
                         data: this.form_getevent,
                     })
                     .then(res => {
-                        this.isLoading = false;
                         this.getEvent = res.data;
-                        this.ticket = this.getEvent.ticket
+                        this.ticket = this.getEvent.ticket;
                     })
             },
 
             confirmTicket() {
+                var is = this;
                 axios({
                     method: "POST",
                     url: "/rsvp/ticketlist",
                     headers: {
                         "Content-Type": "text/plain",
+                        data: this.form_getevent,
                     },
-                    data: this.form_getevent,
                 }).then((res) => {
-                    if (this.ticket == "") {
+                    if (this.ticket.class_name == "") {
                         Swal.fire({
                             title: "Please Select Ticket",
                             text: res.data.msg,
@@ -119,8 +119,8 @@
                         });
                     } else {
                         setTimeout(() => {
-                            this.createCookie("ticket", this.ticket);
-                            this.$router.push("/mycart/" + this.form_getevent.events_id);  
+                            is.createCookie("ticket", this.ticket);
+                            is.$router.push("/mycart/" + this.form_getevent.events_id);  
                         }, 1000)
                     }
                 });
