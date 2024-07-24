@@ -10,6 +10,7 @@ import RegistrationView from "../views/RegistrationView.vue";
 import QuestionnaireView from "../views/QuestionnaireView.vue";
 import PaymentView from "../views/PaymentView.vue";
 import SuccessPageView from "../views/SuccessPageView.vue";
+// import P1HomeWaitingView from "../views/P1HomeWaitingView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,6 +71,12 @@ const router = createRouter({
       component: SuccessPageView,
     },
 
+    // {
+    //   path: "/p1homewaiting",
+    //   name: "p1homewaiting",
+    //   component: P1HomeWaitingView,
+    // },
+
     {
       path: '/ticketlist/:Eventsid',
       name: 'ticketlist',
@@ -81,12 +88,6 @@ const router = createRouter({
       name: 'mycart',
       component: () => import('../components/MyCartPage.vue') 
     },
-
-    // {
-    //   path: '/ticketlist/:Eventsid',
-    //   name: 'ticketlist',
-    //   component: () => import('../pages/TicketList.vue')
-    // },
   ],
 });
 

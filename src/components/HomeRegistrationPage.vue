@@ -1,6 +1,6 @@
 <template>
     <section class="vh-100">
-        <img :src=" global_url +  this.poster_mobile" alt="event banner" class="bg-registration-page">
+        <img :src=" global_url +  this.event_detail.poster_mobile" alt="event banner" class="bg-registration-page">
         <div class="centered container">
             <div class="row m-auto w-50">
                 <h4 class="text-white">PLEASE CHOOSE TICKET DAY</h4>
@@ -31,19 +31,14 @@
                 ticket_list: "",
                 ticket: [],
                 global_url: this.$globalURL,
-                poster_mobile: "",
-                form_getposter: {
-                    events_id: this.$route.params.Eventsid,
-                    ip_address: "10.10.10.10",
-                    prev_action: ""
-                },
                 form_getevent: {
-                    events_id: this.$route.params.Eventsid,
+                    events_id: "",
                     ticket_level: 'MT',
                     prev_action: "p1home"
                 },
-                // event_detail: JSON.parse(localStorage.getItem("event_details")),
-                // route_name: this.$route.name
+                poster_mobile: "",
+                event_detail: JSON.parse(localStorage.getItem("event_details")),
+                route_name: this.$route.name
             };
         },
         components: {
@@ -70,22 +65,6 @@
                 }
                 return null;
             },
-
-            getPoster() {
-                axios({
-                        url: "/rsvp/p1home",
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                        method: "POST",
-                        data: this.form_getposter
-                    })
-                    .then(res => {
-                        this.getPoster = res.data;
-                        this.poster_mobile = this.getPoster.poster_mobile;
-                    })
-            },
-
             getEvent() {
                 axios({
                         url: "/rsvp/ticketlist",
@@ -100,35 +79,48 @@
                         this.ticket = this.getEvent.ticket;
                     })
             },
-
             confirmTicket() {
                 var is = this;
                 axios({
-                    method: "POST",
-                    url: "/rsvp/ticketlist",
-                    headers: {
-                        "Content-Type": "text/plain",
+                        url: "/rsvp/ticketlist",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
                         data: this.form_getevent,
-                    },
-                }).then((res) => {
-                    if (this.ticket.class_name == "") {
-                        Swal.fire({
-                            title: "Please Select Ticket",
-                            text: res.data.msg,
-                            icon: "warning",
-                        });
-                    } else {
-                        setTimeout(() => {
-                            is.createCookie("ticket", this.ticket);
-                            is.$router.push("/mycart/" + this.form_getevent.events_id);  
-                        }, 1000)
-                    }
-                });
+                    })
+                    .then(res => {
+                        if (this.ticket.id == "") {
+                            Swal.fire({
+                                title: "Please Select the Agenda/Track/Session",
+                                text: res.data.msg,
+                                icon: "warning",
+                            });
+                        } else{
+                        this.getEvent = res.data;
+                        this.ticket = this.getEvent.ticket;
+                        this.createCookie("ticket", this.ticket);
+                        this.$router.push("/mycart/" + this.form_getevent.events_id)}
+                    });
+            },
+
+            get_ipaddress() {
+                var this_ = this
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        this_.ip_address = data.ip
+                        localStorage.setItem('ip_address', this_.ip_address)
+                        // console.log(data.ip);
+                        this_.getEvent();
+                    })
+                    .catch(error => {
+                        console.log('Error:', error);
+                    });
             },
         },
         mounted() {
             this.form_getevent.events_id = $cookies.get("events_id");
-            this.form_getposter.events_id = $cookies.get("events_id");
             if (this.form_getevent.events_id == null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
@@ -140,7 +132,6 @@
                 this.getCookie();
             }
             this.getEvent();
-            this.getPoster();
         },
     };
 </script>

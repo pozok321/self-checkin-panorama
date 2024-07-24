@@ -35,7 +35,7 @@
                 </div>
                 <div class="row">
                     <h4 class="text-start my-3">Terms & Condition</h4>
-                    <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
+                    <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll" >
                         {{ this.event_declaration }}
                     </div>
                     <div v-if="isLoading">
@@ -43,7 +43,7 @@
                         <div class="is-loading text-30"></div>
                         <div class="is-loading text-30"></div>
                     </div>
-                    <div id="stylebar" class="scrollbar"v-else></div>
+                    <div id="stylebar" class="scrollbar" v-html="this.event_declaration" v-else></div>
                     <div class="form-group">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="declare_checkbox"
@@ -55,7 +55,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-4 bg-grey p-5 vh-100">
                 <h2 class="mt-3 text-start">Your Order Details</h2>
                 <div class="border-bottom mt-3"></div>
@@ -129,19 +128,20 @@
                         <span class="span-total-ticket text-end">please check ticket before add to purchase</span>
                     </div>
                     <div class="total-payment bottom-0 end-0 ">
-                         <div class="row">
-                        <div class="col-lg-12 col-sm-12 col-12">
-                            <button class="btn btn-purchase" :disabled="declare_checkbox == false" @click="next_page()">
-                                <span v-if="LoadingButton">
-                                    <span class="loader loading-quarter"></span>
-                                    Processing
-                                </span>
-                                <span v-else>
-                                   Purchase
-                                </span>
-                            </button>
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12 col-12">
+                                <button class="btn btn-purchase" :disabled="declare_checkbox == false"
+                                    @click="next_page()">
+                                    <span v-if="LoadingButton">
+                                        <span class="loader loading-quarter"></span>
+                                        Processing
+                                    </span>
+                                    <span v-else>
+                                        Purchase
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -167,11 +167,12 @@
                     prev_action: "getcart",
                 },
                 global_url: this.$globalURL,
-                titlePage: 'Terms & Condition'
+                titlePage: 'Terms & Condition',
+                descPage: 'By buying this ticket, you agree to comply with following terms & conditions.'
             };
         },
         components: {
-
+            
         },
         methods: {
 
@@ -253,6 +254,10 @@
                     }
                 }, 200);
             },
+
+            setTitle(title_page) {
+                document.title = `${title_page}`
+            },
             next_page() {
                 this.LoadingButton = true
                 // this.$router.push("/register/" + this.form_getDeclare.events_id);
@@ -306,6 +311,18 @@
 
     .event-date {
         line-height: 10px
+    }
+
+    .formRSVP input.padding-100 {
+        padding-left: 125px;
+    }
+
+    .formRSVP {
+        margin: auto;
+        width: 100%;
+        max-width: 600px;
+        padding: 30px 20px;
+        position: relative;
     }
 
     .termcondition-overflow {

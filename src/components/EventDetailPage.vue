@@ -1,21 +1,10 @@
 <template>
     <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
-        <!-- <div class="btn-group dropend top-left">
-            <select class="form-select icon-setting" id="selectAgenda" v-model="agenda_id" @change="getTrack()">
-                <option v-for="agendaData in agenda" v-bind:value="agendaData.id">
-                    {{ agendaData.agenda_name }}
-                </option>
-            </select>
-            <button @click="simpanData()">simpan</button>
-            <button @click="hapusData()">hapus</button>
-            <button class="icon-setting" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-        </div> -->
         <div class="d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
                     <div class="col-sm-6">
-                        <img :src=" global_url + session.poster" alt="event banner" width="100%"
-                            height="100%">
+                        <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
                         <div class="card-body">
@@ -27,8 +16,10 @@
                                     <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
                                 </div>
                                 <div class="registration mt-3 mb-5">
-                                    <span class="mx-2"><img src="../assets/image/registration.png" alt="registration-icon"></span>
-                                    <button class="w-50 btn-registration" @click="homeRegistrationPage()"> Registration </button>
+                                    <span class="mx-2"><img src="../assets/image/registration.png"
+                                            alt="registration-icon"></span>
+                                    <button class="w-50 btn-registration" @click="homeRegistrationPage()"> Registration
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -47,8 +38,8 @@
         data() {
             return {
                 url: '',
-                zpl_printer:"",
-                thermal_printer:"",
+                zpl_printer: "",
+                thermal_printer: "",
                 events_id: "",
                 prime_agenda: "",
                 showOnMedia: "",
@@ -63,7 +54,19 @@
                 track: "",
                 multiple_session_entry: "",
                 qr_setting: "",
-                global_url : this.$globalURL,
+                global_url: this.$globalURL,
+                getWaitingPage:"",
+                // waitingPage: {
+                //     events_id: "",
+                //     ip_address: "10.10.10.10",
+                //     prev_action: "p1home"
+                // },
+                form_getposter: {
+                    events_id: "",
+                    ip_address: "10.10.10.10",
+                    prev_action: ""
+                },
+                
             };
         },
         components: {
@@ -111,7 +114,7 @@
                         this.agenda = res.data;
                     })
             },
-            
+
             getTrack() {
                 axios({
                     method: "GET",
@@ -129,7 +132,8 @@
             getSession() {
                 axios({
                         method: "GET",
-                        url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id + "/session/" + this.session_id,
+                        url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this
+                            .track_id + "/session/" + this.session_id,
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -141,31 +145,61 @@
                         this.createCookie("multiple_session_entry", this.multiple_session_entry);
                         this.createCookie("qr_setting", this.qr_setting);
                     })
+            },
 
+            getPoster() {
+                axios({
+                        url: "/rsvp/p1home",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_getposter
+                    })
+                    .then(res => {
+                        this.getPoster = res.data;
+                        this.poster_mobile = this.getPoster.poster_mobile;
+                        localStorage.setItem("poster_mobile", this.poster_mobile);
+                        localStorage.setItem('event_details', JSON.stringify(this.getPoster));
+                    })
             },
-           
-            simpanData(){
-                localStorage.zpl_printer = this.zpl_printer;
-                localStorage.thermal_printer = this.thermal_printer;
-                console.log("data berhasil disimpan");
-            },
-            hapusData(){
-                localStorage.removeItem = this.zpl_printer;
-                localStorage.removeItem = this.thermal_printer;
-            }
+            // waitingContent() {
+            //     axios({
+            //             url: "/rsvp/home2waiting",
+            //             headers: {
+            //                 "Content-Type": "text/plain"
+            //             },
+            //             method: "POST",
+            //             data: this.waitingPage,
+            //         })
+            //         .then(res => {
+            //             var is = this;
+            //             is.goWaiting = res.data;
+            //             if (is.goWaiting == "false") {
+            //                 is.isLoading = true;
+            //                 setTimeout(() => {
+            //                     is.isLoading = false
+            //                     is.$router.push("/homeregistrationpage");
+            //                     is.isLoading = false
+            //                 }, 1000)
+            //             } else {
+            //                 is.isLoading = true;
+            //                 setTimeout(() => {
+            //                     is.isLoading = false
+            //                     is.$router.push("/p1homewaiting");
+            //                 }, 1000)
+                            
+            //             }
+            //         })
+            // },
         },
         mounted() {
+            // this.waitingPage.events_id = $cookies.get("events_id");
+            this.form_getposter .events_id = $cookies.get("events_id");
             this.events_id = $cookies.get("events_id");
             this.session_id = $cookies.get("session_id");
             this.agenda_id = $cookies.get("agenda_id");
             this.track_id = $cookies.get("track_id");
-            if (localStorage.zpl_printer) {
-                this.zpl_printer = localStorage.zpl_printer;
-            }
-            if (localStorage.thermal_printer) {
-                this.thermal_printer = localStorage.thermal_printer;
-            }
-
             if (this.events_id == null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
@@ -174,9 +208,11 @@
                 setTimeout(1000);
                 this.$router.push("/");
             } else {
-                this.getCookie()
+                this.getCookie();
             }
             this.getSession();
+            this.getPoster();
+            // this.waitingContent();
         },
     };
 </script>
