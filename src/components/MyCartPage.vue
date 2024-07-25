@@ -35,7 +35,7 @@
                 </div>
                 <div class="row">
                     <h4 class="text-start my-3">Terms & Condition</h4>
-                    <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll" >
+                    <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
                         {{ this.event_declaration }}
                     </div>
                     <div v-if="isLoading">
@@ -156,26 +156,45 @@
     export default {
         data() {
             return {
+                form_getCart: {
+                    events_id: this.$route.params.Eventsid,
+                    ticketid: JSON.parse(localStorage.getItem("mt_id")),
+                    ticket_qty: localStorage.getItem("ticket_qty"),
+                },
+                cart_detail: [],
+                main_ticket: [],
+                addon_ticket: [],
+                ticket_ao: [],
+                subtotal: '',
+                total: '',
+                onhold_msg: '',
+                enable_button: true,
+                form_getticketSession: {
+                    events_id: this.$route.params.Eventsid,
+                    ticket_id: '',
+                },
+                ticket_details: [],
+                ticket_session: [],
                 url: '',
                 event_declaration: "",
                 declare_checkbox: false,
                 LoadingButton: false,
                 isLoading: false,
                 declareget: {
-                    events_id: this.$route.params.Eventsid,
+                    events_id: "",
                     ip_address: "10.10.10.10",
                     prev_action: "getcart",
                 },
                 global_url: this.$globalURL,
+                event_detail: JSON.parse(localStorage.getItem("event_details")),
                 titlePage: 'Terms & Condition',
                 descPage: 'By buying this ticket, you agree to comply with following terms & conditions.'
             };
         },
         components: {
-            
+
         },
         methods: {
-
             createCookie(name, value, day) {
                 if (day) {
                     let currentDate = new Date();
@@ -261,11 +280,234 @@
             next_page() {
                 this.LoadingButton = true
                 // this.$router.push("/register/" + this.form_getDeclare.events_id);
+            },
+            plus_qty(ticket, ticket_qty) {
+                this.form_getCart.ticket_qty = parseInt(ticket_qty) + 1
+
+                if (this.form_getCart.ticket_qty > this.event_detail.setting.maxticket_per_guest) {
+                    this.form_getCart.ticket_qty = this.event_detail.setting.maxticket_per_guest
+                    var wording = "Max allowed limit is " + this.event_detail.setting.maxticket_per_guest +
+                        " tickets / <br> Maks pembelian adalah " + this.event_detail.setting.maxticket_per_guest +
+                        " tiket";
+                    Swal.fire({
+                            title: "Warning",
+                            icon: "warning",
+                            html: wording,
+                        })
+                        .then((value) => {});
+                }
+                this.check_on_hold()
+            },
+            min_qty(ticket, ticket_qty) {
+                if (ticket_qty > 0) {
+                    this.form_getCart.ticket_qty = ticket_qty - 1
+                    this.check_on_hold()
+                }
+                if (this.form_getCart.ticket_qty < 1) {
+                    this.form_getCart.ticket_qty = 1
+                }
+            },
+            add_qty(ticket, ticket_qty) {
+                if (this.form_getCart.ticket_qty < 1) {
+                    this.form_getCart.ticket_qty = 1
+                }
+                if (ticket_qty > this.event_detail.setting.maxticket_per_guest) {
+                    this.form_getCart.ticket_qty = this.event_detail.setting.maxticket_per_guest
+                    var wording = "Max allowed limit is " + this.event_detail.setting.maxticket_per_guest +
+                        " tickets / <br> Maks pembelian adalah " + this.event_detail.setting.maxticket_per_guest +
+                        " tiket";
+                    Swal.fire({
+                            title: "Warning",
+                            icon: "warning",
+                            html: wording,
+                        })
+                        .then((value) => {});
+                }
+                this.check_on_hold()
+            },
+            check_on_hold() {
+                this.isLoading = true
+                this.form_getCart.ticketid = []
+
+                this.form_getCart.ticketid.push(this.main_ticket.ticket_id)
+                for (let i = 0; i < this.addon_ticket.length; i++) {
+                    if (this.ticket_ao[this.addon_ticket[i].ticket_id] == true) {
+                        this.form_getCart.ticketid.push(this.addon_ticket[i].ticket_id)
+                    }
+                }
+                axios({
+                        url: "/v1/rsvp/checkonhold",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_getCart,
+                    })
+                    .then(res => {
+                        this.isLoading = false
+                        if (this.form_getCart.ticket_qty < 1) {
+                            this.enable_button = false
+                            this.onhold_msg = 'Oops! Minimum is 1 ticket'
+                            this.form_getCart.ticket_qty = 0
+                            Swal.fire({
+                                    title: "Warning",
+                                    icon: "warning",
+                                    html: this.onhold_msg,
+                                })
+                                .then((value) => {});
+                        } else {
+                            this.onhold_data = res.data
+                            if (res.data.status == 201) {
+                                this.enable_button = false
+                            } else {
+                                this.enable_button = true
+                            }
+                            this.onhold_msg = res.data.msg
+                            this.getCart()
+                        }
+                    })
+            },
+            get_infoticket(ticket) {
+                this.isLoading = true
+                this.form_getticketSession.ticket_id = ticket.ticket_id
+
+                axios({
+                        url: "/v1/rsvp/ticketsession",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_getticketSession,
+                    })
+                    .then(res => {
+                        this.isLoading = false
+                        this.ticket_details = res.data
+                        this.ticket_session = res.data.ticket_session
+                    })
+            },
+            calculate_price() {
+                this.subtotal = 0
+                for (let i = 0; i < this.addon_ticket.length; i++) {
+                    if (this.ticket_ao[this.addon_ticket[i].ticket_id] == true) {
+                        // if (this.addon_ticket[i].coret == true) {
+                        //     this.subtotal = this.subtotal + parseInt(this.addon_ticket[i].final_price)
+                        // } else {
+                        this.subtotal = this.subtotal + parseInt(this.addon_ticket[i].final_price)
+                        // }
+                    }
+                }
+
+                let subtotal_ticket = 0;
+                if (this.main_ticket.coret == true) {
+                    subtotal_ticket = parseInt(this.main_ticket.final_price)
+                } else {
+                    subtotal_ticket = parseInt(this.main_ticket.normal_price)
+                }
+
+                this.total = (this.subtotal + subtotal_ticket) * this.form_getCart.ticket_qty
+            },
+            formatCurrency(value, currency) {
+                if (currency == 'IDR') {
+                    if (value == 0) {
+                        return currency = currency + ' ' + value
+                    } else {
+                        var number_string = value ? value.toString().replace(/[^,\d]/g, '') : '',
+                            split = number_string.split(','),
+                            sisa = split[0].length % 3,
+                            rupiah = split[0].substr(0, sisa),
+                            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                        var separator = '';
+                        // tambahkan titik jika yang di input sudah menjadi angka ribuan
+                        if (ribuan) {
+                            separator = sisa ? '.' : '';
+                            rupiah += separator + ribuan.join('.');
+                        }
+
+                        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+                        return currency == undefined ? rupiah : (rupiah ? currency + ' ' + rupiah : '');
+                    }
+                } else {
+                    return currency + value ? currency + ' ' + value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') :
+                        '';
+                }
+            },
+            kFormatter(num, currency) {
+                if (currency == 'IDR') {
+                    return Math.abs(num) > 999 ? currency + ' ' + Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) +
+                        'K' : currency + ' ' + Math.sign(num) * Math.abs(num)
+                } else {
+                    return currency + value ? currency + ' ' + value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') :
+                        '';
+                }
+            },
+            update_mycart() {
+                this.isLoadingHeader = true
+                this.isLoading = true;
+                this.LoadingButton = true
+
+                axios({
+                        url: "/v1/rsvp/getcart",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_getCart,
+                    })
+                    .then(res => {
+                        this.isLoading = false;
+                        this.isLoadingHeader = false
+                        if (res.data.status == 201) {
+                            Swal.fire({
+                                title: "Warning",
+                                html: res.data.msg,
+                                icon: "warning",
+                            });
+                            this.$router.push("/ticketlist/" + this.form_getCart.events_id);
+                        } else {
+                            this.cart_detail = res.data;
+                            this.main_ticket = this.cart_detail.main_ticket;
+                            this.addon_ticket = this.cart_detail.addon_ticket;
+                            this.total = this.cart_detail.total_price;
+
+                            for (let i = 0; i < this.addon_ticket.length; i++) {
+                                this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
+
+                            }
+
+                            if (this.event_detail.rsvp_counter !== 'O') {
+                                this.$router.push("/closed/" + this.form_getCart.events_id);
+                            }
+
+                            if (this.main_ticket.mark_soldout == 'N' && this.main_ticket.ticket_remain > 0) {
+                                localStorage.setItem("mt_id", JSON.stringify(this.form_getCart.ticketid));
+                                localStorage.setItem("ticket_qty", this.form_getCart.ticket_qty);
+
+                                if (this.event_detail.setting.tnc_toggle == 'N') {
+                                    this.$router.push("/register/" + this.form_getCart.events_id);
+                                } else {
+                                    this.$router.push("/declare/" + this.form_getCart.events_id);
+                                }
+
+                            } else if (this.main_ticket.mark_soldout == 'N' && this.main_ticket.ticket_remain < 1) {
+                                Swal.fire({
+                                    title: "Warning",
+                                    html: "On hold, please try in a few minutes ! / Tertahan, mohon dicoba beberapa menit lagi",
+                                    icon: "warning",
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Warning",
+                                    html: "Ticket sold out ! / Tiket sudah habis terjual",
+                                    icon: "warning",
+                                });
+                            }
+                        }
+                    })
             }
         },
         mounted() {
-            this.events_id = $cookies.get("events_id");
-            if (this.events_id == null) {
+            this.declareget.events_id = $cookies.get("events_id");
+            if (this.declareget.events_id == null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
                     icon: "warning",

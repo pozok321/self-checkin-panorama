@@ -194,8 +194,7 @@
             // },
         },
         mounted() {
-            // this.waitingPage.events_id = $cookies.get("events_id");
-            this.form_getposter .events_id = $cookies.get("events_id");
+            this.form_getposter.events_id = $cookies.get("events_id");
             this.events_id = $cookies.get("events_id");
             this.session_id = $cookies.get("session_id");
             this.agenda_id = $cookies.get("agenda_id");
@@ -212,7 +211,6 @@
             }
             this.getSession();
             this.getPoster();
-            // this.waitingContent();
         },
     };
 </script>

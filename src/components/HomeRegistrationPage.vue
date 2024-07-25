@@ -12,7 +12,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <button class="btn-get-ticket mt-4" @click="confirmTicket()">Get Ticket</button>
+                    <button class="btn-get-ticket mt-4" @click="add_to_cart(ticket_id)">Get Ticket</button>
                 </div>
             </div>
         </div>
@@ -30,6 +30,7 @@
                 ticket_id: "",
                 ticket_list: "",
                 ticket: [],
+                poster:"",
                 global_url: this.$globalURL,
                 form_getevent: {
                     events_id: "",
@@ -79,29 +80,14 @@
                         this.ticket = this.getEvent.ticket;
                     })
             },
-            confirmTicket() {
-                var is = this;
-                axios({
-                        url: "/rsvp/ticketlist",
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                        method: "POST",
-                        data: this.form_getevent,
-                    })
-                    .then(res => {
-                        if (this.ticket.id == "") {
-                            Swal.fire({
-                                title: "Please Select the Agenda/Track/Session",
-                                text: res.data.msg,
-                                icon: "warning",
-                            });
-                        } else{
-                        this.getEvent = res.data;
-                        this.ticket = this.getEvent.ticket;
-                        this.createCookie("ticket", this.ticket);
-                        this.$router.push("/mycart/" + this.form_getevent.events_id)}
-                    });
+            add_to_cart(ticket) {
+                this.LoadingButton = true;
+                var ticketid = [];
+                ticketid.push(ticket);
+                localStorage.setItem('mt_id', JSON.stringify(ticketid));
+                localStorage.setItem('ticket_qty', 1)
+                var data = JSON.parse(localStorage.getItem("mt_id"));
+                this.$router.push("/mycart/" + this.form_getevent.events_id);
             },
 
             get_ipaddress() {
@@ -110,8 +96,7 @@
                     .then(response => response.json())
                     .then(data => {
                         this_.ip_address = data.ip
-                        localStorage.setItem('ip_address', this_.ip_address)
-                        // console.log(data.ip);
+                        localStorage.setItem('ip_address', this_.ip_address);
                         this_.getEvent();
                     })
                     .catch(error => {
