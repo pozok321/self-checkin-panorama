@@ -23,34 +23,64 @@
                         </div>
                         <div class="border-bottom my-2"></div>
                         <div class="justify-content-between flex">
-                            <p>ticket price</p>
+                            <p>Ticket price</p>
                             <p>Quantity Ticket</p>
                         </div>
                         <div class="justify-content-between flex">
-                            <p>IDR. 55.000</p>
-                            <p>Quantity Ticket</p>
+                            IDR. {{this.main_ticket}}
+                            <div class="quantity-item" v-if="event_detail.pre_reg == 'Y'">
+                                <form id='myform' method='POST' class='quantity' action='#'>
+                                    <input type='button' value='-' class='qtyminus minus' field='quantity'
+                                        @click="min_qty(main_ticket, form_getCart.ticket_qty)" disabled />
+                                    <input type='number' name='quantity' class='qty' v-model="form_getCart.ticket_qty"
+                                        @change="add_qty(main_ticket, form_getCart.ticket_qty)" disabled />
+                                    <input type='button' value='+' class='qtyplus plus' field='quantity'
+                                        @click="plus_qty(main_ticket, form_getCart.ticket_qty)" disabled />
+                                </form>
+                            </div>
+                            <div class="quantity-item" v-else>
+                                <form id='myform' method='POST' class='quantity'
+                                    v-if="main_ticket.mark_soldout == 'N' && main_ticket.ticket_remain > 0">
+                                    <input type='button' value='-' class='qtyminus minus' field='quantity'
+                                        @click="min_qty(main_ticket, form_getCart.ticket_qty)" />
+                                    <input type='number' name='quantity' class='qty' v-model="form_getCart.ticket_qty"
+                                        @change="add_qty(main_ticket, form_getCart.ticket_qty)" />
+                                    <input type='button' value='+' class='qtyplus plus' field='quantity'
+                                        @click="plus_qty(main_ticket, form_getCart.ticket_qty)" />
+                                </form>
+                                <form id='myform' method='POST' class='quantity' v-else>
+                                    <input type='button' value='-' class='qtyminus minus' field='quantity'
+                                        @click="min_qty(main_ticket, form_getCart.ticket_qty)" disabled />
+                                    <input type='number' name='quantity' class='qty' v-model="form_getCart.ticket_qty"
+                                        disabled @change="add_qty(main_ticket, form_getCart.ticket_qty)" />
+                                    <input type='button' value='+' class='qtyplus plus' field='quantity'
+                                        @click="plus_qty(main_ticket, form_getCart.ticket_qty)" disabled />
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-1"></div>
                 </div>
                 <div class="row">
-                    <h4 class="text-start my-3">Terms & Condition</h4>
-                    <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
-                        {{ this.event_declaration }}
-                    </div>
-                    <div v-if="isLoading">
-                        <div class="is-loading text-30"></div>
-                        <div class="is-loading text-30"></div>
-                        <div class="is-loading text-30"></div>
-                    </div>
-                    <div id="stylebar" class="scrollbar" v-html="this.event_declaration" v-else></div>
-                    <div class="form-group">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="declare_checkbox"
-                                v-model="declare_checkbox" name="declare_checkbox" disabled>
-                            <label class="form-check-label" for="declare_checkbox">
-                                Yes, I understand and agree to comply.
-                            </label>
+                    <div class="formRSVP">
+                        <h4 class="text-start my-3">Terms & Condition</h4>
+                        <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
+                            {{ this.event_declaration.event_declaration }}
+                        </div>
+                        <div v-if="isLoading">
+                            <div class="is-loading text-30"></div>
+                            <div class="is-loading text-30"></div>
+                            <div class="is-loading text-30"></div>
+                        </div>
+                        <div id="stylebar" class="scrollbar" v-html="this.event_declaration.event_detail" v-else></div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="declare_checkbox"
+                                    v-model="declare_checkbox" name="declare_checkbox" disabled>
+                                <label class="form-check-label" for="declare_checkbox">
+                                    Yes, I understand and agree to comply.
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -68,7 +98,7 @@
                 </div>
                 <div class="row mt-5">
                     <h4 class="text-start">Add On Ticket (Optional)</h4>
-                    <div class="justify-content-between flex mt-3">
+                    <!-- <div class="justify-content-between flex mt-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
                             <label class="form-check-label" for="flexCheckChecked">
@@ -115,23 +145,22 @@
                         <div class="price-addon">
                             <p>IDR 10K</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row mt-5">
                     <div class="total-payment col-md-6">
                         <p>Total Payment</p>
                     </div>
                     <div class="price col-md-6 p-ticket text-end">
-                        <div class="price =">
+                        <div class="price">
                             IDR 10k
                         </div>
                         <span class="span-total-ticket text-end">please check ticket before add to purchase</span>
                     </div>
-                    <div class="total-payment bottom-0 end-0 ">
+                    <div class="total-payment bottom-0 end-0">
                         <div class="row">
                             <div class="col-lg-12 col-sm-12 col-12">
-                                <button class="btn btn-purchase" :disabled="declare_checkbox == false"
-                                    @click="next_page()">
+                                <button class="btn btn-purchase" :disabled="declare_checkbox == false" @click="next_page()">
                                     <span v-if="LoadingButton">
                                         <span class="loader loading-quarter"></span>
                                         Processing
@@ -145,6 +174,9 @@
                     </div>
                 </div>
             </div>
+            <button @click="topFunction()" id="myBtn" title="Go to top">
+            <i class='bx bxs-chevron-up'></i>
+        </button>
         </div>
     </section>
 </template>
@@ -161,30 +193,29 @@
                     ticketid: JSON.parse(localStorage.getItem("mt_id")),
                     ticket_qty: localStorage.getItem("ticket_qty"),
                 },
-                cart_detail: [],
-                main_ticket: [],
-                addon_ticket: [],
-                ticket_ao: [],
-                subtotal: '',
-                total: '',
-                onhold_msg: '',
-                enable_button: true,
+                form_getDeclare: {
+                    events_id: this.$route.params.Eventsid,
+                },
                 form_getticketSession: {
                     events_id: this.$route.params.Eventsid,
                     ticket_id: '',
                 },
+                url: '',
+                cart_detail: [],
+                main_ticket: [],
+                addon_ticket: [],
+                ticket_ao: [],
                 ticket_details: [],
                 ticket_session: [],
-                url: '',
-                event_declaration: "",
+                event_declaration: [],
+                enable_button: true,
+                subtotal: '',
+                total: '',
+                onhold_msg: '',
+                route_name: this.$route.name,
                 declare_checkbox: false,
                 LoadingButton: false,
                 isLoading: false,
-                declareget: {
-                    events_id: "",
-                    ip_address: "10.10.10.10",
-                    prev_action: "getcart",
-                },
                 global_url: this.$globalURL,
                 event_detail: JSON.parse(localStorage.getItem("event_details")),
                 titlePage: 'Terms & Condition',
@@ -215,22 +246,71 @@
                 }
                 return null;
             },
+            getCart() {
+                this.isLoadingHeader = true
+                this.isLoading = true;
+                axios({
+                        url: "/rsvp/getcart",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_getCart,
+                    })
+                    .then(res => {
+                        this.isLoading = false;
+                        this.isLoadingHeader = false
+                        if (res.data.status == 201) {
+                            Swal.fire({
+                                title: "Warning",
+                                html: res.data.msg,
+                                icon: "warning",
+                            });
+                            this.$router.push("/ticketlist/" + this.form_getCart.events_id);
+                        } else {
+                            this.cart_detail = res.data;
+                            this.main_ticket = this.cart_detail.main_ticket;
+                            this.addon_ticket = this.cart_detail.addon_ticket;
+                            this.total = this.cart_detail.total_price;
 
-            declareGet() {
+                            for (let i = 0; i < this.addon_ticket.length; i++) {
+                                this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
+
+                            }
+                            this.setTitle("My Cart - " + this.event_detail.event_title + " - Undangin")
+
+                            if (this.event_detail.rsvp_counter !== 'O') {
+                                this.$router.push("/closed/" + this.form_getCart.events_id);
+                            }
+                        }
+                    })
+            },
+            reset_qty() {
+                this.createCookie("qty", "1", 2)
+            },
+
+            getDeclare() {
+                this.topFunction();
                 axios({
                         method: "POST",
                         url: "/rsvp/declareget",
                         headers: {
                             "Content-Type": "text/plain"
                         },
-                        data: this.declareget
+                        data: this.form_getDeclare
                     })
                     .then(res => {
                         this.event_declaration = res.data;
-                        this.createCookie("prev_action", this.prev_action);
+                        this.setTitle("Declare - Undangin")
                         this.js();
                         this.js_showchecked();
                     })
+            },
+            topFunction() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             },
             js() {
                 var mybutton = document.getElementById("myBtn");
@@ -336,7 +416,7 @@
                     }
                 }
                 axios({
-                        url: "/v1/rsvp/checkonhold",
+                        url: "/rsvp/checkonhold",
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -372,7 +452,7 @@
                 this.form_getticketSession.ticket_id = ticket.ticket_id
 
                 axios({
-                        url: "/v1/rsvp/ticketsession",
+                        url: "/rsvp/ticketsession",
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -446,7 +526,7 @@
                 this.LoadingButton = true
 
                 axios({
-                        url: "/v1/rsvp/getcart",
+                        url: "/rsvp/getcart",
                         headers: {
                             "Content-Type": "text/plain"
                         },
@@ -506,8 +586,8 @@
             }
         },
         mounted() {
-            this.declareget.events_id = $cookies.get("events_id");
-            if (this.declareget.events_id == null) {
+            this.form_getDeclare.events_id = $cookies.get("events_id");
+            if (this.form_getDeclare.events_id === null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
                     icon: "warning",
@@ -517,7 +597,7 @@
             } else {
                 this.getCookie()
             }
-            this.declareGet();
+            this.getDeclare();
         },
     };
 </script>
@@ -561,8 +641,7 @@
 
     .formRSVP {
         margin: auto;
-        width: 100%;
-        max-width: 600px;
+        width: fit-content;
         padding: 30px 20px;
         position: relative;
     }
@@ -634,6 +713,10 @@
         margin: auto;
     }
 
+    .quantity-item {
+        display: block;
+    }
+
     .ticket-buy-center {
         position: absolute;
         left: 50%;
@@ -684,5 +767,53 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    #myform {
+        text-align: center;
+        margin: 0;
+    }
+
+    .qty {
+        width: 40px;
+        height: 25px;
+        text-align: center;
+    }
+
+    #myform input.qty {
+        vertical-align: top;
+        display: inline-block;
+        width: 40px;
+        border: 1px solid #e1eaea;
+        border-radius: 4px;
+        background: none;
+        padding: 2px;
+        border: 1px solid #BFCFDD;
+    }
+
+    #myform input.qtyplus {
+        vertical-align: top;
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        padding: 2px;
+        border-radius: 4px;
+        font-size: 9pt;
+        background: #000000;
+        color: #FFFFFF;
+        border: 1px solid #BFCFDD;
+    }
+
+    #myform input.qtyminus {
+        vertical-align: top;
+        display: inline-block;
+        width: 25px;
+        height: 25px;
+        padding: 2px;
+        border-radius: 4px;
+        font-size: 9pt;
+        background: #000000;
+        color: #FFFFFF;
+        border: 1px solid #BFCFDD;
     }
 </style>
