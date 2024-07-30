@@ -31,6 +31,7 @@
                 ticket_list: "",
                 ticket: [],
                 poster:"",
+                class_name:"",
                 global_url: this.$globalURL,
                 form_getevent: {
                     events_id: "",
@@ -78,6 +79,9 @@
                     .then(res => {
                         this.getEvent = res.data;
                         this.ticket = this.getEvent.ticket;
+                        // console.log(this.ticket,"ticketttttttttt");
+                        this.class_name =  this.ticket.class_name;
+                        console.log(this.class_name,"ticketttttttttt");
                     })
             },
             add_to_cart(ticket) {
@@ -85,23 +89,10 @@
                 var ticketid = [];
                 ticketid.push(ticket);
                 localStorage.setItem('mt_id', JSON.stringify(ticketid));
-                localStorage.setItem('ticket_qty', 1)
+                localStorage.setItem('ticket_qty', 1);
+                localStorage.setItem('class_name', this.ticket.class_name);
                 var data = JSON.parse(localStorage.getItem("mt_id"));
                 this.$router.push("/mycart/" + this.form_getevent.events_id);
-            },
-
-            get_ipaddress() {
-                var this_ = this
-                fetch('https://api.ipify.org?format=json')
-                    .then(response => response.json())
-                    .then(data => {
-                        this_.ip_address = data.ip
-                        localStorage.setItem('ip_address', this_.ip_address);
-                        this_.getEvent();
-                    })
-                    .catch(error => {
-                        console.log('Error:', error);
-                    });
             },
         },
         mounted() {

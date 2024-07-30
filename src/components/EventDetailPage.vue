@@ -56,14 +56,9 @@
                 qr_setting: "",
                 global_url: this.$globalURL,
                 getWaitingPage:"",
-                // waitingPage: {
-                //     events_id: "",
-                //     ip_address: "10.10.10.10",
-                //     prev_action: "p1home"
-                // },
                 form_getposter: {
                     events_id: "",
-                    ip_address: "10.10.10.10",
+                    ip_address: "",
                     prev_action: ""
                 },
                 
@@ -99,6 +94,7 @@
             },
 
             homeRegistrationPage() {
+                this.get_ipaddress();
                 this.$router.push("/homeregistrationpage");
             },
 
@@ -161,37 +157,16 @@
                         this.poster_mobile = this.getPoster.poster_mobile;
                         localStorage.setItem("poster_mobile", this.poster_mobile);
                         localStorage.setItem('event_details', JSON.stringify(this.getPoster));
+                       
                     })
             },
-            // waitingContent() {
-            //     axios({
-            //             url: "/rsvp/home2waiting",
-            //             headers: {
-            //                 "Content-Type": "text/plain"
-            //             },
-            //             method: "POST",
-            //             data: this.waitingPage,
-            //         })
-            //         .then(res => {
-            //             var is = this;
-            //             is.goWaiting = res.data;
-            //             if (is.goWaiting == "false") {
-            //                 is.isLoading = true;
-            //                 setTimeout(() => {
-            //                     is.isLoading = false
-            //                     is.$router.push("/homeregistrationpage");
-            //                     is.isLoading = false
-            //                 }, 1000)
-            //             } else {
-            //                 is.isLoading = true;
-            //                 setTimeout(() => {
-            //                     is.isLoading = false
-            //                     is.$router.push("/p1homewaiting");
-            //                 }, 1000)
-                            
-            //             }
-            //         })
-            // },
+            get_ipaddress() {
+                var this_ = this
+                $.getJSON('https://jsonip.com/', function (data) {
+                    this_.ip_address = data.ip
+                    localStorage.setItem('ip_address', this_.ip_address)
+                });
+            },
         },
         mounted() {
             this.form_getposter.events_id = $cookies.get("events_id");

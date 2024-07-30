@@ -27,7 +27,7 @@
                             <p>Quantity Ticket</p>
                         </div>
                         <div class="justify-content-between flex">
-                            IDR. {{this.main_ticket}}
+                            IDR. {{this.total}}
                             <div class="quantity-item" v-if="event_detail.pre_reg == 'Y'">
                                 <form id='myform' method='POST' class='quantity' action='#'>
                                     <input type='button' value='-' class='qtyminus minus' field='quantity'
@@ -93,59 +93,58 @@
                         Total Ticket
                     </div>
                     <div class="ticket-number">
-                        2
+                        {{this.form_getCart.ticket_qty}}
                     </div>
                 </div>
-                <div class="row mt-5">
+                <div class="row mt-5" v-if="addon_ticket.length > 0">
                     <h4 class="text-start">Add On Ticket (Optional)</h4>
-                    <!-- <div class="justify-content-between flex mt-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                Additional Ticket 1
-                            </label>
-                            <p class="additional-font">Additional Ticket Start 12:00 - 13:30 Pm </p>
-                        </div>
-                        <div class="price-addon">
-                            <p>IDR 10K</p>
+                    <div class="checkbox-wrap" v-for="ticket in addon_ticket">
+                        <div class="row">
+                            <div class="col-md-8 col-8">
+                                <div class="is-loading text-30" v-if="isLoading"></div>
+                                <div v-else>
+                                    <input class="inp-cbx" :id="'ticket_'+ticket.ticket_id"
+                                        @change="add_qty(main_ticket, ticket_qty)" v-model="ticket_ao[ticket.ticket_id]"
+                                        type="checkbox"
+                                        v-if="main_ticket.mark_soldout == 'N' && main_ticket.ticket_remain > 0" />
+                                    <input class="inp-cbx" :id="'ticket_'+ticket.ticket_id"
+                                        @change="add_qty(main_ticket, ticket_qty)" v-model="ticket_ao[ticket.ticket_id]"
+                                        type="checkbox" disabled v-else />
+                                    <label class="cbx" :for="'ticket_'+ticket.ticket_id">
+                                        <span>
+                                            <svg width="12px" height="9px" viewbox="0 0 12 9">
+                                                <polyline points="1 5 4 8 11 1"></polyline>
+                                            </svg>
+                                        </span>
+                                        <span>
+                                            {{ticket.ticket_name}}
+                                        </span>
+                                    </label>
+
+                                    <a class="info-btn" data-bs-toggle="modal" data-bs-target="#showdetails_modal"
+                                        @click="get_infoticket(ticket)">
+                                        <i class='bx bx-info-circle'></i>Info Details
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-6 padding-l-0 text-right">
+                                <div class="is-loading text-30" v-if="isLoading"></div>
+                                <div v-else>
+                                    <div class="ticket-price-ao" v-if="ticket">
+                                        {{formatCurrency(ticket.final_price, event_detail.currency)}}
+                                    </div>
+                                    <div class="coret-box" v-else>
+                                        <div class="ticket-pricediscount-ao">
+                                            {{formatCurrency(ticket.final_price, event_detail.currency)}}
+                                        </div>
+                                        <div class="ticket-price-ao">
+                                            {{formatCurrency(ticket.final_price, event_detail.currency)}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="justify-content-between flex">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="check1">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                Additional Ticket 2
-                            </label>
-                            <p class="additional-font">Additional Ticket Start 12:00 - 13:30 Pm </p>
-                        </div>
-                        <div class="price-addon">
-                            <p>IDR 10K</p>
-                        </div>
-                    </div>
-                    <div class="justify-content-between flex">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                Additional Ticket 3
-                            </label>
-                            <p class="additional-font">Additional Ticket Start 12:00 - 13:30 Pm </p>
-                        </div>
-                        <div class="price-addon">
-                            <p>IDR 10K</p>
-                        </div>
-                    </div>
-                    <div class="justify-content-between flex">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                Additional Ticket 4
-                            </label>
-                            <p class="additional-font">Additional Ticket Start 12:00 - 13:30 Pm </p>
-                        </div>
-                        <div class="price-addon">
-                            <p>IDR 10K</p>
-                        </div>
-                    </div> -->
                 </div>
                 <div class="row mt-5">
                     <div class="total-payment col-md-6">
@@ -153,14 +152,15 @@
                     </div>
                     <div class="price col-md-6 p-ticket text-end">
                         <div class="price">
-                            IDR 10k
+                            IDR {{ this.total }}
                         </div>
                         <span class="span-total-ticket text-end">please check ticket before add to purchase</span>
                     </div>
                     <div class="total-payment bottom-0 end-0">
                         <div class="row">
                             <div class="col-lg-12 col-sm-12 col-12">
-                                <button class="btn btn-purchase" :disabled="declare_checkbox == false" @click="next_page()">
+                                <button class="btn btn-purchase" :disabled="declare_checkbox == false"
+                                    @click="next_page()">
                                     <span v-if="LoadingButton">
                                         <span class="loader loading-quarter"></span>
                                         Processing
@@ -175,8 +175,64 @@
                 </div>
             </div>
             <button @click="topFunction()" id="myBtn" title="Go to top">
-            <i class='bx bxs-chevron-up'></i>
-        </button>
+                <i class='bx bxs-chevron-up'></i>
+            </button>
+        </div>
+        <!-- MODAL DETAIL TICKET ADD ON-->
+        <div class="modal fade" id="showdetails_modal" role="dialog">
+            <div class="modal-dialog modal-top modal-top-50">
+                <div class="modal-content border-bottom-navy">
+                    <div class="modal-body">
+                        <div class="title-modal-custom">
+                            <div class="icon-modal"><img src="../assets/image/ticket-icon.png" width="39"
+                                    alt="Ticket">
+                            </div>
+                        </div>
+                        <p>&nbsp;</p>
+                        <div class="is-loading text-30" v-if="isLoading"></div>
+                        <h4 class="text-center" v-else></h4>
+                        <p class="ppage text-center" v-if="ticket_details.status == 200">Ticket for :</p>
+                        <div v-if="ticket_details.status == 200">
+                            <div class="row marginbtm-5" v-for="session in ticket_session">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-5 time-content">
+                                    <b>{{session.start_time}} - {{session.end_time}}</b>
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-7 desc-content">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="session-topic">{{session.session_topic}}
+                                            </div>
+                                            <div class="session-brief">{{session.session_brief}}
+                                            </div>
+                                            <table class="session-table">
+                                                <tr>
+                                                    <td>Speaker</td>
+                                                    <td> : </td>
+                                                    <td>
+                                                        <div class="speaker-style">
+                                                            <b>{{session.speaker_name}}
+                                                                <span
+                                                                    v-if="session.speaker_jobtitle !==''">({{session.speaker_jobtitle}})</span></b>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center" v-else>{{ticket_details.msg}}</div>
+                        <br>
+                        <div class="btn-wrap text-center">
+                            <a class="btn btn-navy-cancel short-btn" data-bs-dismiss="modal">
+                                Close
+                            </a>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </template>
@@ -192,6 +248,8 @@
                     events_id: this.$route.params.Eventsid,
                     ticketid: JSON.parse(localStorage.getItem("mt_id")),
                     ticket_qty: localStorage.getItem("ticket_qty"),
+                    ip_address: localStorage.getItem("ip_address"),
+                    prev_action: "ticketlist"
                 },
                 form_getDeclare: {
                     events_id: this.$route.params.Eventsid,
@@ -359,7 +417,7 @@
             },
             next_page() {
                 this.LoadingButton = true
-                // this.$router.push("/register/" + this.form_getDeclare.events_id);
+                this.$router.push("/registrationpage/" + this.form_getCart.events_id);
             },
             plus_qty(ticket, ticket_qty) {
                 this.form_getCart.ticket_qty = parseInt(ticket_qty) + 1
@@ -598,6 +656,7 @@
                 this.getCookie()
             }
             this.getDeclare();
+            this.getCart();
         },
     };
 </script>
@@ -769,6 +828,16 @@
         transform: translate(-50%, -50%);
     }
 
+    .icon-modal {
+        background: #fff;
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        padding: 10px;
+        border-radius: 50%;
+        text-align: center;
+    }
+
     #myform {
         text-align: center;
         margin: 0;
@@ -778,6 +847,35 @@
         width: 40px;
         height: 25px;
         text-align: center;
+    }
+
+    /*  Stylebar */
+    .scrollbar {
+        padding-right: 10px;
+        margin-bottom: 10px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    #stylebar::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    #stylebar::-webkit-scrollbar,
+    #stylebar::-webkit-scrollbar-track {
+        background-color: #f2f2f2;
+        border-radius: 8px;
+    }
+
+    #stylebar::-webkit-scrollbar-thumb {
+        background-color: #9b9b9b;
+        border-radius: 8px;
+    }
+
+    #stylebar::-webkit-scrollbar-thumb {
+        background-color: #9b9b9b;
+        border-radius: 8px;
     }
 
     #myform input.qty {

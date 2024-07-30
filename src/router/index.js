@@ -45,16 +45,6 @@ const router = createRouter({
       component: CompletedView,
     },
     {
-      path: "/mycart",
-      name: "mycart",
-      component: MyCartView,
-    },
-    {
-      path: "/registrationpage",
-      name: "registrationpage",
-      component: RegistrationView,
-    },
-    {
       path: "/questionnairepage",
       name: "questionnairepage",
       component: QuestionnaireView,
@@ -80,6 +70,11 @@ const router = createRouter({
       path: '/mycart/:Eventsid',
       name: 'mycart',
       component: () => import('../components/MyCartPage.vue') 
+    },
+    {
+      path: '/registrationpage/:Eventsid',
+      name: 'registrationpage',
+      component: () => import('../components/RegistrationPage.vue') 
     },
   ],
 });
