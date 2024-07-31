@@ -37,7 +37,7 @@
             </div>
           </form>
           <div class="form-group text-end">
-            <button class="btn-back mt-4 mx-3" @click="confirmGetTicket()">Back</button>
+            <button class="btn-back mt-4 mx-3" @click="backToCart()">Back</button>
             <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
           </div>
         </div>
@@ -689,6 +689,9 @@
                 //     this.not_verify = true
                 //     this.topFunction()
                 // }
+            },
+            backToCart(){
+                this.$router.push("/mycart/" + this.events_id);
             }
 
     },

@@ -8,18 +8,18 @@
                         <span>My Cart</span>
                     </div>
                     <div class="event-date">
-                        <p>FLEI EXPO XXII</p>
-                        <span>18 - 20 November 202</span>
+                        <p>{{this.event_detail.event_title}}</p>
+                        <span>{{this.event_detail.event_date}}</span>
                     </div>
                 </div>
-                <div class="border-bottom mb-3"></div>
+                <div class="border-bottom mb-2"></div>
                 <div class="row">
-                    <div class="col-md-6">
-                        <img src="../assets/image/flei-img.png" alt="cart" width="100%">
+                    <div class="col-md-4">
+                        <img :src="global_url + this.event_detail.poster_mobile" alt="cart"width="100%" height="100%"
                     </div>
-                    <div class="col-md-5 top-50 start-0 m-auto">
+                    <div class="col-md-6 top-50 start-0 m-auto ">
                         <div class="ticket-title">
-                            <h4 class="text-start">Ticket FLEI EXPO Day 1</h4>
+                            <h4 class="text-start">{{this.event_detail.event_title}}</h4>
                         </div>
                         <div class="border-bottom my-2"></div>
                         <div class="justify-content-between flex">
@@ -63,16 +63,16 @@
                 </div>
                 <div class="row">
                     <div class="formRSVP">
-                        <h4 class="text-start my-3">Terms & Condition</h4>
-                        <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
+                        <h4 class="text-start my-3 ">Terms & Condition</h4>
+                        <!-- <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
                             {{ this.event_declaration.event_declaration }}
-                        </div>
+                        </div> -->
                         <div v-if="isLoading">
                             <div class="is-loading text-30"></div>
                             <div class="is-loading text-30"></div>
                             <div class="is-loading text-30"></div>
                         </div>
-                        <div id="stylebar" class="scrollbar" v-html="this.event_declaration.event_detail" v-else></div>
+                        <div id="stylebar" class="scrollbar" v-html="this.event_declaration.event_declaration" v-else></div>
                         <div class="form-group">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="declare_checkbox"
@@ -89,15 +89,15 @@
                 <h2 class="mt-3 text-start">Your Order Details</h2>
                 <div class="border-bottom mt-3"></div>
                 <div class="justify-content-between flex mt-3">
-                    <div class="total-ticket">
+                    <h4>
                         Total Ticket
-                    </div>
+                    </h4>
                     <div class="ticket-number">
                         {{this.form_getCart.ticket_qty}}
                     </div>
                 </div>
                 <div class="row mt-5" v-if="addon_ticket.length > 0">
-                    <h4 class="text-start">Add On Ticket (Optional)</h4>
+                    <p class="text-start add-on-ticket">Add On Ticket (Optional)</p>
                     <div class="checkbox-wrap" v-for="ticket in addon_ticket">
                         <div class="row">
                             <div class="col-md-8 col-8">
@@ -120,7 +120,6 @@
                                             {{ticket.ticket_name}}
                                         </span>
                                     </label>
-
                                     <a class="info-btn" data-bs-toggle="modal" data-bs-target="#showdetails_modal"
                                         @click="get_infoticket(ticket)">
                                         <i class='bx bx-info-circle'></i>Info Details
@@ -147,10 +146,10 @@
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="total-payment col-md-6">
+                    <div class="total-payment col-md-4">
                         <p>Total Payment</p>
                     </div>
-                    <div class="price col-md-6 p-ticket text-end">
+                    <div class="price col-md-8 p-ticket text-end">
                         <div class="price">
                             IDR {{ this.total }}
                         </div>
@@ -174,9 +173,9 @@
                     </div>
                 </div>
             </div>
-            <button @click="topFunction()" id="myBtn" title="Go to top">
+            <!-- <button @click="topFunction()" id="myBtn" title="Go to top">
                 <i class='bx bxs-chevron-up'></i>
-            </button>
+            </button> -->
         </div>
         <!-- MODAL DETAIL TICKET ADD ON-->
         <div class="modal fade" id="showdetails_modal" role="dialog">
@@ -266,6 +265,7 @@
                 ticket_details: [],
                 ticket_session: [],
                 event_declaration: [],
+                poster_mobile:"",
                 enable_button: true,
                 subtotal: '',
                 total: '',
@@ -670,8 +670,11 @@
     h2,
     h3,
     h4 {
+        font-family: Helvetica;
         margin-bottom: 0px;
         text-align: center;
+        color:#09303E;
+        font-weight: bold;
     }
 
     .bg-white {
@@ -701,7 +704,7 @@
     .formRSVP {
         margin: auto;
         width: fit-content;
-        padding: 30px 20px;
+        padding: 15px 15px;
         position: relative;
     }
 
@@ -744,6 +747,10 @@
         font-size: 16pt;
         font-weight: bold;
     }
+    .ticket-number{
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
 
     .additional-font {
         font-size: 8px;
@@ -755,6 +762,11 @@
         font-style: italic;
     }
 
+    .add-on-ticket{
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
     .price-addon {
         color: #09303E;
         font-size: 14px;
@@ -763,7 +775,7 @@
 
     .price {
         color: #09303E;
-        font-size: 30px;
+        font-size: 2rem;
         font-weight: bold;
     }
 
@@ -838,6 +850,10 @@
         text-align: center;
     }
 
+    .poster_mobile{
+       width: fit-content;
+    }
+
     #myform {
         text-align: center;
         margin: 0;
@@ -853,7 +869,7 @@
     .scrollbar {
         padding-right: 10px;
         margin-bottom: 10px;
-        max-height: 400px;
+        max-height: 200px;
         overflow-y: auto;
     }
 

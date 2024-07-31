@@ -30,8 +30,8 @@
                 ticket_id: "",
                 ticket_list: "",
                 ticket: [],
-                poster:"",
-                class_name:"",
+                poster: "",
+                class_name: "",
                 global_url: this.$globalURL,
                 form_getevent: {
                     events_id: "",
@@ -79,20 +79,25 @@
                     .then(res => {
                         this.getEvent = res.data;
                         this.ticket = this.getEvent.ticket;
-                        // console.log(this.ticket,"ticketttttttttt");
-                        this.class_name =  this.ticket.class_name;
-                        console.log(this.class_name,"ticketttttttttt");
+                        this.class_name = this.ticket.class_name;
                     })
             },
             add_to_cart(ticket) {
-                this.LoadingButton = true;
-                var ticketid = [];
-                ticketid.push(ticket);
-                localStorage.setItem('mt_id', JSON.stringify(ticketid));
-                localStorage.setItem('ticket_qty', 1);
-                localStorage.setItem('class_name', this.ticket.class_name);
-                var data = JSON.parse(localStorage.getItem("mt_id"));
-                this.$router.push("/mycart/" + this.form_getevent.events_id);
+                if (ticket == "") {
+                    Swal.fire({
+                        title: "Select Your Ticket!",
+                        icon: "warning",
+                    });
+                } else {
+                    this.LoadingButton = true;
+                    var ticketid = [];
+                    ticketid.push(ticket);
+                    localStorage.setItem('mt_id', JSON.stringify(ticketid));
+                    localStorage.setItem('ticket_qty', 1);
+                    localStorage.setItem('class_name', this.ticket.class_name);
+                    var data = JSON.parse(localStorage.getItem("mt_id"));
+                    this.$router.push("/mycart/" + this.form_getevent.events_id);
+                }
             },
         },
         mounted() {

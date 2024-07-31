@@ -10,6 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.js";
 import "bootstrap/dist/js/bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.js";
+import "./assets/main.css";
 
 axios.defaults.baseURL = "https://apidev.undangin.com/v1/";
 
