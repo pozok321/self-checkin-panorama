@@ -1,136 +1,139 @@
 <template>
-  <section class="vh-100">
-    <div class="container">
-      <div class="row">
-        <div class="text-center my-5">
-          <h1>Register</h1>
-          <span>Enter your full name, E-mail, and password to register</span>
-        </div>
-        <div id="input-data" class="w-75 m-auto">
-          <form>
-            <div class="input-group mb-3">
-              <input type="email" class="form-control" id="fullname" aria-describedby="emailHelp"
-                placeholder="Full Name" />
-            </div>
+    <section class="vh-100">
+        <div class="container">
             <div class="row">
-              <div class="mb-3 col-md-6">
-                <input type="password" class="form-control" id="email" placeholder="Email" />
-              </div>
-              <div class="mb-3 col-md-6">
-                <input type="password" class="form-control" id="confirmationemail" placeholder="Confirmation E-mail" />
-              </div>
-              <div class="mb-3 col-md-6">
-                <input type="password" class="form-control" id="countrycode" placeholder="Country" />
-              </div>
-              <div class="mb-3 col-md-6">
-                <input type="password" class="form-control" id="province" placeholder="Province" />
-              </div>
-              <div class="mb-3 col-md-6">
-                <input type="password" class="form-control" id="city" placeholder="City" />
-              </div>
-              <div class="mb-3 col-md-6">
-                <input type="password" class="form-control" id="phone" placeholder="Phone" />
-              </div>
-              <div class="mb-3 col-md-6">
-                <input type="password" class="form-control" id="company" placeholder="Company" />
-              </div>
+                <div class="text-center my-5">
+                    <h1>Register</h1>
+                    <span>Enter your full name, E-mail, and password to register</span>
+                </div>
+                <div id="input-data" class="w-75 m-auto">
+                    <form id="registration_form">
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" id="fullname" aria-describedby="emailHelp"
+                                placeholder="Full Name" />
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <input type="password" class="form-control" id="email" placeholder="Email" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <input type="password" class="form-control" id="confirmationemail"
+                                    placeholder="Confirmation E-mail" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <input type="password" class="form-control" id="countrycode" placeholder="Country" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <input type="password" class="form-control" id="province" placeholder="Province" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <input type="password" class="form-control" id="city" placeholder="City" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <input type="password" class="form-control" id="phone" placeholder="Phone" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <input type="password" class="form-control" id="company" placeholder="Company" />
+                            </div>
+                        </div>
+
+                        
+                    </form>
+                    <div class="form-group text-end">
+                        <button class="btn-back mt-4 mx-3" @click="backToCart()">Back</button>
+                        <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
+                    </div>
+                </div>
             </div>
-          </form>
-          <div class="form-group text-end">
-            <button class="btn-back mt-4 mx-3" @click="backToCart()">Back</button>
-            <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 </template>
 
 <script>
-  import Swal from "sweetalert2";
-  import axios from "axios";
-//   import 'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js';
-//   import '/src/assets/bootstrap-datepicker.min.js';
+    import Swal from "sweetalert2";
+    import axios from "axios";
+    import 'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js';
+    import '/src/assets/bootstrap-datepicker.min.js';
 
-  export default {
-    data() {
-      return {
-        events_id: this.$route.params.Eventsid,
-        phone_number: '',
-        codephone: '62',
-        email_confirm: '',
-        not_verify: false,
-        form_Reg: {
-          events_id: this.$route.params.Eventsid,
-          ticketid: JSON.parse(localStorage.getItem("mt_id")),
-          ticket_qty: localStorage.getItem("ticket_qty"),
-          salutation: '',
-          fullname: '',
-          email: '',
-          country_code: '62',
-          phone: '',
-          company: '',
-          company_city: '',
-          company_province: '',
-          company_country: '',
-          company_type: '',
-          company_type_isothers: '',
-          company_type_others: '',
-          position: '',
-          position_isothers: '',
-          position_others: '',
-          profession: '',
-          profession_isothers: '',
-          profession_others: '',
-          division: '',
-          division_isothers: '',
-          division_others: '',
-          nim: '',
-          faculty_name: '',
-          yob: '',
-          invitationcode: '',
-          birth_date: '',
-          sex: '',
-          prev_action: "declareget",
+    export default {
+        data() {
+            return {
+                events_id: this.$route.params.Eventsid,
+                phone_number: '',
+                codephone: '62',
+                email_confirm: '',
+                not_verify: false,
+                form_Reg: {
+                    events_id: this.$route.params.Eventsid,
+                    ticketid: JSON.parse(localStorage.getItem("mt_id")),
+                    ticket_qty: localStorage.getItem("ticket_qty"),
+                    salutation: '',
+                    fullname: '',
+                    email: '',
+                    country_code: '62',
+                    phone: '',
+                    company: '',
+                    company_city: '',
+                    company_province: '',
+                    company_country: '',
+                    company_type: '',
+                    company_type_isothers: '',
+                    company_type_others: '',
+                    position: '',
+                    position_isothers: '',
+                    position_others: '',
+                    profession: '',
+                    profession_isothers: '',
+                    profession_others: '',
+                    division: '',
+                    division_isothers: '',
+                    division_others: '',
+                    nim: '',
+                    faculty_name: '',
+                    yob: '',
+                    invitationcode: '',
+                    birth_date: '',
+                    sex: '',
+                    prev_action: "declareget",
+                },
+                notif_email: false,
+                event_detail: JSON.parse(localStorage.getItem("event_details")),
+                order_id: localStorage.getItem("order_id"),
+                form_getEvid: {
+                    events_id: this.$route.params.Eventsid
+                },
+                salutation_data: [],
+                years_list: [],
+                code_country: [],
+                data_profession: [],
+                profession_enable: [],
+                data_position: [],
+                data_position_enable: [],
+                data_division: [],
+                data_division_enable: [],
+                data_companytype: [],
+                data_companytype_enable: [],
+                form_getProvince: {
+                    country_code: ''
+                },
+                data_province: [],
+                form_getCity: {
+                    country_code: '',
+                    province_code: ''
+                },
+                data_city: '',
+                global_url: this.$globalURL,
+                isLoading: true,
+                LoadingButton: false,
+                isLoadingAnimation: false,
+                route_name: this.$route.name,
+                titlePage: 'Register',
+                descPage: 'Please fill in all field to register.'
+            };
         },
-        notif_email: false,
-        event_detail: JSON.parse(localStorage.getItem("event_details")),
-        order_id: localStorage.getItem("order_id"),
-        form_getEvid: {
-          events_id: this.$route.params.Eventsid
-        },
-        salutation_data: [],
-        years_list: [],
-        code_country: [],
-        data_profession: [],
-        profession_enable: [],
-        data_position: [],
-        data_position_enable: [],
-        data_division: [],
-        data_division_enable: [],
-        data_companytype: [],
-        data_companytype_enable: [],
-        form_getProvince: {
-          country_code: ''
-        },
-        data_province: [],
-        form_getCity: {
-          country_code: '',
-          province_code: ''
-        },
-        data_city: '',
-        global_url: this.$globalURL,
-        isLoading: true,
-        LoadingButton: false,
-        isLoadingAnimation: false,
-        route_name: this.$route.name,
-        titlePage: 'Register',
-        descPage: 'Please fill in all field to register.'
-      };
-    },
-    components: {},
-    methods: {
-      isRequired(value) {
+        components: {},
+        methods: {
+            isRequired(value) {
                 if (!value) {
                     return 'this field is required / kolom wajib diisi';
                 }
@@ -690,118 +693,117 @@
                 //     this.topFunction()
                 // }
             },
-            backToCart(){
+            backToCart() {
                 this.$router.push("/mycart/" + this.events_id);
             }
 
-    },
-    mounted() {
-      this.events_id = $cookies.get("events_id");
-      console.log(this.events_id, "events id");
-      if (this.events_id == null) {
-        Swal.fire({
-          title: "Your Session is Expired!",
-          icon: "warning",
-        });
-        setTimeout(1000);
-        this.$router.push("/");
-      }else{
-        this.getEvent();
-        this.setTitle("Registration - " + this.event_detail.event_title + " - Undangin ")
-      }
-    },
-  };
+        },
+        mounted() {
+            this.events_id = $cookies.get("events_id");
+            if (this.events_id == null) {
+                Swal.fire({
+                    title: "Your Session is Expired!",
+                    icon: "warning",
+                });
+                setTimeout(1000);
+                this.$router.push("/");
+            } else {
+                this.getEvent();
+                this.setTitle("Registration - " + this.event_detail.event_title + " - Undangin ")
+            }
+        },
+    };
 </script>
 
 <style scoped>
-  a {
-    text-decoration: none;
-  }
+    a {
+        text-decoration: none;
+    }
 
-  h1,
-  h2,
-  h3,
-  h4 {
-    margin-bottom: 0px;
-    text-align: center;
-  }
+    h1,
+    h2,
+    h3,
+    h4 {
+        margin-bottom: 0px;
+        text-align: center;
+    }
 
-  .bg-white {
-    background-color: #fff;
-  }
+    .bg-white {
+        background-color: #fff;
+    }
 
-  .text-white {
-    color: #fff;
-  }
+    .text-white {
+        color: #fff;
+    }
 
-  .border-dash {
-    border-style: dashed;
-    border-width: thin;
-    border-radius: 20px;
-  }
+    .border-dash {
+        border-style: dashed;
+        border-width: thin;
+        border-radius: 20px;
+    }
 
-  .card-deck {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-  }
+    .card-deck {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
 
-  .ticket-buy-center {
-    position: absolute;
-    left: 50%;
-    right: 50%;
-    text-align: center;
-    align-items: center;
-  }
+    .ticket-buy-center {
+        position: absolute;
+        left: 50%;
+        right: 50%;
+        text-align: center;
+        align-items: center;
+    }
 
-  .btn-checkin {
-    background-color: #ebebeb;
-    color: #25516b;
-    border-radius: 20px;
-    font-size: 20px;
-    align-items: center;
-    text-align: center;
-    border: none;
-    padding: 10px;
-    font-weight: bold;
-  }
+    .btn-checkin {
+        background-color: #ebebeb;
+        color: #25516b;
+        border-radius: 20px;
+        font-size: 20px;
+        align-items: center;
+        text-align: center;
+        border: none;
+        padding: 10px;
+        font-weight: bold;
+    }
 
-  .btn-back {
-    width: 25%;
-    background-color: #ffffff;
-    color: #2096c1;
-    font-family: Helvetica;
-    border-radius: 10px;
-    font-size: 16pt;
-    padding: 5px 0 5px 0;
-    font-weight: bold;
-    border-color: #2096c1;
-  }
+    .btn-back {
+        width: 25%;
+        background-color: #ffffff;
+        color: #2096c1;
+        font-family: Helvetica;
+        border-radius: 10px;
+        font-size: 16pt;
+        padding: 5px 0 5px 0;
+        font-weight: bold;
+        border-color: #2096c1;
+    }
 
-  .btn-next {
-    width: 25%;
-    background-color: #315568;
-    color: #fff;
-    font-family: Helvetica;
-    border-radius: 10px;
-    font-size: 16pt;
-    padding: 5px 0 5px 0;
-    font-weight: bold;
-    border-color: #315568;
-  }
+    .btn-next {
+        width: 25%;
+        background-color: #315568;
+        color: #fff;
+        font-family: Helvetica;
+        border-radius: 10px;
+        font-size: 16pt;
+        padding: 5px 0 5px 0;
+        font-weight: bold;
+        border-color: #315568;
+    }
 
-  .bg-registration-page {
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100%;
-  }
+    .bg-registration-page {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100%;
+    }
 
-  .centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 </style>

@@ -22,7 +22,6 @@
 <script>
     import Swal from 'sweetalert2'
     import axios from 'axios'
-
     export default {
         data() {
             return {
@@ -79,7 +78,6 @@
                     .then(res => {
                         this.getEvent = res.data;
                         this.ticket = this.getEvent.ticket;
-                        this.class_name = this.ticket.class_name;
                     })
             },
             add_to_cart(ticket) {
@@ -94,7 +92,6 @@
                     ticketid.push(ticket);
                     localStorage.setItem('mt_id', JSON.stringify(ticketid));
                     localStorage.setItem('ticket_qty', 1);
-                    localStorage.setItem('class_name', this.ticket.class_name);
                     var data = JSON.parse(localStorage.getItem("mt_id"));
                     this.$router.push("/mycart/" + this.form_getevent.events_id);
                 }

@@ -118,6 +118,14 @@
     -webkit-animation: slideScaleColour 3s infinite;
     animation: slideScaleColour 3s infinite;
   }
+
+  .formRSVP {
+    margin: auto;
+    width: 100%;
+    max-width: 600px;
+    padding: 30px 20px;
+    position: relative;
+  }
   
   /* Loading Button */
   .loader {
@@ -164,4 +172,5 @@
     100% {
       transform: rotate(0deg);
     }
+    
   }

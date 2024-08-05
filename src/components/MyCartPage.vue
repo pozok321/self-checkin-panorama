@@ -14,9 +14,7 @@
                 </div>
                 <div class="border-bottom mb-2"></div>
                 <div class="row">
-                    <div class="col-md-4">
-                        <img :src="global_url + this.event_detail.poster_mobile" alt="cart"width="100%" height="100%"
-                    </div>
+                    <div class="col-md-4"><img :src="global_url + this.event_detail.poster_mobile" alt="cart"width="100%" height="100%"</div>
                     <div class="col-md-6 top-50 start-0 m-auto ">
                         <div class="ticket-title">
                             <h4 class="text-start">{{this.event_detail.event_title}}</h4>
@@ -64,15 +62,12 @@
                 <div class="row">
                     <div class="formRSVP">
                         <h4 class="text-start my-3 ">Terms & Condition</h4>
-                        <!-- <div class="term-condition overflow-scroll scrollspy-example" data-bs-spy="scroll">
-                            {{ this.event_declaration.event_declaration }}
+                        <!-- <div v-if="isLoading">
+                            <div class="is-loading text-30"></div>
+                            <div class="is-loading text-30"></div>
+                            <div class="is-loading text-30"></div>
                         </div> -->
-                        <div v-if="isLoading">
-                            <div class="is-loading text-30"></div>
-                            <div class="is-loading text-30"></div>
-                            <div class="is-loading text-30"></div>
-                        </div>
-                        <div id="stylebar" class="scrollbar" v-html="this.event_declaration.event_declaration" v-else></div>
+                        <div id="stylebar" class="scrollbar" v-html="this.event_declaration.event_declaration"></div>
                         <div class="form-group">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="declare_checkbox"
@@ -101,8 +96,8 @@
                     <div class="checkbox-wrap" v-for="ticket in addon_ticket">
                         <div class="row">
                             <div class="col-md-8 col-8">
-                                <div class="is-loading text-30" v-if="isLoading"></div>
-                                <div v-else>
+                                <!-- <div class="is-loading text-30" v-if="isLoading"></div> -->
+                                <div>
                                     <input class="inp-cbx" :id="'ticket_'+ticket.ticket_id"
                                         @change="add_qty(main_ticket, ticket_qty)" v-model="ticket_ao[ticket.ticket_id]"
                                         type="checkbox"
@@ -416,7 +411,9 @@
                 document.title = `${title_page}`
             },
             next_page() {
-                this.LoadingButton = true
+                this.LoadingButton = true;
+                localStorage.setItem("ticket_qty", JSON.stringify( this.form_getCart.ticket_qty));
+                localStorage.setItem("total_price", JSON.stringify(  this.total));
                 this.$router.push("/registrationpage/" + this.form_getCart.events_id);
             },
             plus_qty(ticket, ticket_qty) {
