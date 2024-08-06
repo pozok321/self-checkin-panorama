@@ -7,41 +7,337 @@
                     <span>Enter your full name, E-mail, and password to register</span>
                 </div>
                 <div id="input-data" class="w-75 m-auto">
-                    <form id="registration_form">
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control" id="fullname" aria-describedby="emailHelp"
-                                placeholder="Full Name" />
-                        </div>
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <input type="password" class="form-control" id="email" placeholder="Email" />
+                    <div class="formRSVP">
+                        <Form @submit="onSubmit" v-slot="{ errors }">
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.guest_title_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.salutation }">
+                                    <Field as="select" name="salutation" id="salutation" class="form-control"
+                                        v-model="form_Reg.salutation" :rules="isRequired"
+                                        >
+                                        <option v-for="salutation in salutation_data"
+                                            v-bind:value="salutation.salutation_code">
+                                            {{ salutation.salutation_description }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <span class="icon-form"><i class='bx bxs-user'></i></span>
+                                <ErrorMessage class="notif-verror" name="salutation" />
                             </div>
-                            <div class="mb-3 col-md-6">
-                                <input type="password" class="form-control" id="confirmationemail"
-                                    placeholder="Confirmation E-mail" />
+                            <div class="form-group">
+                                <Field type="text" class="form-control" name="fullname" v-model="form_Reg.fullname"
+                                    placeholder="Full Name / Nama Lengkap" :rules="isRequired"
+                                    :class="{ 'errorfield': errors.fullname }">
+                                </Field>
+                                <span class="icon-form"><i class='bx bxs-user'></i></span>
+                                <ErrorMessage class="notif-verror" name="fullname" />
                             </div>
-                            <div class="mb-3 col-md-6">
-                                <input type="password" class="form-control" id="countrycode" placeholder="Country" />
+                            <div class="form-group form-select-search" v-if="event_detail.setting.yob_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.yob }"
+                                    v-if="event_detail.setting.yob_required === 'Y'">
+                                    <Field as="select" name="yob" id="yob" class="form-control" v-model="form_Reg.yob"
+                                        :rules="isRequired">
+                                        <option v-for="year in years_list" v-bind:value="year">
+                                            {{ year }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="yob" id="yob" class="form-control" v-model="form_Reg.yob"
+                                    v-else>
+                                    <option v-for="year in years_list" v-bind:value="year">
+                                        {{ year }}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bx-calendar'></i></span>
+                                <ErrorMessage class="notif-verror" name="yob" />
                             </div>
-                            <div class="mb-3 col-md-6">
-                                <input type="password" class="form-control" id="province" placeholder="Province" />
+                            <div class="form-group">
+                                <div class="filter-country">
+                                    <Field as="select" id="select_country" name="region" style="width:100%"
+                                        v-model="form_Reg.country_code">
+                                        <option value="">Select a Country</option>
+                                        <option v-for="code in code_country" :data-image="code.flags"
+                                            v-bind:value="code.phonecode">
+                                            +{{code.phonecode}}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{code.country_name}}
+                                        </option>
+                                    </Field>
+                                    <Field type="number" class="form-control padding-100" name="phone_number"
+                                        :class="{ 'errorfield': errors.phone_number }" v-model="phone_number"
+                                        @input="check_phonenumber(phone_number)" maxlength="14"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                        placeholder="Phone Number / No. WhatsApp" :rules="isRequired"></Field>
+                                    <span class="icon-form"><i class='bx bx-mobile'></i></span>
+                                    <ErrorMessage class="notif-verror" name="phone_number" />
+                                </div>
                             </div>
-                            <div class="mb-3 col-md-6">
-                                <input type="password" class="form-control" id="city" placeholder="City" />
+                            <div class="form-group">
+                                <Field type="text" class="form-control" name="email_address" id="email_address"
+                                    v-model="form_Reg.email" placeholder="Email " :rules="isRequired"
+                                    v-on:keyup="ValidateEmail(form_Reg.email)"
+                                    :class="{ 'errorfield': errors.email_address }" />
+                                <span class="icon-form"><i class='bx bxs-envelope'></i></span>
+                                <ErrorMessage class="notif-verror" name="email_address" />
+                                <div class="notif-verror" v-if="notif_email">
+                                    invalid email address / email tidak valid (format: xxx@xxx.xxx)
+                                </div>
                             </div>
-                            <div class="mb-3 col-md-6">
-                                <input type="password" class="form-control" id="phone" placeholder="Phone" />
+                            <div class="form-group">
+                                <Field type="text" class="form-control" name="email_confirm" id="email_confirm"
+                                    v-model="email_confirm" placeholder="Email Confirmation" :rules="isRequired"
+                                    v-on:keyup="trim_emailconfirm(email_confirm)"
+                                    :class="{ 'errorfield': errors.email_confirm }" />
+                                <span class="icon-form"><i class='bx bxs-envelope'></i></span>
+                                <ErrorMessage class="notif-verror" name="email_confirm" />
+                                <div class="notif-verror" v-if="not_verify">
+                                    Email is different, please check again!
+                                </div>
                             </div>
-                            <div class="mb-3 col-md-6">
-                                <input type="password" class="form-control" id="company" placeholder="Company" />
+                            <div class="form-group" v-if="event_detail.setting.birth_date_toggle == 'Y'">
+                                <Field type="text" class="form-control" name="birth_date" id="birth_date"
+                                    v-model="form_Reg.birth_date" placeholder="Birthdate / Tanggal lahir (dd/mm/yyyy)"
+                                    :rules="isRequired" :class="{ 'errorfield': errors.birth_date }">
+                                </Field>
+                                <span class="icon-form"><i class='bx bxs-user'></i></span>
+                                <ErrorMessage class="notif-verror" name="birth_date" />
                             </div>
-                        </div>
-
-                        
-                    </form>
-                    <div class="form-group text-end">
-                        <button class="btn-back mt-4 mx-3" @click="backToCart()">Back</button>
-                        <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
+                            <div class="form-group form-select-search" v-if="event_detail.setting.sex_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.sex }">
+                                    <Field as="select" name="sex" id="sex" class="form-control" v-model="form_Reg.sex"
+                                        :rules="isRequired"
+                                        >
+                                        <option value="" disabled>Sex / Jenis Kelamin</option>
+                                        <option value="M">Male / Pria</option>
+                                        <option value="F">Female / Wanita</option>
+                                    </Field>
+                                </div>
+                                <span class="icon-form"><i class='bx bxs-user'></i></span>
+                                <ErrorMessage class="notif-verror" name="sex" />
+                            </div>
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.profession_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.profession }"
+                                    v-if="event_detail.setting.profession_required == 'Y'">
+                                    <Field as="select" name="profession" id="profession" class="form-control"
+                                        v-model="form_Reg.profession" :rules="isRequired">
+                                        <option v-for="profession in profession_enable"
+                                            v-bind:value="profession.profession_id">
+                                            {{ profession.profession_name }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="profession" id="profession" class="form-control"
+                                    v-model="form_Reg.profession" v-else>
+                                    <option v-for="profession in profession_enable"
+                                        v-bind:value="profession.profession_id">
+                                        {{ profession.profession_name }}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="profession" />
+                            </div>
+                            <div class="form-group" v-if="form_Reg.profession_isothers == 'Y'">
+                                <Field type="text" class="form-control" name="profession_others"
+                                    v-model="form_Reg.profession_others"
+                                    placeholder="Profession Others / Profesi Lainnya" :rules="isRequired"
+                                    :class="{ 'errorfield': errors.profession_others }" />
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="profession_others" />
+                            </div>
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.jobtitle_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.position }"
+                                    v-if="event_detail.setting.jobtitle_required == 'Y'">
+                                    <Field as="select" name="position" id="position" class="form-control"
+                                        v-model="form_Reg.position" :rules="isRequired">
+                                        <option v-for="position in data_position_enable"
+                                            v-bind:value="position.position_id">
+                                            {{ position.position_name }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="position" id="position" class="form-control"
+                                    v-model="form_Reg.position" v-else>
+                                    <option v-for="position in data_position_enable"
+                                        v-bind:value="position.position_id">
+                                        {{ position.position_name }}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="position" />
+                            </div>
+                            <div class="form-group" v-if="form_Reg.position_isothers == 'Y'">
+                                <Field type="text" class="form-control" name="position_others"
+                                    v-model="form_Reg.position_others" placeholder="Position Others / Posisi Lainnya"
+                                    :rules="isRequired" :class="{ 'errorfield': errors.position_others }" />
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="position_others" />
+                            </div>
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.division_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.division }"
+                                    v-if="event_detail.setting.division_required == 'Y'">
+                                    <Field as="select" name="division" id="division" class="form-control"
+                                        v-model="form_Reg.division" :rules="isRequired">
+                                        <option v-for="division in data_division_enable"
+                                            v-bind:value="division.division_id">
+                                            {{ division.division_name }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="division" id="division" class="form-control"
+                                    v-model="form_Reg.division" v-else>
+                                    <option v-for="division in data_division_enable"
+                                        v-bind:value="division.division_id">
+                                        {{ division.division_name }}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="division" />
+                            </div>
+                            <div class="form-group" v-if="form_Reg.division_isothers == 'Y'">
+                                <Field type="text" class="form-control" name="division_others"
+                                    v-model="form_Reg.division_others" placeholder="division Others / Divisi Lainnya"
+                                    :rules="isRequired" :class="{ 'errorfield': errors.division_others }" />
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="division_others" />
+                            </div>
+                            <div class="form-group" v-if="event_detail.setting.nim_toggle == 'Y'">
+                                <Field type="text" class="form-control" id="nim" name="nim" v-model="form_Reg.nim"
+                                    placeholder="NIM" :rules="isRequired" :class="{ 'errorfield': errors.nim }"
+                                    v-if="event_detail.setting.nim_required == 'Y'" />
+                                <Field type="text" class="form-control" id="nim" name="nim" v-model="form_Reg.nim"
+                                    placeholder="NIM (Optional)" v-else />
+                                <span class="icon-form"><i class='bx bxs-bank'></i></span>
+                                <ErrorMessage class="notif-verror" name="nim" />
+                            </div>
+                            <div class="form-group" v-if="event_detail.setting.faculty_toggle == 'Y'">
+                                <Field type="text" class="form-control" id="faculty_name" name="faculty_name"
+                                    v-model="form_Reg.faculty_name" placeholder="Faculty Name / Nama Fakultas"
+                                    :rules="isRequired" :class="{ 'errorfield': errors.faculty_name }"
+                                    v-if="event_detail.setting.faculty_required == 'Y'" />
+                                <Field type="text" class="form-control" id="faculty_name" name="faculty_name"
+                                    v-model="form_Reg.faculty_name"
+                                    placeholder="Faculty Name / Nama Fakultas (Optional)" v-else />
+                                <span class="icon-form"><i class='bx bxs-bank'></i></span>
+                                <ErrorMessage class="notif-verror" name="faculty_name" />
+                            </div>
+                            <div class="form-group" v-if="event_detail.setting.companyname_toggle == 'Y'">
+                                <Field type="text" class="form-control" id="company" name="company"
+                                    v-model="form_Reg.company"
+                                    placeholder="Company / Organization Name / Nama Perusahaan" :rules="isRequired"
+                                    :class="{ 'errorfield': errors.company }"
+                                    v-if="event_detail.setting.companyname_required == 'Y'" />
+                                <Field type="text" class="form-control" id="company" name="company"
+                                    v-model="form_Reg.company"
+                                    placeholder="Company / Organization Name / Nama Perusahaan (Optional)" v-else />
+                                <span class="icon-form"><i class='bx bxs-bank'></i></span>
+                                <ErrorMessage class="notif-verror" name="company" />
+                            </div>
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.companytype_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.company_type }"
+                                    v-if="event_detail.setting.companytype_required == 'Y'">
+                                    <Field as="select" name="company_type" id="company_type" class="form-control"
+                                        v-model="form_Reg.company_type" :rules="isRequired">
+                                        <option v-for="companytype in data_companytype_enable"
+                                            v-bind:value="companytype.comptype_id">
+                                            {{ companytype.comptype_name }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="company_type" id="company_type" class="form-control"
+                                    v-model="form_Reg.company_type" v-else>
+                                    <option v-for="companytype in data_companytype_enable"
+                                        v-bind:value="companytype.comptype_id">
+                                        {{ companytype.comptype_name }}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="company_type" />
+                            </div>
+                            <div class="form-group" v-if="form_Reg.company_type_isothers == 'Y'">
+                                <Field type="text" class="form-control" name="company_type_others"
+                                    v-model="form_Reg.company_type_others" placeholder="Company Type Others"
+                                    :rules="isRequired" :class="{ 'errorfield': errors.company_type_others }" />
+                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                <ErrorMessage class="notif-verror" name="company_type_others" />
+                            </div>
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.companycountry_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.company_country }"
+                                    v-if="event_detail.setting.companycountry_required == 'Y'">
+                                    <Field as="select" name="company_country" id="company_country" class="form-control"
+                                        v-model="form_Reg.company_country" :rules="isRequired">
+                                        <option v-for="code in code_country" v-bind:value="code.country_code">
+                                            {{code.country_name}}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="company_country" id="company_country" class="form-control"
+                                    v-model="form_Reg.company_country" v-else>
+                                    <option v-for="code in code_country" v-bind:value="code.country_code">
+                                        {{code.country_name}}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bx-world'></i></span>
+                                <ErrorMessage class="notif-verror" name="company_country" />
+                            </div>
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.companycity_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.company_province }"
+                                    v-if="event_detail.setting.companycity_required == 'Y'">
+                                    <Field as="select" name="company_province" id="company_province"
+                                        class="form-control" v-model="form_Reg.company_province" :rules="isRequired">
+                                        <option v-for="data_province in data_province"
+                                            v-bind:value="data_province.province_code">
+                                            {{ data_province.province_name }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="company_province" id="company_province" class="form-control"
+                                    v-model="form_Reg.company_province" v-else>
+                                    <option v-for="data_province in data_province"
+                                        v-bind:value="data_province.province_code">
+                                        {{ data_province.province_name }}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bx-world'></i></span>
+                                <ErrorMessage class="notif-verror" name="company_province" />
+                            </div>
+                            <div class="form-group form-select-search"
+                                v-if="event_detail.setting.companycity_toggle == 'Y'">
+                                <div class="form-control-select" :class="{ 'errorfield': errors.company_city }"
+                                    v-if="event_detail.setting.companycity_required == 'Y'">
+                                    <Field as="select" name="company_city" id="company_city" class="form-control"
+                                        v-model="form_Reg.company_city" :rules="isRequired">
+                                        <option v-for="data_city in data_city" v-bind:value="data_city.city_code">
+                                            {{ data_city.city_name }}
+                                        </option>
+                                    </Field>
+                                </div>
+                                <Field as="select" name="company_city" id="company_city" class="form-control"
+                                    v-model="form_Reg.company_city" v-else>
+                                    <option v-for="data_city in data_city" v-bind:value="data_city.city_code">
+                                        {{ data_city.city_name }}
+                                    </option>
+                                </Field>
+                                <span class="icon-form"><i class='bx bx-world'></i></span>
+                                <ErrorMessage class="notif-verror" name="company_city" />
+                            </div>
+                            <div class="form-group" v-if="event_detail.setting.reguler_invitationcode_toggle == 'Y'">
+                                <Field type="text" class="form-control" id="regular_invitation_code"
+                                    name="regular_invitation_code" v-model="form_Reg.invitationcode"
+                                    placeholder="Invitation Code / Kode Undangan" :rules="isRequired"
+                                    :class="{ 'errorfield': errors.regular_invitation_code }" />
+                                <span class="icon-form"><i class='bx bxs-coupon'></i></span>
+                                <ErrorMessage class="notif-verror" name="regular_invitation_code" />
+                            </div>
+                            <div class="form-group text-end">
+                                <button class="btn-back mt-4 mx-3" @click="backToCart()">Back</button>
+                                <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
+                            </div>
+                        </Form>
                     </div>
                 </div>
             </div>
@@ -54,6 +350,11 @@
     import axios from "axios";
     import 'https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js';
     import '/src/assets/bootstrap-datepicker.min.js';
+    import {
+        Form,
+        Field,
+        ErrorMessage
+    } from 'vee-validate';
 
     export default {
         data() {
@@ -131,7 +432,11 @@
                 descPage: 'Please fill in all field to register.'
             };
         },
-        components: {},
+        components: {
+            Form,
+            Field,
+            ErrorMessage
+        },
         methods: {
             isRequired(value) {
                 if (!value) {

@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="col-md-7 border-left">
-            <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%" >
+            <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
           </div>
         </div>
         <div class="row mt-3">
@@ -42,11 +42,11 @@
           </div>
           <div class="printable" id="areaprint" style="border: 1px solid;">
             <center>
-              <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 145px" />
-              <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
-                {{ scanner_data.guest.fullname }}</h4>
-              <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
-                {{ scanner_data.guest.ticketclass_name }}</p>
+            <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 145px" />
+            <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
+              {{ scanner_data.guest.fullname }}</h4>
+            <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
+              {{ scanner_data.guest.ticketclass_name }}</p>
             </center>
           </div>
         </div>
@@ -122,7 +122,8 @@
       getSession() {
         axios({
           method: "GET",
-          url: "/selfsvc/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/track/" + this.obj.track_id + "/session/" + this.obj.session_id,
+          url: "/selfsvc/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/track/" + this.obj
+            .track_id + "/session/" + this.obj.session_id,
           headers: {
             "Content-Type": "text/plain",
           },
@@ -178,10 +179,9 @@
         }).then((res) => {
           this.on_scanner();
           this.scanner_data = res.data;
-          this.status = res.status;
+          this.status = res.data.status;
           this.guests_token_scan = this.scanner_data.guests_token;
           if (this.scanner_data.message === "Welcome") {
-            // this.isLoading = true;
             // simulate AJAX
             setTimeout(() => {
               // this.isLoading = false
@@ -192,6 +192,13 @@
             case 200:
               this.checkin_status = true;
               this.on_print();
+              break;
+            case 201:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "info",
+              });
               break;
             case 202:
               this.checkin_status = false;
@@ -206,12 +213,14 @@
                 title: this.scanner_data.message,
                 icon: "warning",
               });
+              break;
             default:
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
                 icon: "warning",
               });
+              break;
           }
         });
       },
@@ -256,7 +265,6 @@
       setTimeout(() => {
         this.isLoading = false
       }, 500)
-
       this.obj.events_id = $cookies.get("events_id");
       this.obj.session_id = $cookies.get("session_id");
       this.obj.agenda_id = $cookies.get("agenda_id");
@@ -355,7 +363,7 @@
     background-color: #fff;
   }
 
-  .bg-darkblue{
+  .bg-darkblue {
     color: #25516B;
   }
 

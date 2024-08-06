@@ -25,7 +25,20 @@
                             <p>Quantity Ticket</p>
                         </div>
                         <div class="justify-content-between flex">
-                            IDR. {{this.total}}
+                            <div class="is-loading text-30" v-if="isLoading"></div>
+                                <div v-else>
+                                    <div class="ticket-price-mt" v-if="main_ticket.coret == false">
+                                        {{formatCurrency(main_ticket.normal_price, event_detail.currency)}}
+                                    </div>
+                                    <div class="coret-mt" v-else>
+                                        <div class="ticket-pricediscount-mt">
+                                            {{formatCurrency(main_ticket.normal_price, event_detail.currency)}}
+                                        </div>
+                                        <div class="ticket-price-mt">
+                                            {{formatCurrency(main_ticket.final_price, event_detail.currency)}}
+                                        </div>
+                                    </div>
+                                </div>
                             <div class="quantity-item" v-if="event_detail.pre_reg == 'Y'">
                                 <form id='myform' method='POST' class='quantity' action='#'>
                                     <input type='button' value='-' class='qtyminus minus' field='quantity'
@@ -122,18 +135,12 @@
                                 </div>
                             </div>
                             <div class="col-md-4 col-6 padding-l-0 text-right">
-                                <div class="is-loading text-30" v-if="isLoading"></div>
-                                <div v-else>
-                                    <div class="ticket-price-ao" v-if="ticket">
-                                        {{formatCurrency(ticket.final_price, event_detail.currency)}}
-                                    </div>
-                                    <div class="coret-box" v-else>
-                                        <div class="ticket-pricediscount-ao">
-                                            {{formatCurrency(ticket.final_price, event_detail.currency)}}
-                                        </div>
-                                        <div class="ticket-price-ao">
-                                            {{formatCurrency(ticket.final_price, event_detail.currency)}}
-                                        </div>
+                                <div class="ticket-name-mt">
+                                    <div class="is-loading text-30" v-if="isLoading"></div>
+                                    <div v-else>
+                                        Ticket {{main_ticket.ticket_name}}
+                                        <span class="font-red" v-if="main_ticket.mark_soldout == 'Y'">( Sold Out
+                                            )</span>
                                     </div>
                                 </div>
                             </div>
@@ -154,7 +161,7 @@
                         <div class="row">
                             <div class="col-lg-12 col-sm-12 col-12">
                                 <button class="btn btn-purchase" :disabled="declare_checkbox == false"
-                                    @click="next_page()">
+                                    @click="update_mycart()">
                                     <span v-if="LoadingButton">
                                         <span class="loader loading-quarter"></span>
                                         Processing
@@ -616,11 +623,11 @@
                             if (this.main_ticket.mark_soldout == 'N' && this.main_ticket.ticket_remain > 0) {
                                 localStorage.setItem("mt_id", JSON.stringify(this.form_getCart.ticketid));
                                 localStorage.setItem("ticket_qty", this.form_getCart.ticket_qty);
-
+                                localStorage.setItem("total", this.total);
                                 if (this.event_detail.setting.tnc_toggle == 'N') {
-                                    this.$router.push("/register/" + this.form_getCart.events_id);
+                                    this.$router.push("/registrationpage/" + this.form_getCart.events_id);
                                 } else {
-                                    this.$router.push("/declare/" + this.form_getCart.events_id);
+                                    this.$router.push("/questionnairepage/" + this.form_getCart.events_id);
                                 }
 
                             } else if (this.main_ticket.mark_soldout == 'N' && this.main_ticket.ticket_remain < 1) {
@@ -698,13 +705,6 @@
         padding-left: 125px;
     }
 
-    .formRSVP {
-        margin: auto;
-        width: fit-content;
-        padding: 15px 15px;
-        position: relative;
-    }
-
     .termcondition-overflow {
         flex: 1;
         overflow: auto;
@@ -715,6 +715,25 @@
         border-style: dashed;
         border-width: thin;
         border-radius: 20px;
+    }
+
+    
+    .ticket-price-mt {
+        display: inline-block;
+        font-family: 'PlusJakartaSans';
+        font-weight: bold;
+        font-size: 20pt;
+        color: #09303E;
+        line-height: 1;
+        padding: 5px 0;
+    }
+
+    .ticket-name-mt {
+        font-family: 'PlusJakartaSans';
+        font-weight: bold;
+        font-size: 13pt;
+        color: #09303E;
+        line-height: 1;
     }
 
     .term-condition {
@@ -847,6 +866,39 @@
         text-align: center;
     }
 
+    .ticket-price-ao {
+        display: inline-block;
+        font-family: 'PlusJakartaSans';
+        font-weight: bold;
+        font-size: 12pt;
+        color: #09303E;
+    }
+
+    .ticket-pricediscount-mt {
+        display: inline-block;
+        font-family: 'PlusJakartaSans';
+        font-size: 10pt;
+        color: #F24C4C;
+        text-decoration: line-through;
+        line-height: 1;
+    }
+    .ticket-price-mt {
+        display: inline-block;
+        font-family: 'PlusJakartaSans';
+        font-weight: bold;
+        font-size: 18pt;
+        color: #09303E;
+        line-height: 1;
+        padding: 5px 0;
+    }
+
+    .ticket-pricediscount-ao {
+        display: inline-block;
+        font-family: 'PlusJakartaSans';
+        font-size: 9pt;
+        color: #F24C4C;
+        text-decoration: line-through;
+    }
     .poster_mobile{
        width: fit-content;
     }
