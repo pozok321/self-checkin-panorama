@@ -9,7 +9,7 @@
                 <div id="input-data" class="w-75 m-auto">
                     <div class="formRSVP">
                         <Form @submit="onSubmit" v-slot="{ errors }">
-                            <div class="form-group form-select-search"
+                            <!-- <div class="form-group form-select-search"
                                 v-if="event_detail.setting.guest_title_toggle == 'Y'">
                                 <div class="form-control-select" :class="{ 'errorfield': errors.salutation }">
                                     <Field as="select" name="salutation" id="salutation" class="form-control"
@@ -23,7 +23,7 @@
                                 </div>
                                 <span class="icon-form"><i class='bx bxs-user'></i></span>
                                 <ErrorMessage class="notif-verror" name="salutation" />
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <Field type="text" class="form-control" name="fullname" v-model="form_Reg.fullname"
                                     placeholder="Full Name / Nama Lengkap" :rules="isRequired"
@@ -32,117 +32,145 @@
                                 <span class="icon-form"><i class='bx bxs-user'></i></span>
                                 <ErrorMessage class="notif-verror" name="fullname" />
                             </div>
-                            <div class="form-group form-select-search" v-if="event_detail.setting.yob_toggle == 'Y'">
-                                <div class="form-control-select" :class="{ 'errorfield': errors.yob }"
-                                    v-if="event_detail.setting.yob_required === 'Y'">
-                                    <Field as="select" name="yob" id="yob" class="form-control" v-model="form_Reg.yob"
-                                        :rules="isRequired">
-                                        <option v-for="year in years_list" v-bind:value="year">
-                                            {{ year }}
-                                        </option>
-                                    </Field>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-select-search"
+                                        v-if="event_detail.setting.yob_toggle == 'Y'">
+                                        <div class="form-control-select" :class="{ 'errorfield': errors.yob }"
+                                            v-if="event_detail.setting.yob_required === 'Y'">
+                                            <Field as="select" name="yob" id="yob" class="form-control"
+                                                v-model="form_Reg.yob" :rules="isRequired">
+                                                <option v-for="year in years_list" v-bind:value="year">
+                                                    {{ year }}
+                                                </option>
+                                            </Field>
+                                        </div>
+                                        <Field as="select" name="yob" id="yob" class="form-control"
+                                            v-model="form_Reg.yob" v-else>
+                                            <option v-for="year in years_list" v-bind:value="year">
+                                                {{ year }}
+                                            </option>
+                                        </Field>
+                                        <span class="icon-form"><i class='bx bx-calendar'></i></span>
+                                        <ErrorMessage class="notif-verror" name="yob" />
+                                    </div>
                                 </div>
-                                <Field as="select" name="yob" id="yob" class="form-control" v-model="form_Reg.yob"
-                                    v-else>
-                                    <option v-for="year in years_list" v-bind:value="year">
-                                        {{ year }}
-                                    </option>
-                                </Field>
-                                <span class="icon-form"><i class='bx bx-calendar'></i></span>
-                                <ErrorMessage class="notif-verror" name="yob" />
-                            </div>
-                            <div class="form-group">
-                                <div class="filter-country">
-                                    <Field as="select" id="select_country" name="region" style="width:100%"
-                                        v-model="form_Reg.country_code">
-                                        <option value="">Select a Country</option>
-                                        <option v-for="code in code_country" :data-image="code.flags"
-                                            v-bind:value="code.phonecode">
-                                            +{{code.phonecode}}
-                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{code.country_name}}
-                                        </option>
-                                    </Field>
-                                    <Field type="number" class="form-control padding-100" name="phone_number"
-                                        :class="{ 'errorfield': errors.phone_number }" v-model="phone_number"
-                                        @input="check_phonenumber(phone_number)" maxlength="14"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
-                                        placeholder="Phone Number / No. WhatsApp" :rules="isRequired"></Field>
-                                    <span class="icon-form"><i class='bx bx-mobile'></i></span>
-                                    <ErrorMessage class="notif-verror" name="phone_number" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <Field type="text" class="form-control" name="email_address" id="email_address"
-                                    v-model="form_Reg.email" placeholder="Email " :rules="isRequired"
-                                    v-on:keyup="ValidateEmail(form_Reg.email)"
-                                    :class="{ 'errorfield': errors.email_address }" />
-                                <span class="icon-form"><i class='bx bxs-envelope'></i></span>
-                                <ErrorMessage class="notif-verror" name="email_address" />
-                                <div class="notif-verror" v-if="notif_email">
-                                    invalid email address / email tidak valid (format: xxx@xxx.xxx)
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="filter-country">
+                                            <Field as="select" id="select_country" name="region" style="width:100%"
+                                                v-model="form_Reg.country_code">
+                                                <option value="">Select a Country</option>
+                                                <option v-for="code in code_country" :data-image="code.flags"
+                                                    v-bind:value="code.phonecode">
+                                                    +{{code.phonecode}}
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{code.country_name}}
+                                                </option>
+                                            </Field>
+                                            <Field type="number" class="form-control padding-100" name="phone_number"
+                                                :class="{ 'errorfield': errors.phone_number }" v-model="phone_number"
+                                                @input="check_phonenumber(phone_number)" maxlength="14"
+                                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+                                                placeholder="Phone Number / No. WhatsApp" :rules="isRequired"></Field>
+                                            <span class="icon-form"><i class='bx bx-mobile'></i></span>
+                                            <ErrorMessage class="notif-verror" name="phone_number" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <Field type="text" class="form-control" name="email_confirm" id="email_confirm"
-                                    v-model="email_confirm" placeholder="Email Confirmation" :rules="isRequired"
-                                    v-on:keyup="trim_emailconfirm(email_confirm)"
-                                    :class="{ 'errorfield': errors.email_confirm }" />
-                                <span class="icon-form"><i class='bx bxs-envelope'></i></span>
-                                <ErrorMessage class="notif-verror" name="email_confirm" />
-                                <div class="notif-verror" v-if="not_verify">
-                                    Email is different, please check again!
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <Field type="text" class="form-control" name="email_address" id="email_address"
+                                            v-model="form_Reg.email" placeholder="Email " :rules="isRequired"
+                                            v-on:keyup="ValidateEmail(form_Reg.email)"
+                                            :class="{ 'errorfield': errors.email_address }" />
+                                        <span class="icon-form"><i class='bx bxs-envelope'></i></span>
+                                        <ErrorMessage class="notif-verror" name="email_address" />
+                                        <div class="notif-verror" v-if="notif_email">
+                                            invalid email address / email tidak valid (format: xxx@xxx.xxx)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <Field type="text" class="form-control" name="email_confirm" id="email_confirm"
+                                            v-model="email_confirm" placeholder="Email Confirmation" :rules="isRequired"
+                                            v-on:keyup="trim_emailconfirm(email_confirm)"
+                                            :class="{ 'errorfield': errors.email_confirm }" />
+                                        <span class="icon-form"><i class='bx bxs-envelope'></i></span>
+                                        <ErrorMessage class="notif-verror" name="email_confirm" />
+                                        <div class="notif-verror" v-if="not_verify">
+                                            Email is different, please check again!
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group" v-if="event_detail.setting.birth_date_toggle == 'Y'">
-                                <Field type="text" class="form-control" name="birth_date" id="birth_date"
-                                    v-model="form_Reg.birth_date" placeholder="Birthdate / Tanggal lahir (dd/mm/yyyy)"
-                                    :rules="isRequired" :class="{ 'errorfield': errors.birth_date }">
-                                </Field>
-                                <span class="icon-form"><i class='bx bxs-user'></i></span>
-                                <ErrorMessage class="notif-verror" name="birth_date" />
-                            </div>
-                            <div class="form-group form-select-search" v-if="event_detail.setting.sex_toggle == 'Y'">
-                                <div class="form-control-select" :class="{ 'errorfield': errors.sex }">
-                                    <Field as="select" name="sex" id="sex" class="form-control" v-model="form_Reg.sex"
-                                        :rules="isRequired"
-                                        >
-                                        <option value="" disabled>Sex / Jenis Kelamin</option>
-                                        <option value="M">Male / Pria</option>
-                                        <option value="F">Female / Wanita</option>
-                                    </Field>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group" v-if="event_detail.setting.birth_date_toggle == 'Y'">
+                                        <Field type="text" class="form-control" name="birth_date" id="birth_date"
+                                            v-model="form_Reg.birth_date"
+                                            placeholder="Birthdate / Tanggal lahir (dd/mm/yyyy)" :rules="isRequired"
+                                            :class="{ 'errorfield': errors.birth_date }">
+                                        </Field>
+                                        <span class="icon-form"><i class='bx bxs-user'></i></span>
+                                        <ErrorMessage class="notif-verror" name="birth_date" />
+                                    </div>
                                 </div>
-                                <span class="icon-form"><i class='bx bxs-user'></i></span>
-                                <ErrorMessage class="notif-verror" name="sex" />
-                            </div>
-                            <div class="form-group form-select-search"
-                                v-if="event_detail.setting.profession_toggle == 'Y'">
-                                <div class="form-control-select" :class="{ 'errorfield': errors.profession }"
-                                    v-if="event_detail.setting.profession_required == 'Y'">
-                                    <Field as="select" name="profession" id="profession" class="form-control"
-                                        v-model="form_Reg.profession" :rules="isRequired">
-                                        <option v-for="profession in profession_enable"
-                                            v-bind:value="profession.profession_id">
-                                            {{ profession.profession_name }}
-                                        </option>
-                                    </Field>
+                                <div class="col-md-6">
+                                    <div class="form-group form-select-search"
+                                        v-if="event_detail.setting.sex_toggle == 'Y'">
+                                        <div class="form-control-select" :class="{ 'errorfield': errors.sex }">
+                                            <Field as="select" name="sex" id="sex" class="form-control"
+                                                v-model="form_Reg.sex" :rules="isRequired">
+                                                <option value="" disabled>Sex / Jenis Kelamin</option>
+                                                <option value="M">Male / Pria</option>
+                                                <option value="F">Female / Wanita</option>
+                                            </Field>
+                                        </div>
+                                        <span class="icon-form"><i class='bx bxs-user'></i></span>
+                                        <ErrorMessage class="notif-verror" name="sex" />
+                                    </div>
                                 </div>
-                                <Field as="select" name="profession" id="profession" class="form-control"
-                                    v-model="form_Reg.profession" v-else>
-                                    <option v-for="profession in profession_enable"
-                                        v-bind:value="profession.profession_id">
-                                        {{ profession.profession_name }}
-                                    </option>
-                                </Field>
-                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
-                                <ErrorMessage class="notif-verror" name="profession" />
                             </div>
-                            <div class="form-group" v-if="form_Reg.profession_isothers == 'Y'">
-                                <Field type="text" class="form-control" name="profession_others"
-                                    v-model="form_Reg.profession_others"
-                                    placeholder="Profession Others / Profesi Lainnya" :rules="isRequired"
-                                    :class="{ 'errorfield': errors.profession_others }" />
-                                <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
-                                <ErrorMessage class="notif-verror" name="profession_others" />
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-select-search"
+                                        v-if="event_detail.setting.profession_toggle == 'Y'">
+                                        <div class="form-control-select" :class="{ 'errorfield': errors.profession }"
+                                            v-if="event_detail.setting.profession_required == 'Y'">
+                                            <Field as="select" name="profession" id="profession" class="form-control"
+                                                v-model="form_Reg.profession" :rules="isRequired">
+                                                <option v-for="profession in profession_enable"
+                                                    v-bind:value="profession.profession_id">
+                                                    {{ profession.profession_name }}
+                                                </option>
+                                            </Field>
+                                        </div>
+                                        <Field as="select" name="profession" id="profession" class="form-control"
+                                            v-model="form_Reg.profession" v-else>
+                                            <option v-for="profession in profession_enable"
+                                                v-bind:value="profession.profession_id">
+                                                {{ profession.profession_name }}
+                                            </option>
+                                        </Field>
+                                        <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                        <ErrorMessage class="notif-verror" name="profession" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group" v-if="form_Reg.profession_isothers == 'Y'">
+                                        <Field type="text" class="form-control" name="profession_others"
+                                            v-model="form_Reg.profession_others"
+                                            placeholder="Profession Others / Profesi Lainnya" :rules="isRequired"
+                                            :class="{ 'errorfield': errors.profession_others }" />
+                                        <span class="icon-form"><i class='bx bxs-briefcase'></i></span>
+                                        <ErrorMessage class="notif-verror" name="profession_others" />
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group form-select-search"
                                 v-if="event_detail.setting.jobtitle_toggle == 'Y'">
@@ -447,7 +475,7 @@
             },
             getEvent() {
                 this.topFunction()
-                this.getSalutation()
+                // this.getSalutation()
                 this.get_codecountry()
                 if (this.event_detail.setting.yob_toggle == 'Y') {
                     this.get_yearslist()
@@ -962,45 +990,55 @@
                 document.title = `${title_page}`
             },
             onSubmit(values) {
-                // if (this.form_Reg.email == this.email_confirm) {
-                this.not_verify = false
-                this.form_Reg.phone = this.phone_number
-                this.isLoadingAnimation = true;
-
-                axios({
-                        url: "/rsvp/addguest",
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                        method: "POST",
-                        data: this.form_Reg,
-                    })
-                    .then(res => {
-                        if (res.data.status == 200) {
-                            localStorage.setItem('order_id', res.data.order_id)
-                            if (this.event_detail.setting.rsvp_assesment == 'Y') {
-                                this.$router.push("/questionaire/" + this.form_Reg.events_id);
+                if (this.form_Reg.email == this.email_confirm) {
+                    this.not_verify = false
+                    this.form_Reg.phone = this.phone_number
+                    this.isLoadingAnimation = true
+                    axios({
+                            url: "/rsvp/addguest",
+                            headers: {
+                                "Content-Type": "text/plain"
+                            },
+                            method: "POST",
+                            data: this.form_Reg,
+                        })
+                        .then(res => {
+                            if (res.data.status == 200) {
+                                localStorage.setItem('order_id', res.data.order_id)
+                                if (this.event_detail.setting.rsvp_assesment == 'Y') {
+                                    this.$router.push("/questionnairepage/" + this.form_Reg.events_id);
+                                } else {
+                                    this.$router.push("/checkout/" + this.form_Reg.events_id);
+                                }
                             } else {
-                                this.$router.push("/checkout/" + this.form_Reg.events_id);
+                                this.isLoadingAnimation = false;
+                                Swal.fire({
+                                        title: "Warning",
+                                        icon: "warning",
+                                        text: res.data.msg,
+                                    })
+                                    .then((value) => {});
                             }
-                        } else {
-                            this.isLoadingAnimation = false;
-                            Swal.fire({
-                                    title: "Warning",
-                                    icon: "warning",
-                                    text: res.data.msg,
-                                })
-                                .then((value) => {});
-                        }
-                    })
-                // } else {
-                //     this.not_verify = true
-                //     this.topFunction()
-                // }
+                        })
+                } else {
+                    this.not_verify = true
+                    this.topFunction()
+                }
             },
             backToCart() {
                 this.$router.push("/mycart/" + this.events_id);
-            }
+            },
+            getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(";");
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == " ") c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+
 
         },
         mounted() {

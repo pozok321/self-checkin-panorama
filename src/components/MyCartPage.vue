@@ -1,7 +1,7 @@
 <template>
     <section class="vh-100 container-fluid">
         <div class="row">
-            <div class="col-md-8 p-5 vh-100">
+            <div class="col-md-8 p-5 vh-100 bg-white">
                 <div class="justify-content-between flex mb-3" name="cart">
                     <div class="my-car mt-4">
                         <img src="../assets/image/cart.svg" alt="cart">
@@ -14,8 +14,8 @@
                 </div>
                 <div class="border-bottom mb-2"></div>
                 <div class="row">
-                    <div class="col-md-4"><img :src="global_url + this.event_detail.poster_mobile" alt="cart"width="100%" height="100%"</div>
-                    <div class="col-md-6 top-50 start-0 m-auto ">
+                    <div class="col-md-4"><img :src="global_url + this.event_detail.poster_mobile" alt="cart"
+                            width="100%" height="100%" </div> <div class="col-md-6 top-50 start-0 m-auto ">
                         <div class="ticket-title">
                             <h4 class="text-start">{{this.event_detail.event_title}}</h4>
                         </div>
@@ -26,19 +26,19 @@
                         </div>
                         <div class="justify-content-between flex">
                             <div class="is-loading text-30" v-if="isLoading"></div>
-                                <div v-else>
-                                    <div class="ticket-price-mt" v-if="main_ticket.coret == false">
+                            <div v-else>
+                                <div class="ticket-price-mt" v-if="main_ticket.coret == false">
+                                    {{formatCurrency(main_ticket.normal_price, event_detail.currency)}}
+                                </div>
+                                <div class="coret-mt" v-else>
+                                    <div class="ticket-pricediscount-mt">
                                         {{formatCurrency(main_ticket.normal_price, event_detail.currency)}}
                                     </div>
-                                    <div class="coret-mt" v-else>
-                                        <div class="ticket-pricediscount-mt">
-                                            {{formatCurrency(main_ticket.normal_price, event_detail.currency)}}
-                                        </div>
-                                        <div class="ticket-price-mt">
-                                            {{formatCurrency(main_ticket.final_price, event_detail.currency)}}
-                                        </div>
+                                    <div class="ticket-price-mt">
+                                        {{formatCurrency(main_ticket.final_price, event_detail.currency)}}
                                     </div>
                                 </div>
+                            </div>
                             <div class="quantity-item" v-if="event_detail.pre_reg == 'Y'">
                                 <form id='myform' method='POST' class='quantity' action='#'>
                                     <input type='button' value='-' class='qtyminus minus' field='quantity'
@@ -72,7 +72,7 @@
                     </div>
                     <div class="col-md-1"></div>
                 </div>
-                <div class="row">
+                <div class="row" v-if="this.event_detail.setting.tnc_toggle== 'Y'">
                     <div class="formRSVP">
                         <h4 class="text-start my-3 ">Terms & Condition</h4>
                         <!-- <div v-if="isLoading">
@@ -148,10 +148,10 @@
                     </div>
                 </div>
                 <div class="row mt-5">
-                    <div class="total-payment col-md-4">
+                    <div class="total-payment col-md-3">
                         <p>Total Payment</p>
                     </div>
-                    <div class="price col-md-8 p-ticket text-end">
+                    <div class="price col-md-9 p-ticket text-end">
                         <div class="price">
                             IDR {{ this.total }}
                         </div>
@@ -185,8 +185,7 @@
                 <div class="modal-content border-bottom-navy">
                     <div class="modal-body">
                         <div class="title-modal-custom">
-                            <div class="icon-modal"><img src="../assets/image/ticket-icon.png" width="39"
-                                    alt="Ticket">
+                            <div class="icon-modal"><img src="../assets/image/ticket-icon.png" width="39" alt="Ticket">
                             </div>
                         </div>
                         <p>&nbsp;</p>
@@ -267,7 +266,7 @@
                 ticket_details: [],
                 ticket_session: [],
                 event_declaration: [],
-                poster_mobile:"",
+                poster_mobile: "",
                 enable_button: true,
                 subtotal: '',
                 total: '',
@@ -341,6 +340,9 @@
 
                             if (this.event_detail.rsvp_counter !== 'O') {
                                 this.$router.push("/closed/" + this.form_getCart.events_id);
+                            }
+                            if (this.event_detail.setting.tnc_toggle == 'Y') {
+                                this.getDeclare();
                             }
                         }
                     })
@@ -419,8 +421,8 @@
             },
             next_page() {
                 this.LoadingButton = true;
-                localStorage.setItem("ticket_qty", JSON.stringify( this.form_getCart.ticket_qty));
-                localStorage.setItem("total_price", JSON.stringify(  this.total));
+                localStorage.setItem("ticket_qty", JSON.stringify(this.form_getCart.ticket_qty));
+                localStorage.setItem("total_price", JSON.stringify(this.total));
                 this.$router.push("/registrationpage/" + this.form_getCart.events_id);
             },
             plus_qty(ticket, ticket_qty) {
@@ -586,7 +588,6 @@
                 this.isLoadingHeader = true
                 this.isLoading = true;
                 this.LoadingButton = true
-
                 axios({
                         url: "/rsvp/getcart",
                         headers: {
@@ -610,10 +611,8 @@
                             this.main_ticket = this.cart_detail.main_ticket;
                             this.addon_ticket = this.cart_detail.addon_ticket;
                             this.total = this.cart_detail.total_price;
-
                             for (let i = 0; i < this.addon_ticket.length; i++) {
                                 this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
-
                             }
 
                             if (this.event_detail.rsvp_counter !== 'O') {
@@ -624,12 +623,7 @@
                                 localStorage.setItem("mt_id", JSON.stringify(this.form_getCart.ticketid));
                                 localStorage.setItem("ticket_qty", this.form_getCart.ticket_qty);
                                 localStorage.setItem("total", this.total);
-                                if (this.event_detail.setting.tnc_toggle == 'N') {
-                                    this.$router.push("/registrationpage/" + this.form_getCart.events_id);
-                                } else {
-                                    this.$router.push("/questionnairepage/" + this.form_getCart.events_id);
-                                }
-
+                                this.$router.push("/registrationpage/" + this.form_getCart.events_id);
                             } else if (this.main_ticket.mark_soldout == 'N' && this.main_ticket.ticket_remain < 1) {
                                 Swal.fire({
                                     title: "Warning",
@@ -659,7 +653,6 @@
             } else {
                 this.getCookie()
             }
-            this.getDeclare();
             this.getCart();
         },
     };
@@ -677,7 +670,7 @@
         font-family: Helvetica;
         margin-bottom: 0px;
         text-align: center;
-        color:#09303E;
+        color: #09303E;
         font-weight: bold;
     }
 
@@ -717,7 +710,6 @@
         border-radius: 20px;
     }
 
-    
     .ticket-price-mt {
         display: inline-block;
         font-family: 'PlusJakartaSans';
@@ -763,7 +755,8 @@
         font-size: 16pt;
         font-weight: bold;
     }
-    .ticket-number{
+
+    .ticket-number {
         font-size: 1.25rem;
         font-weight: bold;
     }
@@ -778,7 +771,7 @@
         font-style: italic;
     }
 
-    .add-on-ticket{
+    .add-on-ticket {
         font-size: 1rem;
         font-weight: bold;
     }
@@ -882,6 +875,7 @@
         text-decoration: line-through;
         line-height: 1;
     }
+
     .ticket-price-mt {
         display: inline-block;
         font-family: 'PlusJakartaSans';
@@ -899,8 +893,9 @@
         color: #F24C4C;
         text-decoration: line-through;
     }
-    .poster_mobile{
-       width: fit-content;
+
+    .poster_mobile {
+        width: fit-content;
     }
 
     #myform {

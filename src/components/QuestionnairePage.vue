@@ -5,43 +5,118 @@
                 <h1>Questionnaire</h1>
                 <span>Tell us about you and your business</span>
             </div>
-            <div id="input-data" class="w-75 m-auto">
-                <form>
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="fullname" aria-describedby="emailHelp"
-                            placeholder="Full Name">
+            <div class="content-limit">
+                <div class="wrap-content radius-floating-none bg-white">
+                    <div class="formRSVP">
+                        <form @submit="submitQuestion">
+                            <div>
+                                <div class="form-box" v-for="question in question_data.question"
+                                    :class="{ 'redBox' : notifArray[question.question_id]}">
+                                    <div class="is-loading text-30" v-if="isLoading"></div>
+                                    <div v-else>
+                                        <h4 class="title-sub">{{question.question}}</h4>
+                                    </div>
+                                    <div v-if="question.input_type == 'RB'">
+                                        <div class="form-check form-check-block" v-for="QA in question.answer">
+                                            <div class="is-loading text-30" v-if="isLoading"></div>
+                                            <div v-else>
+                                                <label class="form-check-label" :for="'qa-'+question.question_id+QA.id"
+                                                    v-if="QA.answer_feedback == 'Y'">
+                                                    <input class="form-check-input" type="radio"
+                                                        :id="'qa-'+question.question_id+QA.id"
+                                                        :value="question.question_id+','+QA.id+','+QA.quest_score+','+QA.is_others"
+                                                        @click="action_changerb(question.question_id,QA)"
+                                                        :name="'question-'+question.question_id" checked />
+                                                    <span v-html="QA.answer_content"></span>
+                                                </label>
+                                                <label class="form-check-label" :for="'qa-'+question.question_id+QA.id"
+                                                    v-else>
+                                                    <input class="form-check-input" type="radio"
+                                                        :name="'question-'+question.question_id"
+                                                        :id="'qa-'+question.question_id+QA.id"
+                                                        :value="question.question_id+','+QA.id+','+QA.quest_score+','+QA.is_others"
+                                                        @click="action_changerb(question.question_id,QA)">
+                                                    <span v-html="QA.answer_content"></span>
+                                                </label>
+
+                                                <div class="form-group" v-if="QA.is_others == 'Y'"
+                                                    :id="'qa_other_wrap-'+question.question_id+QA.id"
+                                                    style="display:none">
+                                                    <input type="text" class="form-control"
+                                                        :id="'qa_other-'+question.question_id+QA.id"
+                                                        :name="'qa_other-'+question.question_id+QA.id"
+                                                        placeholder="Answer Others" disabled />
+                                                    <span class="icon-form"><i class='bx bx-check-square'></i></span>
+                                                    <div class="notif-verror"
+                                                        :id="'qa_other_notif-'+question.question_id+QA.id"
+                                                        style="display:none">{{ titleNotifOther }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="notif-verror" v-if="notifArray[question.question_id]">
+                                            {{ titleNotif }}
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <div class="form-check form-check-block" v-for="QA in question.answer">
+                                            <div class="is-loading text-30" v-if="isLoading"></div>
+                                            <div v-else>
+                                                <label class="form-check-label" :for="'qa-'+question.question_id+QA.id"
+                                                    v-if="QA.answer_feedback == 'Y'">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        :id="'qa-'+question.question_id+QA.id"
+                                                        :value="question.question_id+','+QA.id+','+QA.quest_score+','+QA.is_others"
+                                                        @input="action_change(question.question_id,QA)"
+                                                        :name="'question-'+question.question_id" checked>
+                                                    <span v-html="QA.answer_content"></span>
+                                                </label>
+                                                <label class="form-check-label" :for="'qa-'+question.question_id+QA.id"
+                                                    v-else>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        :id="'qa-'+question.question_id+QA.id"
+                                                        :value="question.question_id+','+QA.id+','+QA.quest_score+','+QA.is_others"
+                                                        :name="'question-'+question.question_id"
+                                                        @input="action_change(question.question_id,QA)">
+                                                    <span v-html="QA.answer_content"></span>
+                                                </label>
+
+                                                <div class="form-group" v-if="QA.is_others == 'Y'"
+                                                    :id="'qa_other_wrap-'+question.question_id+QA.id"
+                                                    style="display:none">
+                                                    <input type="text" class="form-control"
+                                                        :id="'qa_other-'+question.question_id+QA.id"
+                                                        :name="'qa_otherfield-'+question.question_id+QA.id"
+                                                        placeholder="Answer Others" disabled>
+                                                    <span class="icon-form"><i class='bx bx-check-square'></i></span>
+                                                    <div class="notif-verror"
+                                                        :id="'qa_other_notif-'+question.question_id+QA.id"
+                                                        style="display:none">{{ titleNotifOther }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="notif-verror" v-if="notifArray[question.question_id]">
+                                            {{ titleNotif }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn green-btn" id="btn_next">
+                                    <span v-if="LoadingButton">
+                                        <span class="loader loading-quarter"></span>
+                                        Processing
+                                    </span>
+                                    <span v-else>
+                                        Next
+                                    </span>
+                                </button>
+                            </div>
+                        </Form>
                     </div>
-                    <div class="row">
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="email"  placeholder="Email">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="confirmationemail"  placeholder="Confirmation E-mail">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="countrycode"  placeholder="Country">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="province"  placeholder="Province">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="city"  placeholder="City">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="phone"  placeholder="Phone">
-                        </div>
-                        <div class="mb-3 col-md-6">
-                            <input type="password" class="form-control" id="company"  placeholder="Company">
-                        </div>
-                    </div>
-                </form>
-                <div class="form-group text-end">
-                    <button class="btn-back mt-4 mx-3" @click="confirmGetTicket()">Back</button>
-                    <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
                 </div>
             </div>
         </div>
-        
+
     </section>
 </template>
 
@@ -52,100 +127,301 @@
     export default {
         data() {
             return {
-                url: '',
-                zpl_printer: "",
-                thermal_printer: "",
-                showOnMedia: "",
-                venue_id: "",
-                session_topic: "",
-                prev_action: "",
-                ticket_id: "",
-                ticket_list: "",
-                multiple_session_entry: "",
-                qr_setting: "",
-                ticket: "",
+                event_detail: JSON.parse(localStorage.getItem("event_details")),
+                form_getQuestion: {
+                    events_id: this.$route.params.Eventsid,
+                    order_id: localStorage.getItem("order_id"),
+                    prev_action: "addguest"
+                },
+                form_sendAnswer: {
+                    events_id: this.$route.params.Eventsid,
+                    guests_id: '',
+                    order_id: localStorage.getItem("order_id"),
+                    cbAnswer_id: [],
+                    ip_address: localStorage.getItem("ip_address"),
+                    prev_action: "questget"
+                },
+                question_data: [],
+                answer_checked: [],
+                answer_isother: [],
+                answer_other: [],
+                notifArray: [],
+                notifArrayOther: [],
+                declare_checkbox: false,
                 global_url: this.$globalURL,
-                obj: {
-                    prev_action: "",
-                    events_id: "",
-                    ticket_level: "MT",
-                }
+                isLoading: false,
+                LoadingButton: false,
+                isLoadingAnimation: false,
+                route_name: this.$route.name,
+                // titlePage: 'Attendance Details',
+                // descPage: 'Please fill in all fields',
+                // titleNotif: 'Please select something',
+                // titleNotifOther: 'this field is required',
             };
         },
         components: {
 
         },
         methods: {
-            createCookie(name, value, day) {
-                if (day) {
-                    let currentDate = new Date();
-                    currentDate.setTime(currentDate.getTime() + (day * 24 * 60 * 60 * 1000));
-                    var expires = "expires=" + currentDate.toGMTString();
-                } else {
-                    var expires = "";
+            isRequired(value) {
+                if (!value) {
+                    return 'this field is required';
                 }
-                document.cookie = name + "=" + value + ";" + expires + "; path=/";
+                return true;
+            },
+            get_ipaddress() {
+                var this_ = this
+                $.getJSON('https://jsonip.com/', function (data) {
+                    this_.ip_address = data.ip
+                    localStorage.setItem('ip_address', this_.ip_address)
+                });
+            },
+            getQuestion() {
+                this.topFunction()
+                this.isLoading = true;
+                axios({
+                        url: "rsvp/questget",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_getQuestion,
+                    })
+                    .then(res => {
+
+                        this.question_data = res.data;
+                        if (res.data.status === '201') {
+
+                            Swal.fire({
+                                    title: "Warning",
+                                    icon: "warning",
+                                    text: res.data.msg,
+                                })
+                                .then((value) => {
+                                    // localStorage.clear();
+                                    this.get_ipaddress();
+                                    this.$router.push("/homeregistrationpage");
+                                });
+                        } else {
+                            this.isLoading = false;
+                            this.form_sendAnswer.guests_id = this.question_data.guests_id
+
+                            for (let i = 0; i < this.question_data.question.length; i++) {
+                                this.notifArray[this.question_data.question[i].question_id] = false
+                                for (let j = 0; j < this.question_data.question[i].answer.length; j++) {
+                                    this.notifArrayOther[this.question_data.question[i].question_id + this
+                                        .question_data
+                                        .question[i].answer[j].id] = false
+                                    $("#qa_other_notif-" + this.question_data.question[i].question_id + this
+                                        .question_data.question[i].answer[j].id).hide();
+                                }
+                            }
+                            this.js()
+                        }
+                    })
+            },
+
+            action_changerb(question_id, value) {
+                this.answer_isother[question_id + value.id] = value.is_others
+                for (let i = 0; i < this.question_data.question.length; i++) {
+                    if (this.question_data.question[i].question_id == question_id) {
+                        for (let j = 0; j < this.question_data.question[i].answer.length; j++) {
+                            if (this.question_data.question[i].answer[j].id == value.id) {
+                                if (value.is_others == 'Y') {
+                                    $("#qa_other_wrap-" + question_id + value.id).show()
+                                    $("#qa_other-" + question_id + value.id).prop('disabled', false);
+                                } else {
+                                    $("#qa_other_wrap-" + question_id + value.id).hide()
+                                    $("#qa_other-" + question_id + value.id).prop('disabled', true);
+                                }
+                            } else {
+                                $("#qa_other_wrap-" + this.question_data.question[i].question_id + this
+                                    .question_data
+                                    .question[i].answer[j].id).hide()
+                                $("#qa_other-" + this.question_data.question[i].question_id + this.question_data
+                                    .question[i]
+                                    .answer[j].id).prop('disabled', true);
+                            }
+                        }
+                    }
+                }
+            },
+            action_change(question_id, value) {
+                this.answer_isother[question_id + value.id] = value.is_others
+                if ($("#qa-" + question_id + value.id).is(":checked")) {
+                    this.answer_checked[question_id + value.id] = 'Y'
+                    if (this.answer_isother[question_id + value.id] == 'Y') {
+                        $("#qa_other_wrap-" + question_id + value.id).show()
+                        $("#qa_other-" + question_id + value.id).prop('disabled', false);
+                    } else {
+                        $("#qa_other_wrap-" + question_id + value.id).hide()
+                        $("#qa_other-" + question_id + value.id).prop('disabled', true);
+                    }
+                } else {
+                    this.answer_checked[question_id + value.id] = 'N'
+                    $("#qa_other_wrap-" + question_id + value.id).hide()
+                    $("#qa_other-" + question_id + value.id).prop('disabled', true);
+                }
+            },
+            topFunction() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            },
+            js() {
+                var mybutton = document.getElementById("myBtn");
+                window.onscroll = function () {
+                    scrollFunction()
+                };
+
+                function scrollFunction() {
+                    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                        mybutton.style.display = "block";
+                    } else {
+                        mybutton.style.display = "none";
+                    }
+                }
+            },
+            js_showchecked() {
+                setTimeout(function () {
+                    (function ($) {
+                        $.fn.hasScrollBar = function () {
+                            return this.get(0).scrollHeight > this.height();
+                        }
+                    })(jQuery);
+                    var scrollbar = $('#stylebar').hasScrollBar()
+
+                    var master_agreement = document.getElementById('stylebar');
+                    if (scrollbar == true) {
+                        jQuery(master_agreement).scroll(function (e) {
+                            if (isScrolledToBottom(master_agreement)) {
+                                jQuery('#declare_checkbox').prop('disabled', false);
+                            }
+                        });
+                    } else {
+                        jQuery('#declare_checkbox').prop('disabled', false);
+                    }
+
+                    function isScrolledToBottom(el) {
+                        var $el = $(el);
+                        return el.scrollHeight - $el.scrollTop() - $el.outerHeight() < 1;
+                    }
+                }, 1000);
+            },
+            setTitle(title_page) {
+                document.title = `${title_page}`
+            },
+            next_page() {
+                this.LoadingButton = true
+                this.$router.push("/register/" + this.form_getDeclare.events_id);
+            },
+            submitQuestion(values) {
+                this.form_sendAnswer.cbAnswer_id = []
+                var lengthQuestion = 0
+                var lengthAnswer = 0
+                var lengthAnswerOther = 0
+                var is = this
+                for (let i = 0; i < this.question_data.question.length; i++) {
+                    if ($("input[name=question-" + this.question_data.question[i].question_id + "]").is(':checked')) {
+                        lengthQuestion = lengthQuestion + 1;
+                        $("input[name=question-" + this.question_data.question[i].question_id + "]:checked").each(
+                            function () {
+                                var array = $(this).val().split(",");
+                                var answer_id = array[1]
+                                var answer_other = $("#qa_other-" + is.question_data.question[i].question_id +
+                                    answer_id).val()
+                                if (answer_other !== undefined) {
+                                    lengthAnswer = lengthAnswer + 1
+                                    if (answer_other !== '') {
+                                        lengthAnswerOther = lengthAnswerOther + 1
+                                        $("#qa_other-" + is.question_data.question[i].question_id + answer_id)
+                                            .removeClass("redBox")
+                                        $("#qa_other_notif-" + is.question_data.question[i].question_id + answer_id)
+                                            .hide();
+                                        is.notifArrayOther[is.question_data.question[i].question_id + answer_id] =
+                                            false
+                                        var cbAnswer_id = $(this).val() + "," + answer_other
+                                        is.form_sendAnswer.cbAnswer_id.push(cbAnswer_id)
+                                    } else {
+                                        $("#qa_other-" + is.question_data.question[i].question_id + answer_id)
+                                            .addClass("redBox")
+                                        $("#qa_other_notif-" + is.question_data.question[i].question_id + answer_id)
+                                            .show();
+                                        is.notifArrayOther[is.question_data.question[i].question_id + answer_id] =
+                                            true
+                                        is.topFunction()
+                                    }
+                                } else {
+                                    is.form_sendAnswer.cbAnswer_id.push($(this).val())
+                                }
+                            });
+                        this.notifArray[this.question_data.question[i].question_id] = false
+                    } else {
+                        this.notifArray[this.question_data.question[i].question_id] = true
+                        this.topFunction()
+                        return false;
+                    }
+                }
+
+                if (this.question_data.question.length == lengthQuestion && lengthAnswer == lengthAnswerOther) {
+                    this.actionSubmitQuestionare()
+                } else {}
+            },
+            actionSubmitQuestionare() {
+                this.isLoadingAnimation = true;
+
+                axios({
+                        url: "rsvp/savequest",
+                        headers: {
+                            "Content-Type": "text/plain"
+                        },
+                        method: "POST",
+                        data: this.form_sendAnswer,
+                    })
+                    .then(res => {
+                        if (res.data.status == 200) {
+                            localStorage.setItem('guests_id', res.data.guests_id)
+                            this.$router.push("/checkout/" + this.form_getQuestion.events_id);
+                        } else {
+                            this.isLoadingAnimation = false;
+                            Swal.fire({
+                                    title: "Warning",
+                                    icon: "warning",
+                                    text: res.data.msg,
+                                })
+                                .then((value) => {});
+                        }
+                    })
             },
             getCookie(name) {
                 var nameEQ = name + "=";
-                var ca = document.cookie.split(';');
+                var ca = document.cookie.split(";");
                 for (var i = 0; i < ca.length; i++) {
                     var c = ca[i];
-                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    while (c.charAt(0) == " ") c = c.substring(1, c.length);
                     if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
                 }
                 return null;
             },
-            ticketList() {
-                axios({
-                        method: "POST",
-                        url: "/rsvp/ticketlist",
-                        data: this.obj,
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                    })
-                    .then(res => {
-                        this.ticket = res.data;
-
-                        // this.ticket_level = this.ticket.ticket_level;
-                        // this.prev_action = this.ticket.prev_action;
-                        console.log(this.ticket, "test123");
-                    })
-
-            },
-
-            simpanData() {
-                localStorage.zpl_printer = this.zpl_printer;
-                localStorage.thermal_printer = this.thermal_printer;
-                console.log("data berhasil disimpan");
-            },
-            hapusData() {
-                localStorage.removeItem = this.zpl_printer;
-                localStorage.removeItem = this.thermal_printer;
-            }
         },
         mounted() {
-            this.events_id = $cookies.get("events_id");
-            if (localStorage.zpl_printer) {
-                this.zpl_printer = localStorage.zpl_printer;
-            }
-            if (localStorage.thermal_printer) {
-                this.thermal_printer = localStorage.thermal_printer;
-            }
-
-            if (this.events_id == null) {
-                Swal.fire({
-                    title: "Your Session is Expired!",
-                    icon: "warning",
-                });
-                setTimeout(1000);
+            if (this.event_detail === null) {
                 this.$router.push("/");
             } else {
-                this.getCookie()
+                if (this.event_detail.rsvp_counter != 'O') {
+                    this.$router.push("/closed/" + this.form_getQuestion.events_id);
+                }
+                if (this.getQuestion.order_id != null) {
+                    this.$router.push("/registrationpage/" + this.events_id);
+                } else {
+                    if (this.event_detail.setting.rsvp_assesment == 'N') {
+                        this.$router.push("/checkout/" + this.form_Reg.events_id);
+                    }
+                    this.getQuestion();
+                    this.setTitle("Questionaire - " + this.event_detail.event_title + " - Undangin ")
+                }
             }
-            this.ticketList();
-
         },
     };
 </script>
@@ -171,68 +447,17 @@
         color: #fff;
     }
 
-    .border-dash {
-        border-style: dashed;
-        border-width: thin;
-        border-radius: 20px;
-    }
-
-    .card-deck {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: stretch;
-    }
-
-    .ticket-buy-center {
-        position: absolute;
-        left: 50%;
-        right: 50%;
-        text-align: center;
-        align-items: center;
-    }
-
-    .btn-checkin {
-        background-color: #EBEBEB;
-        color: #25516B;
-        border-radius: 20px;
-        font-size: 20px;
-        align-items: center;
-        text-align: center;
-        border: none;
+    .form-control {
         padding: 10px;
-        font-weight: bold;
+        padding-left: 31px;
+        height: 47px;
+        border: 1px solid #91B2C3;
+        border-radius: 10pt;
     }
 
-    .btn-back {
-        width: 25%;
-        background-color: #FFFFFF;
-        color: #2096C1;
-        font-family: Helvetica;
-        border-radius: 10px;
-        font-size: 16pt;
-        padding: 5px 0 5px 0;
-        font-weight: bold;
-        border-color: #2096C1;
-    }
+    .redBox {
+        border: 1px solid red;
 
-    .btn-next {
-        width: 25%;
-        background-color: #315568;
-        color: #fff;
-        font-family: Helvetica;
-        border-radius: 10px;
-        font-size: 16pt;
-        padding: 5px 0 5px 0;
-        font-weight: bold;
-        border-color: #315568;
-    }
-
-    .bg-registration-page {
-        position: relative;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        height: 100%;
     }
 
     .centered {
