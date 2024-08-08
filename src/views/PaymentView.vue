@@ -1,8 +1,8 @@
 <script setup>
-import PaymentPage from "../components/PaymentPage.vue";
+import CheckoutPage from "../components/CheckoutPage.vue";
 </script>
 <template>
-  <PaymentPage />
+  <CheckoutPage />
 </template>
 
 <style scoped></style>

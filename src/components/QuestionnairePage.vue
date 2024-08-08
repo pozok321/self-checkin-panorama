@@ -1,7 +1,7 @@
 <template>
-    <section class="vh-100">
-        <div class="container">
-            <div class="text-center my-5">
+    <section class="vh-100 bg-white">
+        <div class="container p-5">
+            <div class="text-center">
                 <h1>Questionnaire</h1>
                 <span>Tell us about you and your business</span>
             </div>
@@ -111,6 +111,9 @@
                                     </span>
                                 </button>
                             </div>
+                            <button @click="topFunction()" id="myBtn" title="Go to top">
+                                <i class='bx bxs-chevron-up'></i>
+                            </button>
                         </Form>
                     </div>
                 </div>
@@ -153,10 +156,10 @@
                 LoadingButton: false,
                 isLoadingAnimation: false,
                 route_name: this.$route.name,
-                // titlePage: 'Attendance Details',
-                // descPage: 'Please fill in all fields',
-                // titleNotif: 'Please select something',
-                // titleNotifOther: 'this field is required',
+                titlePage: 'Attendance Details',
+                descPage: 'Please fill in all fields',
+                titleNotif: 'Please select something',
+                titleNotifOther: 'this field is required',
             };
         },
         components: {
@@ -382,7 +385,7 @@
                     .then(res => {
                         if (res.data.status == 200) {
                             localStorage.setItem('guests_id', res.data.guests_id)
-                            this.$router.push("/checkout/" + this.form_getQuestion.events_id);
+                            this.$router.push("/checkoutpage/" + this.form_getQuestion.events_id);
                         } else {
                             this.isLoadingAnimation = false;
                             Swal.fire({
@@ -416,7 +419,7 @@
                     this.$router.push("/registrationpage/" + this.events_id);
                 } else {
                     if (this.event_detail.setting.rsvp_assesment == 'N') {
-                        this.$router.push("/checkout/" + this.form_Reg.events_id);
+                        this.$router.push("/checkoutpage/" + this.events_id);
                     }
                     this.getQuestion();
                     this.setTitle("Questionaire - " + this.event_detail.event_title + " - Undangin ")

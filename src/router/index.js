@@ -5,8 +5,6 @@ import AgendaView from "../views/AgendaView.vue";
 import EventDetailView from "../views/EventDetailView.vue";
 import HomeRegistrationView from "../views/HomeRegistrationView.vue";
 import CompletedView from "../views/CompletedView.vue";
-import MyCartView from "../views/MyCartView.vue";
-import PaymentView from "../views/PaymentView.vue";
 import SuccessPageView from "../views/SuccessPageView.vue";
 
 const router = createRouter({
@@ -43,11 +41,6 @@ const router = createRouter({
       component: CompletedView,
     },
     {
-      path: "/paymentpage",
-      name: "paymentpage",
-      component: PaymentView,
-    },
-    {
       path: "/successpage",
       name: "successpage",
       component: SuccessPageView,
@@ -73,6 +66,11 @@ const router = createRouter({
       path: '/questionnairepage/:Eventsid',
       name: 'questionnairepage',
       component: () => import('../components/QuestionnairePage.vue') 
+    },
+    {
+      path: '/checkoutpage/:Eventsid',
+      name: 'checkoutpage',
+      component: () => import('../components/CheckoutPage.vue') 
     },
   ],
 });
