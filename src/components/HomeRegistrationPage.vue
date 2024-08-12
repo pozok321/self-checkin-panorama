@@ -78,6 +78,7 @@
                     .then(res => {
                         this.getEvent = res.data;
                         this.ticket = this.getEvent.ticket;
+                        this.class_name = this.ticket.class_name;
                     })
             },
             add_to_cart(ticket) {

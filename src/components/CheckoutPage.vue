@@ -27,7 +27,7 @@
                 <p>Mr. Muhammad Irfan</p>
                 <p>muhammadirvan337@gmail.com</p>
                 <p>Order ID</p>
-                <p>UD20220722741944787</p>
+                <p>{{this.form_getCart.order_id}}</p>
               </div>
             </div>
           </div>
@@ -118,113 +118,314 @@
 <script>
   import Swal from "sweetalert2";
   import axios from "axios";
+  import {
+    Form,
+    Field,
+    ErrorMessage,
+  } from 'vee-validate';
 
   export default {
     data() {
       return {
-        url: "",
-        zpl_printer: "",
-        thermal_printer: "",
-        showOnMedia: "",
-        venue_id: "",
-        session_topic: "",
-        prev_action: "",
-        ticket_id: "",
-        ticket_list: "",
-        multiple_session_entry: "",
-        qr_setting: "",
-        ticket: "",
-        global_url: this.$globalURL,
-        obj: {
-          prev_action: "",
-          events_id: "",
-          ticket_level: "MT",
+        form_getCart: {
+          events_id: this.$route.params.Eventsid,
+          ticketid: JSON.parse(localStorage.getItem("mt_id")),
+          ticket_qty: localStorage.getItem("ticket_qty"),
+          order_id: localStorage.getItem("order_id"),
         },
+        form_getgetFree: {
+          events_id: this.$route.params.Eventsid,
+          ticketid: JSON.parse(localStorage.getItem("mt_id")),
+          ticket_qty: localStorage.getItem("ticket_qty"),
+          order_id: localStorage.getItem("order_id"),
+          promo_id: '',
+        },
+        form_promoApply: {
+          events_id: this.$route.params.Eventsid,
+          ticketid: JSON.parse(localStorage.getItem("mt_id")),
+          ticket_qty: localStorage.getItem("ticket_qty"),
+          order_id: localStorage.getItem("order_id"),
+          coupon: '',
+        },
+        form_promoDelete: {
+          events_id: this.$route.params.Eventsid,
+          order_id: localStorage.getItem("order_id"),
+        },
+        order_id: localStorage.getItem("order_id"),
+        event_detail: JSON.parse(localStorage.getItem("event_details")),
+        cart_detail: [],
+        main_ticket: [],
+        addon_ticket: [],
+        ticket_ao: [],
+        length_ao: '',
+        subtotal: '',
+        total: '',
+        onhold_msg: '',
+        enable_button: true,
+        form_getticketSession: {
+          events_id: this.$route.params.Eventsid,
+          ticket_id: '',
+        },
+        ticket_details: [],
+        ticket_session: [],
+        msg_notif: '',
+        LoadingButton: false,
+        isLoadingAnimation: false,
+        global_url: this.$globalURL,
+        isLoading: false,
+        isLoadingHeader: false,
+        route_name: this.$route.name
       };
     },
-    components: {},
+    components: {
+      Form,
+      Field,
+      ErrorMessage,
+    },
     methods: {
-      ticketList() {
+      isRequired(value) {
+        if (!value) {
+          return 'this field is required';
+        }
+        return true;
+      },
+      getCart() {
+        this.topFunction()
+        this.isLoadingHeader = true
+        this.isLoading = true;
         axios({
-          method: "POST",
-          url: "/rsvp/ticketlist",
-          data: this.obj,
-          headers: {
-            "Content-Type": "text/plain",
-          },
-        }).then((res) => {
-          this.ticket = res.data;
-          console.log(this.ticket, "test123");
+            url: "/rsvp/getcheckout",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            method: "POST",
+            data: this.form_getCart,
+          })
+          .then(res => {
+            this.isLoading = false;
+            this.isLoadingHeader = false
+            if (res.data.status == 201) {
+              Swal.fire({
+                  title: "Warning",
+                  icon: "warning",
+                  text: res.data.msg,
+                })
+                .then((value) => {
+                  this.$router.push("/ticketlist/" + this.form_getCart.events_id);
+                });
+            } else {
+              this.cart_detail = res.data;
+              this.main_ticket = this.cart_detail.main_ticket;
+              this.addon_ticket = this.cart_detail.addon_ticket;
+              this.total = this.cart_detail.total_price;
+              this.form_getgetFree.promo_id = this.main_ticket.promo_id
+
+              for (let i = 0; i < this.addon_ticket.length; i++) {
+                this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
+                if (this.addon_ticket[i].selected == true) {
+                  this.length_ao = this.length_ao + 1
+                }
+              }
+              this.setTitle("Check-Out - " + this.event_detail.event_title + " - Undangin")
+
+              if (this.event_detail.rsvp_counter !== 'O') {
+                this.$router.push("/closed/" + this.form_getCart.events_id);
+              }
+            }
+          })
+      },
+      topFunction() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
         });
       },
+      setTitle(title_page) {
+        document.title = `${title_page}`
+      },
+      get_infoticket(ticket) {
+        this.isLoading = true
+        this.form_getticketSession.ticket_id = ticket.ticket_id
 
-      simpanData() {
-        localStorage.zpl_printer = this.zpl_printer;
-        localStorage.thermal_printer = this.thermal_printer;
-        console.log("data berhasil disimpan");
+        axios({
+            url: "/rsvp/ticketsession",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            method: "POST",
+            data: this.form_getticketSession,
+          })
+          .then(res => {
+            this.isLoading = false
+            this.ticket_details = res.data
+            this.ticket_session = res.data.ticket_session
+          })
       },
-      hapusData() {
-        localStorage.removeItem = this.zpl_printer;
-        localStorage.removeItem = this.thermal_printer;
+      formatCurrency(value, currency) {
+        if (currency == 'IDR') {
+          if (value == 0) {
+            return currency = currency + ' ' + value
+          } else {
+            var number_string = value ? value.toString().replace(/[^,\d]/g, '') : '',
+              split = number_string.split(','),
+              sisa = split[0].length % 3,
+              rupiah = split[0].substr(0, sisa),
+              ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+            var separator = '';
+            // tambahkan titik jika yang di input sudah menjadi angka ribuan
+            if (ribuan) {
+              separator = sisa ? '.' : '';
+              rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            return currency == undefined ? rupiah : (rupiah ? currency + ' ' + rupiah : '');
+          }
+        } else {
+          return currency + value ? currency + ' ' + value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') :
+            '';
+        }
       },
+      kFormatter(num, currency) {
+        if (currency == 'IDR') {
+          return Math.abs(num) > 999 ? currency + ' ' + Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) +
+            'K' : currency + ' ' + Math.sign(num) * Math.abs(num)
+        } else {
+          return currency + value ? currency + ' ' + value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') :
+            '';
+        }
+      },
+      close_promo() {
+        this.msg_notif = ''
+        this.form_promoApply.coupon = ''
+      },
+      remove_coupon() {
+        this.isLoadingAnimation = true;
+        axios({
+            url: "/rsvp/deletecoupon",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            method: "POST",
+            data: this.form_promoDelete,
+          })
+          .then(res => {
+            this.isLoadingAnimation = false;
+            if (res.data.status == 200) {
+              document.getElementById("close_deleteCode").click();
+              this.getCart()
+              Swal.fire({
+                  title: "Success",
+                  icon: "success",
+                  text: res.data.msg,
+                })
+                .then((value) => {});
+            } else {
+              var wording = "<span style='color:red; font-size:14px; font-weight:bold'>" + res.data.msg + "<span>."
+              Swal.fire({
+                  title: "Warning",
+                  icon: "warning",
+                  html: wording,
+                })
+                .then((value) => {});
+            }
+          })
+      },
+      applyPromo(values) {
+        this.isLoadingAnimation = true;
+        axios({
+            url: "/rsvp/checkcoupon",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            method: "POST",
+            data: this.form_promoApply,
+          })
+          .then(res => {
+            this.isLoadingAnimation = false;
+            if (res.data.status == 200) {
+              document.getElementById("close_addCode").click();
+              this.getCart()
+              Swal.fire({
+                  title: "Success",
+                  icon: "success",
+                  text: res.data.msg,
+                })
+                .then((value) => {});
+            } else {
+              this.msg_notif = res.data.msg
+              var wording = "<span style='color:red; font-size:14px; font-weight:bold'>" + res.data.msg + "<span>."
+              Swal.fire({
+                  title: "Warning",
+                  icon: "warning",
+                  html: wording,
+                })
+                .then((value) => {});
+            }
+          })
+      },
+      make_payment() {
+        this.isLoadingAnimation = true;
+        axios({
+            url: "/rsvp/makepayment",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            method: "POST",
+            data: this.form_getCart,
+          })
+          .then(res => {
+            if (res.data.status == 200) {
+              localStorage.clear();
+              window.location = res.data.urlGateway;
+            } else {
+              this.isLoadingAnimation = false;
+              Swal.fire({
+                  title: "Warning",
+                  icon: "warning",
+                  text: res.data.msg,
+                })
+                .then((value) => {});
+            }
+          })
+      },
+      get_forfree() {
+        this.isLoadingAnimation = true;
+        axios({
+            url: "/rsvp/freeticket",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            method: "POST",
+            data: this.form_getgetFree,
+          })
+          .then(res => {
+            if (res.data.status == 200) {
+              localStorage.clear();
+              window.location = this.global_url + "/payment/finish?events_id=" + this.form_getCart.events_id;
+            } else {
+              this.isLoadingAnimation = false;
+              Swal.fire({
+                  title: "Warning",
+                  icon: "warning",
+                  text: res.data.msg,
+                })
+                .then((value) => {});
+            }
+          })
+      }
     },
     mounted() {
-      this.events_id = $cookies.get("events_id");
-      if (localStorage.zpl_printer) {
-        this.zpl_printer = localStorage.zpl_printer;
-      }
-      if (localStorage.thermal_printer) {
-        this.thermal_printer = localStorage.thermal_printer;
-      }
-
-      if (this.events_id == null) {
-        Swal.fire({
-          title: "Your Session is Expired!",
-          icon: "warning",
-        });
-        setTimeout(1000);
-        this.$router.push("/");
+      if (this.form_getCart.events_id === null) {
+        this.$router.push("/" + this.form_getCart.events_id);
       } else {
-        this.getCookie();
+        this.getCart();
       }
-      this.ticketList();
     },
   };
 </script>
 
 <style scoped>
-  a {
-    text-decoration: none;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    margin-bottom: 0px;
-    text-align: center;
-  }
-
-  .bg-white {
-    background-color: #fff;
-  }
-
-  .bg-grey {
-    background-color: #f8f8f8;
-  }
-
-  .text-white {
-    color: #fff;
-  }
-
-  .flex {
-    display: flex;
-  }
-
-  .event-date {
-    line-height: 10px;
-  }
-
   .order-details,
   .checkout {
     padding: 20px;

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-8 p-5 vh-100 bg-white">
                 <div class="justify-content-between flex mb-3" name="cart">
-                    <div class="my-car mt-4">
+                    <div class="my-cart mt-4">
                         <img src="../assets/image/cart.svg" alt="cart">
                         <span>My Cart</span>
                     </div>
@@ -17,7 +17,7 @@
                     <div class="col-md-4"><img :src="global_url + this.event_detail.poster_mobile" alt="cart"
                             width="100%" height="100%" </div> <div class="col-md-6 top-50 start-0 m-auto ">
                         <div class="ticket-title">
-                            <h4 class="text-start">{{this.event_detail.event_title}}</h4>
+                            <h4 class="text-start">Ticket : {{this.class_name}}</h4>
                         </div>
                         <div class="border-bottom my-2"></div>
                         <div class="justify-content-between flex">
@@ -331,7 +331,7 @@
                             this.main_ticket = this.cart_detail.main_ticket;
                             this.addon_ticket = this.cart_detail.addon_ticket;
                             this.total = this.cart_detail.total_price;
-
+                            this.class_name = this.main_ticket.ticket_name;
                             for (let i = 0; i < this.addon_ticket.length; i++) {
                                 this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
 

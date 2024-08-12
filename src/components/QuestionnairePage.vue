@@ -8,7 +8,7 @@
             <div class="content-limit">
                 <div class="wrap-content radius-floating-none bg-white">
                     <div class="formRSVP">
-                        <form @submit="submitQuestion">
+                        <Form @submit="submitQuestion">
                             <div>
                                 <div class="form-box" v-for="question in question_data.question"
                                     :class="{ 'redBox' : notifArray[question.question_id]}">
@@ -126,6 +126,11 @@
 <script>
     import Swal from 'sweetalert2'
     import axios from 'axios'
+    import {
+        Form,
+        Field,
+        ErrorMessage
+    } from 'vee-validate';
 
     export default {
         data() {
@@ -163,7 +168,9 @@
             };
         },
         components: {
-
+            Form,
+            Field,
+            ErrorMessage,
         },
         methods: {
             isRequired(value) {
@@ -201,14 +208,13 @@
                                     text: res.data.msg,
                                 })
                                 .then((value) => {
-                                    // localStorage.clear();
-                                    this.get_ipaddress();
+                                    localStorage.clear();
+                                    // this.get_ipaddress();
                                     this.$router.push("/homeregistrationpage");
                                 });
                         } else {
                             this.isLoading = false;
-                            this.form_sendAnswer.guests_id = this.question_data.guests_id
-
+                            this.form_sendAnswer.guests_id = this.question_data.guests_id;
                             for (let i = 0; i < this.question_data.question.length; i++) {
                                 this.notifArray[this.question_data.question[i].question_id] = false
                                 for (let j = 0; j < this.question_data.question[i].answer.length; j++) {
@@ -315,10 +321,6 @@
             setTitle(title_page) {
                 document.title = `${title_page}`
             },
-            next_page() {
-                this.LoadingButton = true
-                this.$router.push("/register/" + this.form_getDeclare.events_id);
-            },
             submitQuestion(values) {
                 this.form_sendAnswer.cbAnswer_id = []
                 var lengthQuestion = 0
@@ -373,7 +375,6 @@
             },
             actionSubmitQuestionare() {
                 this.isLoadingAnimation = true;
-
                 axios({
                         url: "rsvp/savequest",
                         headers: {
@@ -397,24 +398,14 @@
                         }
                     })
             },
-            getCookie(name) {
-                var nameEQ = name + "=";
-                var ca = document.cookie.split(";");
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == " ") c = c.substring(1, c.length);
-                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-                }
-                return null;
-            },
         },
         mounted() {
             if (this.event_detail === null) {
                 this.$router.push("/");
             } else {
-                if (this.event_detail.rsvp_counter != 'O') {
-                    this.$router.push("/closed/" + this.form_getQuestion.events_id);
-                }
+                // if (this.event_detail.rsvp_counter != 'O') {
+                //     this.$router.push("/closed/" + this.form_getQuestion.events_id);
+                // }
                 if (this.getQuestion.order_id != null) {
                     this.$router.push("/registrationpage/" + this.events_id);
                 } else {
@@ -430,26 +421,6 @@
 </script>
 
 <style scoped>
-    a {
-        text-decoration: none;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4 {
-        margin-bottom: 0px;
-        text-align: center;
-    }
-
-    .bg-white {
-        background-color: #fff;
-    }
-
-    .text-white {
-        color: #fff;
-    }
-
     .form-control {
         padding: 10px;
         padding-left: 31px;
@@ -461,12 +432,5 @@
     .redBox {
         border: 1px solid red;
 
-    }
-
-    .centered {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
     }
 </style>

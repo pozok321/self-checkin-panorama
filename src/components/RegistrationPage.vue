@@ -381,10 +381,22 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group text-end">
+                            <!-- <div class="form-group text-end">
                                 <button class="btn-back mt-4 mx-3" @click="backToCart()">Back</button>
                                 <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
-                            </div>
+                            </div> -->
+
+                            <div class="form-group">
+                            <button class="btn btn-main" id="btn_register">
+                                <span v-if="LoadingButton">
+                                    <span class="loader loading-quarter"></span>
+                                    Processing
+                                </span>
+                                <span v-else>
+                                    Next
+                                </span>
+                            </button>
+                        </div>
                         </Form>
                     </div>
                 </div>
@@ -1024,7 +1036,9 @@
                         })
                         .then(res => {
                             if (res.data.status == 200) {
-                                localStorage.setItem('order_id', res.data.order_id)
+                                localStorage.setItem('order_id', res.data.order_id);
+                                localStorage.setItem('fullname', res.data.fullname);
+                                localStorage.setItem('email', res.data.email);
                                 if (this.event_detail.setting.rsvp_assesment == 'Y') {
                                     this.$router.push("/questionnairepage/" + this.form_Reg.events_id);
                                 } else {
