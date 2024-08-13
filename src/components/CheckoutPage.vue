@@ -3,108 +3,247 @@
     <div class="row">
       <div class="col-md-8 p-5 vh-100">
         <div class="justify-content-between flex mb-3" name="cart">
-          <div class="my-car mt-4">
+          <div class="my-cart">
             <img src="../assets/image/cart.svg" alt="cart" />
             <span>My Cart</span>
           </div>
           <div class="event-date">
-            <p>FLEI EXPO XXII</p>
-            <span>18 - 20 November 202</span>
+            <p>{{event_detail.event_title}}</p>
+            <span>{{this.event_date}}</span>
           </div>
         </div>
         <div class="border-bottom mb-3"></div>
         <div class="row">
           <div class="col-md-6">
-            <img src="../assets/image/flei-img.png" alt="cart" width="100%" />
+            <img :src="global_url + this.event_detail.poster_mobile" alt="cart" width="100%" />
           </div>
           <div class="col-md-5 top-50 start-0 m-auto">
             <div class="ticket-title">
-              <h4 class="text-start">Ticket FLEI EXPO Day 1</h4>
+              <h4 class="text-start">Ticket : {{this.ticket_name}}</h4>
             </div>
-            <div class="border-bottom my-2"></div>
-            <div class="row">
+            <div class="border-bottom my-3"></div>
+            <div class="row lh-10">
               <div class="profile-name">
-                <p>Mr. Muhammad Irfan</p>
-                <p>muhammadirvan337@gmail.com</p>
-                <p>Order ID</p>
-                <p>{{this.form_getCart.order_id}}</p>
+                <div class="row">
+                  <p>{{this.fullname}}</p>
+                  <p>{{this.email}}</p>
+                </div>
+                <div class="row order-id my-2 uid">
+                  <p>Order ID</p>
+                  <p>{{this.form_getCart.order_id}}</p>
+                </div>
               </div>
             </div>
           </div>
           <div class="col-md-1"></div>
         </div>
 
-        <div class="border-bottom mt-5"></div>
-
+        <div class="border-bottom"></div>
         <div class="row col-md-10">
           <h4 class="text-start my-3">EVENT BRIEF</h4>
-          <span class="mb-3">FRANCHISE & LICENSE EXPO INDONESIA ( FLEI )</span>
-          <div class="term-condition">
-            FLEI – Franchise & License Expo Indonesia will be the best gateway for international franchises, brands, and
-            licenses that are yet to be in Indonesia, and for Indonesia’s own franchises, brands and licenses are
-            looking to expand
-            to the entire Indonesia market or ASIA region.
-          </div>
-        </div>
-        <div class="row col-md-10">
-          <h4 class="text-start">Edisi ke-20</h4>
-          <span>25 - 27 Februari 2022 (3 hari) Jakarta Convention Center (Hall B) Pukul 10.00 - 20.00 WIB</span>
+          <span class="mb-3">{{event_detail.event_title}}</span>
+          <div class="term-condition" v-html="event_detail.event_brief"></div>
         </div>
       </div>
 
-      <div class="col-md-4 p-5 vh-100">
-        <div class="bg-grey order-details">
-          <div class="justify-content-between flex mt-3">
-            <h2 class="text-start">Add Promo</h2>
-            <img src="../assets/image/icon-promo.svg" alt="cart" width="20" />
+      <div class="col-md-4 p-5">
+        <div class="row">
+          <div class="bg-grey order-details">
+            <div class="justify-content-between d-flex mt-2">
+              <h4 class="text-start">Add Promo Code</h4>
+              <img src="../assets/image/icon-promo.svg" alt="cart" width="20" />
+            </div>
+            <div class="border-bottom mt-2"></div>
+            <div class="justify-content-between flex mt-3">
+              <Form @submit="applyPromo" v-slot="{ errors }">
+                <div class="form-group">
+                  <div class="input-group mb-3">
+                    <Field type="text" class="form-control" name="promo_code" v-model="form_promoApply.coupon"
+                      placeholder="Type Promo Code" :rules="isRequired" :class="{ 'errorfield': errors.promo_code }" />
+                    <button class="btn btn-outline-secondary promo-button">
+                      <span v-if="LoadingButton">
+                        <span class="loader loading-quarter"></span>
+                        Processing
+                      </span>
+                      <span v-else>
+                        Apply
+                      </span>
+                    </button>
+                  </div>
+                  <ErrorMessage class="notif-verror" name="promo_code" />
+                  <div class="notif-verror text-center" v-if="msg_notif"><i>{{msg_notif}}</i></div>
+                </div>
+              </Form>
+            </div>
           </div>
-          <div class="border-bottom mt-3"></div>
-          <div class="justify-content-between flex mt-3">
-            <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Type Promo Code" aria-label="Type Promo Code"
-                aria-describedby="button-addon2" />
-              <button class="btn btn-outline-secondary promo-button" type="button" id="button-addon2">Submit</button>
+
+          <div class="bg-grey checkout mt-1">
+            <div class="row p-3">
+              <h4 class="text-start">Check Out</h4>
+              <span class="span-checkout">{{event_detail.event_title}}</span>
+              <div class="justify-content-between d-flex">
+
+                <div class="price-total">
+                  <p>{{this.total_mainticket}}</p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="total-payment col-md-3">
+                <p>Total Payment</p>
+              </div>
+              <div class="price col-md-9 p-ticket text-end">
+                <div class="total-flycart">
+                  <div class="is-loading text-30" v-if="isLoading"></div>
+                  <div v-else>
+                    {{formatCurrency(total, event_detail.currency)}}
+                  </div>
+
+                </div>
+              </div>
+              <div class="total-payment bottom-0 end-0">
+                <div class="form-group">
+                  <button class="btn green-btn small-btn" @click="make_payment()" v-if="cart_detail.gratis == false">
+                    <span v-if="LoadingButton">
+                      <span class="loader loading-quarter"></span>
+                      Loading...
+                    </span>
+                    <span v-else>
+                      <i class='bx bx-wallet'></i> Make Payment
+                    </span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        <div class="bg-grey checkout mt-5">
-          <div class="row p-3">
-            <h4 class="text-start">Check Out</h4>
-            <span class="span-checkout">FRANCHISE & LICENSE EXPO INDONESIA ( FLEI )</span>
-            <div class="justify-content-between flex mt-3">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
-                <label class="form-check-label" for="flexCheckChecked"> Additional Ticket 1 </label>
-                <p class="additional-font">Additional Ticket Start 12:00 - 13:30 Pm</p>
+      </div>
+      <!-- Modal Details Ticket -->
+      <div class="modal fade" id="showdetails_modal" role="dialog">
+        <div class="modal-dialog modal-top modal-top-50">
+          <div class="modal-content border-bottom-navy">
+            <div class="modal-body">
+              <div class="title-modal-custom">
+                <div class="icon-modal"><img src="/src/assets/image/ticket-icon.png" width="39" alt="Ticket">
+                </div>
               </div>
-              <div class="price-addon">
-                <p>IDR 10K</p>
+              <p>&nbsp;</p>
+              <div class="is-loading text-30" v-if="isLoading"></div>
+              <h4 class="text-center" v-else></h4>
+              <p class="ppage text-center" v-if="ticket_details.status == 200">Ticket for :</p>
+              <div v-if="ticket_details.status == 200">
+                <div class="row marginbtm-5" v-for="session in ticket_session">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-5 time-content">
+                    <b>{{session.start_time}} - {{session.end_time}}</b>
+                  </div>
+                  <div class="col-lg-8 col-md-8 col-sm-8 col-7 desc-content">
+                    <div class="row">
+                      <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="session-topic">{{session.session_topic}}
+                        </div>
+                        <div class="session-brief">{{session.session_brief}}
+                        </div>
+                        <table class="session-table">
+                          <tr>
+                            <td>Speaker</td>
+                            <td> : </td>
+                            <td>
+                              <div class="speaker-style">
+                                <b>{{session.speaker_name}}
+                                  <span v-if="session.speaker_jobtitle !==''">({{session.speaker_jobtitle}})</span></b>
+                              </div>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
+              <div class="text-center" v-else>{{ticket_details.msg}}</div>
+              <br>
+              <div class="btn-wrap text-center">
+                <a class="btn btn-navy-cancel short-btn" data-bs-dismiss="modal">
+                  Close
+                </a>
+              </div>
+              <br>
             </div>
-            <div class="justify-content-between flex">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="check1" />
-                <label class="form-check-label" for="flexCheckChecked"> Additional Ticket 2 </label>
-                <p class="additional-font">Additional Ticket Start 12:00 - 13:30 Pm</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Add Promo -->
+      <div class="modal fade" id="addpromo_modal" role="dialog">
+        <div class="modal-dialog modal-top modal-top-50">
+          <div class="modal-content border-bottom-navy">
+            <div class="modal-body">
+              <div class="title-modal-custom">
+                <div class="icon-modal"><img src="/src/assets/image/promo-icon.svg" width="100%" alt="Add Promo"></div>
+                <h4>Add Promo</h4>
               </div>
-              <div class="price-addon">
-                <p>IDR 10K</p>
+              <p>&nbsp;</p>
+              <div class="mt-5">
+                <Form @submit="applyPromo" v-slot="{ errors }">
+                  <div class="form-group">
+                    <Field type="text" class="form-control form-control-custom padding-l-60" name="promo_code"
+                      v-model="form_promoApply.coupon" placeholder="Promo Code" :rules="isRequired"
+                      :class="{ 'errorfield': errors.promo_code }" />
+                    <span class="promo-icon-form">
+                      <img src="/src/assets/image/promo-white-icon.svg" width="100%" alt="Add Promo">
+                    </span>
+                    <ErrorMessage class="notif-verror" name="promo_code" />
+                    <div class="notif-verror text-center" v-if="msg_notif"><i>{{msg_notif}}</i></div>
+                  </div>
+                  <div class="btn-wrap text-center">
+                    <a class="btn btn-navy-cancel short-btn" data-bs-dismiss="modal" id="close_addCode"
+                      @click="close_promo()">
+                      Close
+                    </a>
+                    <button class="btn green-btn short-btn">
+                      <span v-if="LoadingButton">
+                        <span class="loader loading-quarter"></span>
+                        Processing
+                      </span>
+                      <span v-else>
+                        Apply
+                      </span>
+                    </button>
+                  </div>
+                </Form>
               </div>
             </div>
           </div>
-          <div class="row mt-5">
-            <div class="total-payment col-md-6">
-              <p>Total Payment</p>
-            </div>
-            <div class="price col-md-6 p-ticket text-end">
-              <div class="price =">IDR 10k</div>
-              <span class="span-total-ticket text-end">please check ticket before add to purchase</span>
-            </div>
-            <div class="total-payment bottom-0 end-0">
-              <div class="form-group">
-                <button class="btn-purchase mt-4">
-                  <span><img src="../assets/image/payment.svg" alt="payment" /></span> Make payment
+        </div>
+      </div>
+
+      <!-- Modal delete Promo -->
+      <div class="modal fade" id="deletepromo_modal" role="dialog">
+        <div class="modal-dialog modal-top modal-top-50">
+          <div class="modal-content border-bottom-navy">
+            <div class="modal-body">
+              <div class="title-modal-custom">
+                <div class="icon-modal"><img src="/src/assets/image/promo-icon.svg" width="100%" alt="Add Promo"></div>
+                <h4><b>Remove Promo</b></h4>
+              </div>
+              <p>&nbsp;</p>
+              <p>&nbsp;</p>
+              <div class="form-group text-center">
+                <p><b>Are you sure want to remove promo code?</b></p>
+              </div>
+              <div class="btn-wrap text-center">
+                <a class="btn btn-navy-cancel short-btn" id="close_deleteCode" data-bs-dismiss="modal"
+                  @click="close_promo()">
+                  Close
+                </a>
+                <button class="btn orange-btn short-btn" @click="remove_coupon()">
+                  <span v-if="LoadingButton">
+                    <span class="loader loading-quarter"></span>
+                    Processing
+                  </span>
+                  <span v-else>
+                    Remove
+                  </span>
                 </button>
               </div>
             </div>
@@ -160,6 +299,12 @@
         length_ao: '',
         subtotal: '',
         total: '',
+        ticket_name: "",
+        event_date: '',
+        event_title: '',
+        total_mainticket: "",
+        fullname: localStorage.getItem("fullname"),
+        email: localStorage.getItem("email"),
         onhold_msg: '',
         enable_button: true,
         form_getticketSession: {
@@ -218,7 +363,12 @@
               this.main_ticket = this.cart_detail.main_ticket;
               this.addon_ticket = this.cart_detail.addon_ticket;
               this.total = this.cart_detail.total_price;
-              this.form_getgetFree.promo_id = this.main_ticket.promo_id
+              this.event_date = this.cart_detail.event_date;
+              this.event_title = this.cart_detail.event_title;
+              this.form_getgetFree.promo_id = this.main_ticket.promo_id;
+              this.ticket_name = this.main_ticket.ticket_name;
+              this.total_mainticket = this.main_ticket * this.form_getCart.ticket_qty;
+              console.log(this.total_mainticket, "total main ticket");
 
               for (let i = 0; i < this.addon_ticket.length; i++) {
                 this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
@@ -376,7 +526,7 @@
           })
           .then(res => {
             if (res.data.status == 200) {
-              localStorage.clear();
+              // localStorage.clear();
               window.location = res.data.urlGateway;
             } else {
               this.isLoadingAnimation = false;
@@ -426,6 +576,10 @@
 </script>
 
 <style scoped>
+  .bg-grey {
+    background-color: #F8F8F8;
+  }
+
   .order-details,
   .checkout {
     padding: 20px;
@@ -455,6 +609,12 @@
 
   .term-condition p {
     font-size: 15px;
+  }
+
+  .date,
+  .uid {
+    font-weight: bold;
+    font-size: 1rem;
   }
 
   .term-condition-date {
@@ -498,6 +658,10 @@
     font-weight: bold;
   }
 
+  .event-date {
+    display: flex;
+  }
+
   .price {
     color: #09303e;
     font-size: 30px;
@@ -515,6 +679,11 @@
     right: 50%;
     text-align: center;
     align-items: center;
+  }
+
+
+  .lh-10 {
+    line-height: 10px;
   }
 
   .btn-checkin {

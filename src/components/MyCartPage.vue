@@ -15,7 +15,8 @@
                 <div class="border-bottom mb-2"></div>
                 <div class="row">
                     <div class="col-md-4"><img :src="global_url + this.event_detail.poster_mobile" alt="cart"
-                            width="100%" height="100%" </div> <div class="col-md-6 top-50 start-0 m-auto ">
+                            width="100%" height="100%"></div>
+                    <div class="col-md-6 top-50 start-0 m-auto">
                         <div class="ticket-title">
                             <h4 class="text-start">Ticket : {{this.class_name}}</h4>
                         </div>

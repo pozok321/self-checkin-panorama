@@ -1037,8 +1037,8 @@
                         .then(res => {
                             if (res.data.status == 200) {
                                 localStorage.setItem('order_id', res.data.order_id);
-                                localStorage.setItem('fullname', res.data.fullname);
-                                localStorage.setItem('email', res.data.email);
+                                localStorage.setItem('fullname', this.form_Reg.fullname);
+                                localStorage.setItem('email', this.form_Reg.email);
                                 if (this.event_detail.setting.rsvp_assesment == 'Y') {
                                     this.$router.push("/questionnairepage/" + this.form_Reg.events_id);
                                 } else {
