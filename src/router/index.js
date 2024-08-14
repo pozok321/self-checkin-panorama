@@ -5,7 +5,6 @@ import AgendaView from "../views/AgendaView.vue";
 import EventDetailView from "../views/EventDetailView.vue";
 import HomeRegistrationView from "../views/HomeRegistrationView.vue";
 import CompletedView from "../views/CompletedView.vue";
-import SuccessPageView from "../views/SuccessPageView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,11 +39,6 @@ const router = createRouter({
       name: "completed",
       component: CompletedView,
     },
-    {
-      path: "/successpage",
-      name: "successpage",
-      component: SuccessPageView,
-    },
 
     {
       path: '/ticketlist/:Eventsid',
@@ -71,6 +65,11 @@ const router = createRouter({
       path: '/checkoutpage/:Eventsid',
       name: 'checkoutpage',
       component: () => import('../components/CheckoutPage.vue') 
+    },
+    {
+      path: '/sucesspage/:Eventsid',
+      name: 'sucesspage',
+      component: () => import('../components/SuccessPage.vue') 
     },
   ],
 });

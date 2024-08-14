@@ -2,14 +2,14 @@
   <section class="vh-100 container-fluid">
     <div class="row">
       <div class="col-md-8 p-5 vh-100">
-        <div class="justify-content-between flex mb-3" name="cart">
+        <div class="justify-content-between d-flex mb-3" name="cart">
           <div class="my-cart">
             <img src="../assets/image/cart.svg" alt="cart" />
-            <span>My Cart</span>
+            <span class="font-mycart">My Cart</span>
           </div>
           <div class="event-date">
-            <p>{{event_detail.event_title}}</p>
-            <span>{{this.event_date}}</span>
+            <p class="font-title-cart">{{event_detail.event_title}}</p>
+            <p>{{this.event_date}}</p>
           </div>
         </div>
         <div class="border-bottom mb-3"></div>
@@ -39,10 +39,10 @@
         </div>
 
         <div class="border-bottom"></div>
-        <div class="row col-md-10">
-          <h4 class="text-start my-3">EVENT BRIEF</h4>
-          <span class="mb-3">{{event_detail.event_title}}</span>
-          <div class="term-condition" v-html="event_detail.event_brief"></div>
+       <div class="row col-md-10">
+          <h4 class="text-start my-3 font-event-brief">EVENT BRIEF</h4>
+          <span class="mb-3 font-eventbrief-sub">{{event_detail.event_title}}</span>
+          <div class="term-condition" v-html="event_detail.event_brief" style="color:#707070;font-size: 0.6rem;"></div>
         </div>
       </div>
 
@@ -50,7 +50,7 @@
         <div class="row">
           <div class="bg-grey order-details">
             <div class="justify-content-between d-flex mt-2">
-              <h4 class="text-start">Add Promo Code</h4>
+              <h4 class="text-start font-addpromo">Add Promo Code</h4>
               <img src="../assets/image/icon-promo.svg" alt="cart" width="20" />
             </div>
             <div class="border-bottom mt-2"></div>
@@ -59,7 +59,7 @@
                 <div class="form-group">
                   <div class="input-group mb-3">
                     <Field type="text" class="form-control" name="promo_code" v-model="form_promoApply.coupon"
-                      placeholder="Type Promo Code" :rules="isRequired" :class="{ 'errorfield': errors.promo_code }" />
+                      placeholder="Type Promo Code" :class="{ 'errorfield': errors.promo_code }" />
                     <button class="btn btn-outline-secondary promo-button">
                       <span v-if="LoadingButton">
                         <span class="loader loading-quarter"></span>
@@ -79,12 +79,12 @@
 
           <div class="bg-grey checkout mt-1">
             <div class="row p-3">
-              <h4 class="text-start">Check Out</h4>
+              <h4 class="text-start font-checkout">Check Out</h4>
               <span class="span-checkout">{{event_detail.event_title}}</span>
               <div class="justify-content-between d-flex">
-
                 <div class="price-total">
-                  <p>{{this.total_mainticket}}</p>
+                  <p class="total-mainticket-price">{{ this.form_getCart.ticket_name }}</p>
+                  <p>Quantity : {{this.form_getCart.ticket_qty}} Ticket</p>
                 </div>
               </div>
             </div>
@@ -266,6 +266,7 @@
   export default {
     data() {
       return {
+        event_detail: JSON.parse(localStorage.getItem("event_details")),
         form_getCart: {
           events_id: this.$route.params.Eventsid,
           ticketid: JSON.parse(localStorage.getItem("mt_id")),
@@ -291,7 +292,6 @@
           order_id: localStorage.getItem("order_id"),
         },
         order_id: localStorage.getItem("order_id"),
-        event_detail: JSON.parse(localStorage.getItem("event_details")),
         cart_detail: [],
         main_ticket: [],
         addon_ticket: [],
@@ -302,7 +302,6 @@
         ticket_name: "",
         event_date: '',
         event_title: '',
-        total_mainticket: "",
         fullname: localStorage.getItem("fullname"),
         email: localStorage.getItem("email"),
         onhold_msg: '',
@@ -367,8 +366,6 @@
               this.event_title = this.cart_detail.event_title;
               this.form_getgetFree.promo_id = this.main_ticket.promo_id;
               this.ticket_name = this.main_ticket.ticket_name;
-              this.total_mainticket = this.main_ticket * this.form_getCart.ticket_qty;
-              console.log(this.total_mainticket, "total main ticket");
 
               for (let i = 0; i < this.addon_ticket.length; i++) {
                 this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
@@ -379,7 +376,7 @@
               this.setTitle("Check-Out - " + this.event_detail.event_title + " - Undangin")
 
               if (this.event_detail.rsvp_counter !== 'O') {
-                this.$router.push("/closed/" + this.form_getCart.events_id);
+                this.$router.push("/sucesspage/" + this.form_getCart.events_id);
               }
             }
           })
@@ -526,7 +523,7 @@
           })
           .then(res => {
             if (res.data.status == 200) {
-              // localStorage.clear();
+              localStorage.clear();
               window.location = res.data.urlGateway;
             } else {
               this.isLoadingAnimation = false;
@@ -566,11 +563,11 @@
       }
     },
     mounted() {
-      if (this.form_getCart.events_id === null) {
-        this.$router.push("/" + this.form_getCart.events_id);
-      } else {
-        this.getCart();
-      }
+      if (this.event_detail === null) {
+                this.$router.push("/eventdetailpage");
+            }  else {
+                this.getCart();
+            }
     },
   };
 </script>
@@ -586,29 +583,61 @@
     border-radius: 15px;
   }
 
+  .font-mycart{
+    color: #09303E;
+    font-size: 1.6rem;
+    font-weight: bold;
+  }
+
+  .font-title-cart{
+    color: #09303E;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .font-event-brief{
+    color: #315568;
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+
+  .font-eventbrief-sub{
+    color: #315568;
+    font-size: 1.1rem;
+  }
+
+  .font-addpromo{
+    color: #315568;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .font-checkout{
+    color: #09303E;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
   .span-checkout {
     font-size: 8px;
     font-family: Arial, Helvetica, sans-serif;
   }
 
-  .border-dash {
-    border-style: dashed;
-    border-width: thin;
-    border-radius: 20px;
+  .total-mainticket-price{
+    color: #09303E;
+    font-size: 20px;
+    font-weight: bold;
   }
 
   .term-condition {
     max-height: 150px;
     height: 100px;
+    font-size: 0.6rem;
+    font-weight: lighter;
   }
-
   .promo-button {
     background-color: #315568;
     color: #fff;
-  }
-
-  .term-condition p {
-    font-size: 15px;
   }
 
   .date,
@@ -617,110 +646,13 @@
     font-size: 1rem;
   }
 
-  .term-condition-date {
-    font-weight: bold;
-    font-size: 12px;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-
-  .card-deck {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-  }
-
-  .btn-purchase {
-    width: 100%;
-    background-color: #3ab54b;
-    color: #fff;
-    border-color: #fff;
-    font-family: Helvetica;
-    border-radius: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 16pt;
-    font-weight: bold;
-  }
-
-  .additional-font {
-    font-size: 8px;
-  }
-
-  .span-total-ticket {
-    color: #dd7223;
-    font-size: 7px;
-    font-style: italic;
-  }
-
-  .price-addon {
-    color: #09303e;
-    font-size: 14px;
-    font-weight: bold;
-  }
-
-  .event-date {
-    display: flex;
-  }
-
-  .price {
-    color: #09303e;
-    font-size: 30px;
-    font-weight: bold;
-  }
-
   .p-ticket {
     line-height: 10px;
     margin: auto;
   }
 
-  .ticket-buy-center {
-    position: absolute;
-    left: 50%;
-    right: 50%;
-    text-align: center;
-    align-items: center;
-  }
-
-
   .lh-10 {
     line-height: 10px;
-  }
-
-  .btn-checkin {
-    background-color: #ebebeb;
-    color: #25516b;
-    border-radius: 20px;
-    font-size: 20px;
-    align-items: center;
-    text-align: center;
-    border: none;
-    padding: 10px;
-    font-weight: bold;
-  }
-
-  .btn-get-ticket {
-    width: 100%;
-    background-color: #2096c1;
-    color: #fff;
-    font-family: Helvetica;
-    border-radius: 50px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 16pt;
-    font-weight: bold;
-  }
-
-  .bg-registration-page {
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100%;
-  }
-
-  .form-check-input:checked {
-    background-color: #22b473;
-    border-color: #22b473;
   }
 
   .centered {

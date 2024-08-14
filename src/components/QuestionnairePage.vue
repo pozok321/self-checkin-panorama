@@ -401,7 +401,7 @@
         },
         mounted() {
             if (this.event_detail === null) {
-                this.$router.push("/");
+                this.$router.push("/eventdetailpage");
             } else {
                 // if (this.event_detail.rsvp_counter != 'O') {
                 //     this.$router.push("/closed/" + this.form_getQuestion.events_id);
