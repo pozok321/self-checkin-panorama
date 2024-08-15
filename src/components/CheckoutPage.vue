@@ -514,7 +514,7 @@
       make_payment() {
         this.isLoadingAnimation = true;
         axios({
-            url: "/rsvp/makepayment",
+            url: "/rsvp/kioskpay",
             headers: {
               "Content-Type": "text/plain"
             },
@@ -523,8 +523,9 @@
           })
           .then(res => {
             if (res.data.status == 200) {
-              localStorage.clear();
-              window.location = res.data.urlGateway;
+              this.form_getCart = res.data;
+              // window.location = res.data.urlGateway;
+              console.log(this.form_getCart, "make_payment");
             } else {
               this.isLoadingAnimation = false;
               Swal.fire({

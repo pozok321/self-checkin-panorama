@@ -1,20 +1,20 @@
 <template>
-  <section class="vh-100 container-fluid">
-    <div class="row">
+  <section class="vh-100">
+    <div class="d-flex">
       <img src="../assets/image/banner.png" alt="banner" width="100%" />
     </div>
     <div class="container">
-      <div class="payment-success col-md-9 m-auto">
+      <div class="payment-success col-md-9 m-auto mt-5">
         <div class="row align-center">
-          <div class="col-md-2">
+          <div class="col-md-3">
             <img src="../assets/image/icon-ceklis.png" alt="icon-ceklis" />
           </div>
-          <div class="col-md-10">
-            <h1 class="text-start">Payment Success, Thank you</h1>
+          <div class="col-md-9">
+            <h1 class="text-start py-3">Payment Success, Thank you</h1>
             <span>Thank you for the purchasing, your ticket has been processed, please check your email immediately</span>
             <div class="form-group">
-              <button class="btn-done mt-4 mx-3" @click="confirmGetTicket()">DONE</button>
-              <button class="btn-print mt-4" @click="confirmGetTicket()">Print Badges</button>
+              <button class="btn-done mt-4 mx-3" >DONE</button>
+              <button class="btn-print mt-4" >Print Badges</button>
             </div>
           </div>
         </div>
@@ -65,26 +65,9 @@ export default {
         console.log(this.ticket, "test123");
       });
     },
-
-    simpanData() {
-      localStorage.zpl_printer = this.zpl_printer;
-      localStorage.thermal_printer = this.thermal_printer;
-      console.log("data berhasil disimpan");
-    },
-    hapusData() {
-      localStorage.removeItem = this.zpl_printer;
-      localStorage.removeItem = this.thermal_printer;
-    },
   },
   mounted() {
     this.events_id = $cookies.get("events_id");
-    if (localStorage.zpl_printer) {
-      this.zpl_printer = localStorage.zpl_printer;
-    }
-    if (localStorage.thermal_printer) {
-      this.thermal_printer = localStorage.thermal_printer;
-    }
-
     if (this.events_id == null) {
       Swal.fire({
         title: "Your Session is Expired!",
@@ -92,9 +75,7 @@ export default {
       });
       setTimeout(1000);
       this.$router.push("/");
-    } else {
-      this.getCookie();
-    }
+    } 
     this.ticketList();
   },
 };
@@ -111,7 +92,10 @@ h3,
 h4 {
   margin-bottom: 0px;
   text-align: center;
+  color: #315568;
+  font-weight: bold;
 }
+
 
 .btn-done {
   width: 25%;
@@ -152,8 +136,9 @@ h4 {
   color: #fff;
 }
 
-.flex {
+.banner-flex {
   display: flex;
+  margin: 0;
 }
 
 .container-banner img {
