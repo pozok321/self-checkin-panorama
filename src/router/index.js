@@ -41,35 +41,40 @@ const router = createRouter({
     },
 
     {
-      path: '/ticketlist/:Eventsid',
-      name: 'ticketlist',
-      component: () => import('../components/HomeRegistrationPage.vue') 
+      path: "/ticketlist/:Eventsid",
+      name: "ticketlist",
+      component: () => import("../components/HomeRegistrationPage.vue"),
     },
 
     {
-      path: '/mycart/:Eventsid',
-      name: 'mycart',
-      component: () => import('../components/MyCartPage.vue') 
+      path: "/mycart/:Eventsid",
+      name: "mycart",
+      component: () => import("../components/MyCartPage.vue"),
     },
     {
-      path: '/registrationpage/:Eventsid',
-      name: 'registrationpage',
-      component: () => import('../components/RegistrationPage.vue') 
+      path: "/registrationpage/:Eventsid",
+      name: "registrationpage",
+      component: () => import("../components/RegistrationPage.vue"),
     },
     {
-      path: '/questionnairepage/:Eventsid',
-      name: 'questionnairepage',
-      component: () => import('../components/QuestionnairePage.vue') 
+      path: "/questionnairepage/:Eventsid",
+      name: "questionnairepage",
+      component: () => import("../components/QuestionnairePage.vue"),
     },
     {
-      path: '/checkoutpage/:Eventsid',
-      name: 'checkoutpage',
-      component: () => import('../components/CheckoutPage.vue') 
+      path: "/checkoutpage/:Eventsid",
+      name: "checkoutpage",
+      component: () => import("../components/CheckoutPage.vue"),
     },
     {
-      path: '/sucesspage/:Eventsid',
-      name: 'sucesspage',
-      component: () => import('../components/SuccessPage.vue') 
+      path: "/sucesspage/:Eventsid",
+      name: "sucesspage",
+      component: () => import("../components/SuccessPage.vue"),
+    },
+    {
+      path: "/waitingpaymentpage/:Eventsid",
+      name: "waitingpaymentpage",
+      component: () => import("../components/WaitingPaymentPage.vue"),
     },
   ],
 });
