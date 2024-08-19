@@ -14,7 +14,7 @@
             <span>PLEASE CHECK YOUR PAYMENT STATUS</span>
             <div class="form-group">
               <button class="btn-done mt-4 mx-3">CANCEL</button>
-              <button class="btn-print mt-4">PAYMENT STATUS</button>
+              <button class="btn-print mt-4" @click="check_status();">PAYMENT STATUS</button>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@ export default {
   },
   components: {},
   methods: {
-    make_payment() {
+    check_status() {
       this.isLoadingAnimation = true;
       axios({
         url: "/midtrans/checkpaystatus",
@@ -66,8 +66,6 @@ export default {
       }).then((res) => {
         if (res.data.status == 200) {
           this.form_getCart = res.data;
-          console.log(form_getCart, "payment status");
-          // this.$router.push("/waitingpaymentpage/" + this.form_Reg.events_id);
         } else {
           this.isLoadingAnimation = false;
           Swal.fire({
