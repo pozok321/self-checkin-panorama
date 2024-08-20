@@ -45,7 +45,6 @@
           this.$router.go("/scanpage");
         },
       },
-  
       mounted() {
         this.isLoading = true;
         // simulate AJAX

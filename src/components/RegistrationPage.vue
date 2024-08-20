@@ -9,21 +9,18 @@
           </div>
           <div class="formRSVP">
             <Form @submit="onSubmit" v-slot="{ errors }">
-              <div class="form-group form-select-search"
-                                v-if="event_detail.setting.guest_title_toggle == 'Y'">
-                                <div class="form-control-select" :class="{ 'errorfield': errors.salutation }">
-                                    <Field as="select" name="salutation" id="salutation" class="form-control"
-                                        v-model="form_Reg.salutation" :rules="isRequired"
-                                        >
-                                        <option v-for="salutation in salutation_data"
-                                            v-bind:value="salutation.salutation_code">
-                                            {{ salutation.salutation_description }}
-                                        </option>
-                                    </Field>
-                                </div>
-                                <span class="icon-form"><i class='bx bxs-user'></i></span>
-                                <ErrorMessage class="notif-verror" name="salutation" />
-                            </div>
+              <div class="form-group form-select-search" v-if="event_detail.setting.guest_title_toggle == 'Y'">
+                <div class="form-control-select" :class="{ 'errorfield': errors.salutation }">
+                  <Field as="select" name="salutation" id="salutation" class="form-control"
+                    v-model="form_Reg.salutation" :rules="isRequired">
+                    <option v-for="salutation in salutation_data" v-bind:value="salutation.salutation_code">
+                      {{ salutation.salutation_description }}
+                    </option>
+                  </Field>
+                </div>
+                <span class="icon-form"><i class='bx bxs-user'></i></span>
+                <ErrorMessage class="notif-verror" name="salutation" />
+              </div>
               <div class="form-group">
                 <Field type="text" class="form-control" name="fullname" v-model="form_Reg.fullname"
                   placeholder="Full Name / Nama Lengkap" :rules="isRequired" :class="{ errorfield: errors.fullname }">
@@ -352,8 +349,13 @@
                                 <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
                             </div> -->
 
-              <div class="form-group">
-                <button class="btn btn-main" id="btn_register">
+              <div class="form-group text-end">
+                <a class="btn btn-back mx-1" @click="backPage()">
+                  <span>
+                    Back
+                  </span>
+                </a>
+                <button class="btn btn-main mx-1" id="btn_register">
                   <span v-if="LoadingButton">
                     <span class="loader loading-quarter"></span>
                     Processing
@@ -984,6 +986,11 @@
           $("#btn_register").prop("disabled", true);
           return false;
         }
+      },
+
+      backPage() {
+        $("#btn_back").click();
+        this.$router.push("/mycart/" + this.form_Reg.events_id);
       },
       topFunction() {
         window.scrollTo({

@@ -155,11 +155,18 @@
           events_id: this.$route.params.Eventsid,
           order_id: localStorage.getItem("order_id"),
         },
+        form_getCheckout: {
+          events_id: this.$route.params.Eventsid,
+          ticketid: JSON.parse(localStorage.getItem("mt_id")),
+          ticket_qty: localStorage.getItem("ticket_qty"),
+          order_id: localStorage.getItem("order_id"),
+        },
         order_id: localStorage.getItem("order_id"),
         cart_detail: [],
         main_ticket: [],
         addon_ticket: [],
         ticket_ao: [],
+        checkout_detail:"",
         length_ao: "",
         subtotal: "",
         total: "",
@@ -372,15 +379,16 @@
             "Content-Type": "text/plain",
           },
           method: "POST",
-          data: this.form_getCart,
+          data: this.form_getCheckout,
         }).then((res) => {
-          this.form_getCart = res.data;
-          this.urlGateway = this.form_getCart.urlGateway;
+          this.checkout_detail = res.data;
+          this.urlGateway = this.checkout_detail.urlGateway;
           this.transaction_id = this.urlGateway.transaction_id;
           this.qr = this.urlGateway.qr;
-          console.log(this.urlGateway, "urlgateway");
-          if (form_getCart.status == 200) {
-            this.$router.push("/waitingpaymentpage/" + this.form_Reg.events_id);
+          if (this.checkout_detail.status == 200) {
+            localStorage.setItem("transaction_id", this.transaction_id);
+            localStorage.setItem("qr_payment", this.qr);
+            this.$router.push("/waitingpaymentpage/" + this.form_getCheckout.events_id);
           } else {
             this.isLoadingAnimation = false;
             Swal.fire({

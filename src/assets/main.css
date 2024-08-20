@@ -402,7 +402,7 @@ body {
 }
 
 .btn-main {
-  width: 100%;
+  width: 30%;
   padding: 10px;
   font-size: 14pt;
   color: #fff;
@@ -418,12 +418,24 @@ body {
 
 
 .btn-main:disabled {
-  width: 100%;
+  width: 30%;
   padding: 10px;
   font-size: 14pt;
   color: #fff;
   border-radius: 12pt;
   background-color: #315568;
+}
+
+.btn-main i {
+  font-size: 18px;
+  vertical-align: top;
+  margin-right: 5px;
+}
+
+.btn i {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-right: 5px;
 }
 
 .btn-disabled, .btn-disabled:hover, .btn-disabled:focus {
@@ -548,17 +560,7 @@ body {
   background-color: red;
 }
 
-.btn-main i {
-  font-size: 18px;
-  vertical-align: top;
-  margin-right: 5px;
-}
 
-.btn i {
-  font-size: 18px;
-  vertical-align: middle;
-  margin-right: 5px;
-}
 
 .btn-remove-promo i {
   margin-right: 0;
