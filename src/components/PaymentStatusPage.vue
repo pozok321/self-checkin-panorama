@@ -1,7 +1,9 @@
 <template>
   <section class="vh-100">
-    <div class="d-flex">
-      <img src="../assets/image/banner.png" alt="banner" width="100%" />
+    <div class="container">
+      <div class="d-flex ">
+        <img :src=" this.qr_payment" alt="banner" class="poster-mobile-img m-auto">
+      </div>
     </div>
     <div class="container">
       <div class="payment-success col-md-9 m-auto mt-5">
@@ -10,10 +12,11 @@
             <img src="../assets/image/icon-ceklis.png" alt="icon-ceklis" />
           </div>
           <div class="col-md-9">
-            <h1 class="text-start py-3">waiting payment</h1>
-            <span>PLEASE CHECK YOUR PAYMENT STATUS</span>
+            <h1 class="text-start py-3">Waiting Payment</h1>
+            <span class="thank-you">Thank you for the purchasing, your ticket has been processed, please check your
+              email immediately</span>
             <div class="form-group">
-              <button class="btn-done mt-4 mx-3" @click="payment_cancel();">CANCEL</button>
+              <button class="btn-done mt-4 mx-1" @click="payment_cancel();">CANCEL</button>
               <button class="btn-print mt-4" @click="check_status();">PAYMENT STATUS</button>
             </div>
           </div>
@@ -37,6 +40,8 @@
         form_cancel: {
           transaction_id: localStorage.getItem("transaction_id"),
         },
+        poster_mobile: localStorage.getItem("poster_mobile"),
+        qr_payment: localStorage.getItem("qr_payment"),
         check_payment: "",
         cancel_payment: "",
         order_id: localStorage.getItem("order_id"),
@@ -69,8 +74,8 @@
           this.check_payment = res.data;
           if (res.data.status_code == 200) {
             Swal.fire({
-              title: "success",
-              icon: "success",
+              title: "",
+              icon: "Transaction Canceled",
               text: res.data.status_message,
             }).then((value) => {});
           } else {
@@ -84,24 +89,26 @@
         });
       },
       payment_cancel() {
-        console.log(this.form_cancel.transaction_id, "formcancel");
         this.isLoadingAnimation = true;
         axios({
           url: "/midtrans/cancelpay",
-          // headers: {
-          //   "Content-Type": "text/plain",
-          // },
+          headers: {
+            "Content-Type": "text/plain",
+          },
           method: "POST",
           data: this.form_cancel,
         }).then((res) => {
-          
+          var is = this;
           if (res.data.status_code == 200) {
-            console.log(this.cancel_payment, "test123");
             Swal.fire({
               title: "success",
               icon: "success",
               text: res.data.status_message,
-            }).then((value) => {});
+            }).then((value) => {
+              is.isLoadingAnimation = true;
+              localStorage.clear();
+              is.$router.push("/eventdetailpage");
+            });
           } else {
             this.isLoadingAnimation = false;
             Swal.fire({
@@ -137,6 +144,12 @@
     font-weight: bold;
   }
 
+  .thank-you {
+    color: #315568;
+    font-size: 1.3rem;
+    font-style: italic;
+  }
+
   .btn-done {
     width: 30%;
     background-color: #ffffff;
@@ -155,7 +168,7 @@
     color: #fff;
     font-family: Helvetica;
     border-radius: 10px;
-    font-size:1rem;
+    font-size: 1rem;
     padding: 5px 0 5px 0;
     font-weight: bold;
     border-color: #315568;
@@ -178,34 +191,8 @@
     color: #fff;
   }
 
-  .banner-flex {
-    display: flex;
-    margin: 0;
-  }
-
-  .container-banner img {
-    background-size: cover;
-    background-position: center;
-    background-image: -moz-linear-gradient();
-  }
-
-  .btn-purchase {
-    width: 100%;
-    background-color: #3ab54b;
-    color: #fff;
-    border-color: #fff;
-    font-family: Helvetica;
-    border-radius: 15px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    font-size: 16pt;
-    font-weight: bold;
-  }
-
-  .centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  .poster-mobile-img {
+    max-width: 400px;
+    max-height: 250px;
   }
 </style>

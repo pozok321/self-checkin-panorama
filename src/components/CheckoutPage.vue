@@ -388,7 +388,7 @@
           if (this.checkout_detail.status == 200) {
             localStorage.setItem("transaction_id", this.transaction_id);
             localStorage.setItem("qr_payment", this.qr);
-            this.$router.push("/waitingpaymentpage/" + this.form_getCheckout.events_id);
+            this.$router.push("/paymentstatuspage/" + this.form_getCheckout.events_id);
           } else {
             this.isLoadingAnimation = false;
             Swal.fire({
