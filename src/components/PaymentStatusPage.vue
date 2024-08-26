@@ -1,8 +1,26 @@
 <template>
   <section class="vh-100">
     <div class="container">
-      <div class="d-flex ">
-        <img :src=" this.qr_payment" alt="banner" class="poster-mobile-img m-auto">
+      <div class="row">
+        <div class="d-flex">
+          <img :src=" this.qr_payment" alt="banner" class="poster-mobile-img m-auto">
+        </div>
+      </div>
+      <div class="d-flex m-auto row">
+        <div class="wrap-countdown">
+          <div id="countdown">
+            <ul>
+              <li><span id="minutes"></span>Minutes</li>
+              <li><span id="seconds"></span>Seconds</li>
+            </ul>
+          </div>
+          <div id="coundown-off">
+            <ul>
+              <li><span id="minutes">00</span>Minutes</li>
+              <li><span id="seconds">00</span>Seconds</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
     <div class="container">
@@ -40,6 +58,7 @@
         form_cancel: {
           transaction_id: localStorage.getItem("transaction_id"),
         },
+        urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
         poster_mobile: localStorage.getItem("poster_mobile"),
         qr_payment: localStorage.getItem("qr_payment"),
         check_payment: "",
@@ -61,6 +80,9 @@
     },
     components: {},
     methods: {
+      getUrlGateway() {
+        this.Countdown(this.urlGateway.expiry_time);
+      },
       check_status() {
         this.isLoadingAnimation = true;
         axios({
@@ -72,18 +94,25 @@
           data: this.form_payment,
         }).then((res) => {
           this.check_payment = res.data;
-          if (res.data.status_code == 200) {
+          if (res.data.status_code == 200 || res.data.status_code == 201) {
             Swal.fire({
               title: "",
               icon: "Transaction Canceled",
-              text: res.data.status_message,
+              text: res.data.transaction_status,
+            }).then((value) => {});
+          } else if (res.data.transaction_status == "pending") {
+            this.isLoadingAnimation = false;
+            Swal.fire({
+              title: "Status Transaction :",
+              icon: "warning",
+              text: res.data.transaction_status,
             }).then((value) => {});
           } else {
             this.isLoadingAnimation = false;
             Swal.fire({
-              title: "Warning",
-              icon: "warning",
-              text: res.data.status_message,
+              title: "Status Transaction :",
+              icon: "Success",
+              text: res.data.transaction_status,
             }).then((value) => {});
           }
         });
@@ -106,7 +135,7 @@
               text: res.data.status_message,
             }).then((value) => {
               is.isLoadingAnimation = true;
-              localStorage.clear();
+              // localStorage.clear();
               is.$router.push("/eventdetailpage");
             });
           } else {
@@ -119,11 +148,48 @@
           }
         });
       },
+      formatDate(date) {
+        return moment(date).format("dddd, DD MMMM YYYY")
+      },
+
+      formatTime(value) {
+        return value = value.substring(0, 5);
+      },
+      Countdown(dateStart) {
+        console.log(dateStart, "dateeeeeeeeeeeeeeee");
+        let datestart2 = moment(dateStart).format('MMM DD, YYYY HH:mm:ss');
+        console.log(datestart2, "dateeeeeeeeeeeeeeee");
+
+        function byId(id) {
+          return document.getElementById(id);
+        }
+
+        function formatTens(n) {
+          // format integers to have at least two digits
+          return (n < 10) ? '0' + n : '' + n;
+        }
+        let endDate = new Date(datestart2);
+        let myCountdown = countdown(null, endDate);
+        setInterval(function () {
+          myCountdown = countdown(null, endDate);
+          if (myCountdown.start > myCountdown.end) {
+            // byId('hours').innerHTML = formatTens(0);
+            byId('minutes').innerHTML = formatTens(0);
+            byId('seconds').innerHTML = formatTens(0);
+          } else {
+            // byId('hours').innerHTML = formatTens(myCountdown.hours);
+            byId('minutes').innerHTML = formatTens(myCountdown.minutes);
+            byId('seconds').innerHTML = formatTens(myCountdown.seconds);
+          }
+        }, 1000);
+      },
     },
 
     mounted() {
-      if (this.event_detail === null) {
+      if (this.event_detail === null && this.urlGateway === null) {
         this.$router.push("/eventdetailpage");
+      } else {
+        this.getUrlGateway()
       }
     },
   };
@@ -194,5 +260,71 @@
   .poster-mobile-img {
     max-width: 400px;
     max-height: 250px;
+  }
+
+  /* Countdown */
+
+  .wrap-countdown {
+    margin-top: 30px;
+  }
+
+  #headline {
+    display: none;
+  }
+
+  #countdown ul,
+  #coundown-off ul {
+    margin-top: 20px;
+    padding: 0;
+  }
+
+  #countdown ul li,
+  #coundown-off ul li {
+    display: inline-block;
+    font-family: "Edensor";
+    font-size: 9pt;
+    list-style-type: none;
+    padding: 5pt 20pt;
+    text-transform: uppercase;
+    border-right: 1px solid #000;
+    color: #000;
+  }
+
+  #countdown ul li:last-child,
+  #coundown-off ul li:last-child {
+    border-right: none;
+  }
+
+  #countdown ul li span,
+  #coundown-off ul li span {
+    display: block;
+    font-family: "Branch";
+    font-size: 28pt;
+  }
+
+  #coundown-off {
+    display: none;
+  }
+
+  @media all and (max-width: 768px) {
+    .wrap-countdown {
+      margin-top: 5px;
+    }
+
+    .hashtagwording-style {
+      margin-top: 0 !important;
+    }
+
+    #countdown ul li,
+    #coundown-off ul li {
+      font-size: 1rem;
+
+      padding: 5pt 8pt;
+    }
+
+    #countdown ul li span,
+    #coundown-off ul li span {
+      font-size: 1.2rem;
+    }
   }
 </style>

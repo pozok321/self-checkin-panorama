@@ -166,6 +166,7 @@
         main_ticket: [],
         addon_ticket: [],
         ticket_ao: [],
+        urlGateway: [],
         checkout_detail:"",
         length_ao: "",
         subtotal: "",
@@ -388,6 +389,7 @@
           if (this.checkout_detail.status == 200) {
             localStorage.setItem("transaction_id", this.transaction_id);
             localStorage.setItem("qr_payment", this.qr);
+            localStorage.setItem('urlGateway', JSON.stringify(this.urlGateway));
             this.$router.push("/paymentstatuspage/" + this.form_getCheckout.events_id);
           } else {
             this.isLoadingAnimation = false;

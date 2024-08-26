@@ -4,6 +4,7 @@ import router from "./router";
 import axios from "axios";
 import Swal from 'sweetalert2';
 import VueCookies from "vue-cookies";
+import VueCountdown from '@chenfengyuan/vue-countdown';
 
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,6 +16,7 @@ import "./assets/main.css";
 axios.defaults.baseURL = "https://apidev.undangin.com/v1/";
 
 const app = createApp(App);
+app.component(VueCountdown.name, VueCountdown);
 app.config.globalProperties.$globalURL = "https://corpdev.undangin.com/"
 app.use(router);
 app.mount("#app");
