@@ -6,25 +6,25 @@
           <img :src=" this.qr_payment" alt="banner" class="poster-mobile-img m-auto">
         </div>
       </div>
-      <div class="d-flex m-auto row">
-        <div class="wrap-countdown">
-          <div id="countdown">
-            <ul>
-              <li><span id="minutes"></span>Minutes</li>
-              <li><span id="seconds"></span>Seconds</li>
-            </ul>
-          </div>
-          <div id="coundown-off">
-            <ul>
-              <li><span id="minutes">00</span>Minutes</li>
-              <li><span id="seconds">00</span>Seconds</li>
-            </ul>
+      <div class="d-flex">
+        <div class="row m-auto">
+          <div class="wrap-countdown">
+            <div id="countdown">
+              <ul>
+                <li><span id="minutes"></span>Minutes</li>
+                <li><span id="seconds"></span>Seconds</li>
+              </ul>
+            </div>
+            <div id="coundown-off">
+              <ul>
+                <li><span id="minutes">00</span>Minutes</li>
+                <li><span id="seconds">00</span>Seconds</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="container">
-      <div class="payment-success col-md-9 m-auto mt-5">
+      <div class="payment-success col-md-9 m-auto mt-4">
         <div class="row align-center">
           <div class="col-md-3">
             <img src="../assets/image/icon-ceklis.png" alt="icon-ceklis" />
@@ -34,8 +34,8 @@
             <span class="thank-you">Thank you for the purchasing, your ticket has been processed, please check your
               email immediately</span>
             <div class="form-group">
-              <button class="btn-done mt-4 mx-1" @click="payment_cancel();">CANCEL</button>
-              <button class="btn-print mt-4" @click="check_status();">PAYMENT STATUS</button>
+              <button class="btn-done mt-3 mx-1" @click="payment_cancel();">CANCEL</button>
+              <button class="btn-print mt-3" @click="check_status();">PAYMENT STATUS</button>
             </div>
           </div>
         </div>
@@ -78,7 +78,9 @@
         route_name: this.$route.name,
       };
     },
-    components: {},
+    components: {
+      
+    },
     methods: {
       getUrlGateway() {
         this.Countdown(this.urlGateway.expiry_time);
@@ -94,24 +96,17 @@
           data: this.form_payment,
         }).then((res) => {
           this.check_payment = res.data;
-          if (res.data.status_code == 200 || res.data.status_code == 201) {
-            Swal.fire({
-              title: "",
-              icon: "Transaction Canceled",
-              text: res.data.transaction_status,
-            }).then((value) => {});
-          } else if (res.data.transaction_status == "pending") {
-            this.isLoadingAnimation = false;
+          if (res.data.status_code == 200) {
             Swal.fire({
               title: "Status Transaction :",
-              icon: "warning",
+              icon: "Transaction Canceled",
               text: res.data.transaction_status,
             }).then((value) => {});
           } else {
             this.isLoadingAnimation = false;
             Swal.fire({
               title: "Status Transaction :",
-              icon: "Success",
+              icon: "warning",
               text: res.data.transaction_status,
             }).then((value) => {});
           }
@@ -135,10 +130,21 @@
               text: res.data.status_message,
             }).then((value) => {
               is.isLoadingAnimation = true;
-              // localStorage.clear();
+              localStorage.clear();
               is.$router.push("/eventdetailpage");
             });
-          } else {
+          } else if(res.data.status_message == "expired"){
+            this.isLoadingAnimation = false;
+            Swal.fire({
+              title: "Your Payment is Expired",
+              icon: "warning",
+              text: res.data.status_message,
+            }).then((value) => {
+               localStorage.clear();
+               is.$router.push("/eventdetailpage");
+            });
+          }
+          else{
             this.isLoadingAnimation = false;
             Swal.fire({
               title: "Warning",
@@ -156,14 +162,10 @@
         return value = value.substring(0, 5);
       },
       Countdown(dateStart) {
-        console.log(dateStart, "dateeeeeeeeeeeeeeee");
         let datestart2 = moment(dateStart).format('MMM DD, YYYY HH:mm:ss');
-        console.log(datestart2, "dateeeeeeeeeeeeeeee");
-
         function byId(id) {
           return document.getElementById(id);
         }
-
         function formatTens(n) {
           // format integers to have at least two digits
           return (n < 10) ? '0' + n : '' + n;
@@ -186,7 +188,8 @@
     },
 
     mounted() {
-      if (this.event_detail === null && this.urlGateway === null) {
+      console.log(this.event_detail, "event detailssssssssss");
+      if (this.event_detail === null) {
         this.$router.push("/eventdetailpage");
       } else {
         this.getUrlGateway()
@@ -259,13 +262,13 @@
 
   .poster-mobile-img {
     max-width: 400px;
-    max-height: 250px;
+    max-height: 200px;
   }
 
   /* Countdown */
 
   .wrap-countdown {
-    margin-top: 30px;
+    margin-top: 2px;
   }
 
   #headline {
@@ -284,7 +287,7 @@
     font-family: "Edensor";
     font-size: 9pt;
     list-style-type: none;
-    padding: 5pt 20pt;
+    padding: 0pt 15pt;
     text-transform: uppercase;
     border-right: 1px solid #000;
     color: #000;

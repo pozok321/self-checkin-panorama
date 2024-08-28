@@ -1052,14 +1052,8 @@
       },
     },
     mounted() {
-      this.events_id = $cookies.get("events_id");
-      if (this.events_id == null) {
-        Swal.fire({
-          title: "Your Session is Expired!",
-          icon: "warning",
-        });
-        setTimeout(1000);
-        this.$router.push("/");
+      if (this.event_detail === null) {
+        this.$router.push("/eventdetailpage");
       } else {
         this.getEvent();
         this.setTitle("Registration - " + this.event_detail.event_title + " - Undangin ");

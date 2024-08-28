@@ -100,15 +100,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <button class="btn green-btn" id="btn_next">
+                            <div class="form-group text-center">
+                                <a class="btn btn-back mx-1" @click="backPage()">
+                                    <span>
+                                        Back
+                                    </span>
+                                </a>
+                                <button class="btn btn-main mx-1" id="btn_register">
                                     <span v-if="LoadingButton">
                                         <span class="loader loading-quarter"></span>
                                         Processing
                                     </span>
-                                    <span v-else>
-                                        Next
-                                    </span>
+                                    <span v-else> Next </span>
                                 </button>
                             </div>
                             <button @click="topFunction()" id="myBtn" title="Go to top">
@@ -173,6 +176,10 @@
             ErrorMessage,
         },
         methods: {
+            backPage() {
+                $("#btn_back").click();
+                this.$router.push("/registrationpage/" + this.form_getQuestion.events_id);
+            },
             isRequired(value) {
                 if (!value) {
                     return 'this field is required';
@@ -271,12 +278,6 @@
                     $("#qa_other_wrap-" + question_id + value.id).hide()
                     $("#qa_other-" + question_id + value.id).prop('disabled', true);
                 }
-            },
-            topFunction() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
             },
             js() {
                 var mybutton = document.getElementById("myBtn");
@@ -398,6 +399,12 @@
                         }
                     })
             },
+            topFunction() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            },
         },
         mounted() {
             if (this.event_detail === null) {
@@ -432,5 +439,17 @@
     .redBox {
         border: 1px solid red;
 
+    }
+
+    .btn-back {
+        width: 25%;
+        background-color: #ffffff;
+        color: #2096c1;
+        font-family: Helvetica;
+        border-radius: 10px;
+        font-size: 16pt;
+        padding: 5px 0 5px 0;
+        font-weight: bold;
+        border-color: #2096c1;
     }
 </style>

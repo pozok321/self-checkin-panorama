@@ -88,16 +88,14 @@
                 }
                 return null;
             },
-
             checkinPage() {
                 this.$router.push("/scanpage");
             },
-
             homeRegistrationPage() {
                 this.get_ipaddress();
+                localStorage.setItem('event_details', JSON.stringify(this.getPoster));
                 this.$router.push("/homeregistrationpage");
             },
-
             getAgenda() {
                 axios({
                         method: "GET",
@@ -110,7 +108,6 @@
                         this.agenda = res.data;
                     })
             },
-
             getTrack() {
                 axios({
                     method: "GET",
@@ -124,7 +121,6 @@
                 });
 
             },
-
             getSession() {
                 axios({
                         method: "GET",
@@ -142,7 +138,6 @@
                         this.createCookie("qr_setting", this.qr_setting);
                     })
             },
-
             getPoster() {
                 axios({
                         url: "/rsvp/p1home",
@@ -156,8 +151,6 @@
                         this.getPoster = res.data;
                         this.poster_mobile = this.getPoster.poster_mobile;
                         localStorage.setItem("poster_mobile", this.poster_mobile);
-                        localStorage.setItem('event_details', JSON.stringify(this.getPoster));
-                       
                     })
             },
             get_ipaddress() {

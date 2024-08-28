@@ -112,7 +112,6 @@
             reset_qty() {
                 this.createCookie("qty", "1", 2)
             },
-
             getDeclare() {
                 this.topFunction();
                 axios({
@@ -141,7 +140,6 @@
                 window.onscroll = function () {
                     scrollFunction()
                 };
-
                 function scrollFunction() {
                     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
                         mybutton.style.display = "block";
@@ -169,7 +167,6 @@
                     } else {
                         jQuery('#declare_checkbox').prop('disabled', false);
                     }
-
                     function isScrolledToBottom(el) {
                         var $el = $(el);
                         // console.log("test ", el.scrollHeight - $el.scrollTop() - $el.outerHeight())
@@ -177,7 +174,6 @@
                     }
                 }, 200);
             },
-
             setTitle(title_page) {
                 document.title = `${title_page}`
             },
@@ -302,14 +298,12 @@
                         // }
                     }
                 }
-
                 let subtotal_ticket = 0;
                 if (this.main_ticket.coret == true) {
                     subtotal_ticket = parseInt(this.main_ticket.final_price)
                 } else {
                     subtotal_ticket = parseInt(this.main_ticket.normal_price)
                 }
-
                 this.total = (this.subtotal + subtotal_ticket) * this.form_getCart.ticket_qty
             },
             formatCurrency(value, currency) {
@@ -376,11 +370,9 @@
                             for (let i = 0; i < this.addon_ticket.length; i++) {
                                 this.ticket_ao[this.addon_ticket[i].ticket_id] = this.addon_ticket[i].selected
                             }
-
                             if (this.event_detail.rsvp_counter !== 'O') {
                                 this.$router.push("/closed/" + this.form_getCart.events_id);
                             }
-
                             if (this.main_ticket.mark_soldout == 'N' && this.main_ticket.ticket_remain > 0) {
                                 localStorage.setItem("mt_id", JSON.stringify(this.form_getCart.ticketid));
                                 localStorage.setItem("ticket_qty", this.form_getCart.ticket_qty);
@@ -406,16 +398,11 @@
         mounted() {
             this.form_getDeclare.events_id = $cookies.get("events_id");
             if (this.form_getDeclare.events_id === null) {
-                Swal.fire({
-                    title: "Your Session is Expired!",
-                    icon: "warning",
-                });
-                setTimeout(1000);
-                this.$router.push("/");
+                this.$router.push("/eventdetailpage");
             } else {
                 this.getCookie()
+                this.getCart();
             }
-            this.getCart();
         },
     };
 </script>

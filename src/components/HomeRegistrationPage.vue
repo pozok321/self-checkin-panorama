@@ -100,13 +100,13 @@
         },
         mounted() {
             this.form_getevent.events_id = $cookies.get("events_id");
-            if (this.form_getevent.events_id == null) {
+            if (this.form_getevent.events_id === null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
                     icon: "warning",
                 });
                 setTimeout(1000);
-                this.$router.push("/");
+                this.$router.push("/eventdetailpage");
             } else {
                 this.getCookie();
             }
