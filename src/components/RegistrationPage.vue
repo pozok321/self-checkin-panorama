@@ -1,6 +1,6 @@
 <template>
   <section class="vh-100">
-    <div class="container">
+    <div class="container" v-if="event_detail">
       <div class="row">
         <div id="input-data" class="w-75 m-auto">
           <div class="text-center my-5">
@@ -1053,7 +1053,7 @@
     },
     mounted() {
       if (this.event_detail === null) {
-        this.$router.push("/eventdetailpage");
+        this.$router.push("/");
       } else {
         this.getEvent();
         this.setTitle("Registration - " + this.event_detail.event_title + " - Undangin ");

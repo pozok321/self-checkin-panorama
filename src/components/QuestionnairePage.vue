@@ -5,7 +5,7 @@
                 <h1>Questionnaire</h1>
                 <span>Tell us about you and your business</span>
             </div>
-            <div class="content-limit">
+            <div class="content-limit" v-if="event_detail">
                 <div class="wrap-content radius-floating-none bg-white">
                     <div class="formRSVP">
                         <Form @submit="submitQuestion">
@@ -408,7 +408,7 @@
         },
         mounted() {
             if (this.event_detail === null) {
-                this.$router.push("/eventdetailpage");
+                this.$router.push("/");
             } else {
                 // if (this.event_detail.rsvp_counter != 'O') {
                 //     this.$router.push("/closed/" + this.form_getQuestion.events_id);

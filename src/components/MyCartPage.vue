@@ -397,8 +397,8 @@
         },
         mounted() {
             this.form_getDeclare.events_id = $cookies.get("events_id");
-            if (this.form_getDeclare.events_id === null) {
-                this.$router.push("/eventdetailpage");
+            if (this.event_detail === null) {
+                this.$router.push("/");
             } else {
                 this.getCookie()
                 this.getCart();
@@ -408,7 +408,7 @@
 </script>
 
 <template>
-    <section class="vh-100 container-fluid">
+    <section class="vh-100 container-fluid" v-if ="event_detail">
         <div class="row">
             <div class="col-md-8 p-5 vh-100 bg-white">
                 <div class="justify-content-between flex mb-3" name="cart">

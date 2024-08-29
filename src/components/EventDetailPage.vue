@@ -1,10 +1,35 @@
 <template>
     <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
         <div class="d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-6 col-lg-6 col-xl-8">
+            <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-if="session.poster != null">
                 <div class="row text-center">
                     <div class="col-sm-6">
                         <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
+                    </div>
+                    <div class="col-sm-6 bg-white border-dash">
+                        <div class="card-body">
+                            <h3 class="mt-5">you can choose for check in or registration</h3>
+                            <div class="row">
+                                <div class="checkin mt-5 mb-3">
+                                    <span class="mx-2"><img src="../assets/image/check-in.png"
+                                            alt="checkin-icon"></span>
+                                    <button class="w-50 btn-checkin" @click="checkinPage()"> Check in</button>
+                                </div>
+                                <div class="registration mt-3 mb-5">
+                                    <span class="mx-2"><img src="../assets/image/registration.png"
+                                            alt="registration-icon"></span>
+                                    <button class="w-50 btn-registration" @click="homeRegistrationPage()"> Registration
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-else>
+                <div class="row text-center">
+                    <div class="col-sm-6">
+                        <img src="../assets/image/default.png" alt="event banner" width="100%" height="100%">
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
                         <div class="card-body">

@@ -1,5 +1,5 @@
 <template>
-    <section class="vh-100">
+    <section class="vh-100" v-if="event_detail">
         <img :src=" global_url +  this.event_detail.poster_mobile" alt="event banner" class="bg-registration-page">
         <div class="centered container">
             <div class="row m-auto w-50">
@@ -100,13 +100,13 @@
         },
         mounted() {
             this.form_getevent.events_id = $cookies.get("events_id");
-            if (this.form_getevent.events_id === null) {
+            if (this.event_detail === null) {
                 Swal.fire({
                     title: "Your Session is Expired!",
                     icon: "warning",
                 });
                 setTimeout(1000);
-                this.$router.push("/eventdetailpage");
+                this.$router.push("/");
             } else {
                 this.getCookie();
             }

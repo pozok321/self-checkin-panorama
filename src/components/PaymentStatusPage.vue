@@ -34,8 +34,28 @@
             <span class="thank-you">Thank you for the purchasing, your ticket has been processed, please check your
               email immediately</span>
             <div class="form-group">
-              <button class="btn-done mt-3 mx-1" @click="payment_cancel();">CANCEL</button>
+              <button data-bs-toggle="modal" data-bs-target="#showdetails_modal" class="btn-done mt-3 mx-1">CANCEL</button>
               <button class="btn-print mt-3" @click="check_status();">PAYMENT STATUS</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL CANCEL-->
+      <div class="modal fade" id="showdetails_modal" role="dialog">
+        <div class="modal-dialog modal-top modal-top-50">
+          <div class="modal-content border-bottom-navy">
+            <div class="modal-body">  
+              <p class="ppage text-center">Are You Sure?</p>
+              <div class="btn-wrap text-center">
+                <a class="btn btn-navy-cancel short-btn" data-bs-dismiss="modal">
+                  No
+                </a>
+                <a class="btn btn-navy-cancel short-btn" data-bs-dismiss="modal" @click="payment_cancel();" >
+                  Yes
+                </a>
+              </div>
+              <br>
             </div>
           </div>
         </div>
@@ -79,7 +99,7 @@
       };
     },
     components: {
-      
+
     },
     methods: {
       getUrlGateway() {
@@ -99,13 +119,13 @@
           if (res.data.status_code == 200) {
             Swal.fire({
               title: "Status Transaction :",
-              icon: "Transaction Canceled",
+              icon: "success",
               text: res.data.transaction_status,
             }).then((value) => {});
           } else {
             this.isLoadingAnimation = false;
             Swal.fire({
-              title: "Status Transaction :",
+              title: "Pending",
               icon: "warning",
               text: res.data.transaction_status,
             }).then((value) => {});
@@ -130,27 +150,56 @@
               text: res.data.status_message,
             }).then((value) => {
               is.isLoadingAnimation = true;
-              localStorage.clear();
               is.$router.push("/eventdetailpage");
             });
-          } else if(res.data.status_message == "expired"){
-            this.isLoadingAnimation = false;
-            Swal.fire({
-              title: "Your Payment is Expired",
-              icon: "warning",
-              text: res.data.status_message,
-            }).then((value) => {
-               localStorage.clear();
-               is.$router.push("/eventdetailpage");
-            });
-          }
-          else{
-            this.isLoadingAnimation = false;
-            Swal.fire({
-              title: "Warning",
-              icon: "warning",
-              text: res.data.status_message,
-            }).then((value) => {});
+          } 
+
+          switch (res.data.status) {
+            case 200:
+              this.checkin_status = true;
+              this.on_print();
+              break;
+            case 201:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "info",
+              });
+              break;
+            case 202:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "info",
+              });
+              break;
+            case 203:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "warning",
+              });
+              break;
+              case "settlement":
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "info",
+              });
+              case "pending":
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "info",
+              });
+              break;
+            default:
+              this.checkin_status = false;
+              Swal.fire({
+                title: this.scanner_data.message,
+                icon: "warning",
+              });
+              break;
           }
         });
       },
@@ -163,9 +212,11 @@
       },
       Countdown(dateStart) {
         let datestart2 = moment(dateStart).format('MMM DD, YYYY HH:mm:ss');
+
         function byId(id) {
           return document.getElementById(id);
         }
+
         function formatTens(n) {
           // format integers to have at least two digits
           return (n < 10) ? '0' + n : '' + n;
@@ -188,7 +239,6 @@
     },
 
     mounted() {
-      console.log(this.event_detail, "event detailssssssssss");
       if (this.event_detail === null) {
         this.$router.push("/eventdetailpage");
       } else {
