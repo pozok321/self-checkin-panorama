@@ -180,13 +180,13 @@
                 icon: "warning",
               });
               break;
-              case "settlement":
+              case "pending":
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
                 icon: "info",
               });
-              case "pending":
+              case "settlement":
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
