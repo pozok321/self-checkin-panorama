@@ -115,20 +115,30 @@
           method: "POST",
           data: this.form_payment,
         }).then((res) => {
-          this.check_payment = res.data;
           if (res.data.status_code == 200) {
+            this.isLoadingAnimation = false;
             Swal.fire({
-              title: "Status Transaction :",
+              title: "Payment Success",
               icon: "success",
               text: res.data.transaction_status,
-            }).then((value) => {});
+            }).then(() => {
+              localStorage.clear();
+              this.$router.push("/eventdetailpage");
+            });
+          } else if(res.data.status_code == 201) {
+            this.isLoadingAnimation = false;
+            Swal.fire({
+              title: "Your Transaction Still Pending",
+              icon: "warning",
+              text: res.data.transaction_status,
+            })
           } else {
             this.isLoadingAnimation = false;
             Swal.fire({
-              title: "Pending",
+              title: "",
               icon: "warning",
               text: res.data.transaction_status,
-            }).then((value) => {});
+            })
           }
         });
       },
@@ -153,54 +163,6 @@
               is.$router.push("/eventdetailpage");
             });
           } 
-
-          switch (res.data.status) {
-            case 200:
-              this.checkin_status = true;
-              this.on_print();
-              break;
-            case 201:
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "info",
-              });
-              break;
-            case 202:
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "info",
-              });
-              break;
-            case 203:
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "warning",
-              });
-              break;
-              case "pending":
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "info",
-              });
-              case "settlement":
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "info",
-              });
-              break;
-            default:
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "warning",
-              });
-              break;
-          }
         });
       },
       formatDate(date) {
