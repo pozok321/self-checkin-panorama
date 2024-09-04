@@ -123,22 +123,24 @@
               text: res.data.transaction_status,
             }).then(() => {
               localStorage.clear();
+              for (var i = 0; i < 100; i++) {
+                window.clearInterval(i);
+            }
               this.$router.push("/eventdetailpage");
             });
           } else if(res.data.status_code == 201) {
             this.isLoadingAnimation = false;
-            Swal.fire({
-              title: "Your Transaction Still Pending",
-              icon: "warning",
-              text: res.data.transaction_status,
-            })
-          } else {
+          } else if (res.data.status_code == 407) {
             this.isLoadingAnimation = false;
             Swal.fire({
-              title: "",
+              title: "Your Payment is Expired",
               icon: "warning",
               text: res.data.transaction_status,
             })
+            this.$router.push("/eventdetailpage");
+            for (var i = 0; i < 100; i++) {
+              window.clearInterval(i);
+            }
           }
         });
       },
@@ -155,11 +157,14 @@
           var is = this;
           if (res.data.status_code == 200) {
             Swal.fire({
-              title: "success",
+              title: "Cancel Payment Success",
               icon: "success",
               text: res.data.status_message,
             }).then((value) => {
               is.isLoadingAnimation = true;
+              for (var i = 0; i < 100; i++) {
+                window.clearInterval(i);
+            }
               is.$router.push("/eventdetailpage");
             });
           } 
@@ -204,7 +209,11 @@
       if (this.event_detail === null) {
         this.$router.push("/eventdetailpage");
       } else {
-        this.getUrlGateway()
+        var is = this;
+        is.getUrlGateway();
+        setInterval(function() { 
+          is.check_status();
+        },5000);
       }
     },
   };

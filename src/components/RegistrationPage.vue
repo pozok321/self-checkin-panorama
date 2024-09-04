@@ -349,7 +349,7 @@
                                 <button class="btn-next mt-4" @click="confirmGetTicket()">Next</button>
                             </div> -->
 
-              <div class="form-group text-end">
+              <div class="form-group text-center">
                 <a class="btn btn-back mx-1" @click="backPage()">
                   <span>
                     Back

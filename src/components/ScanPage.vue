@@ -192,6 +192,7 @@
             case 200:
               this.checkin_status = true;
               this.on_print();
+              finishScan();
               break;
             case 201:
               this.checkin_status = false;
