@@ -78,6 +78,7 @@
         form_cancel: {
           transaction_id: localStorage.getItem("transaction_id"),
         },
+        events_id: this.$route.params.Eventsid,
         urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
         poster_mobile: localStorage.getItem("poster_mobile"),
         qr_payment: localStorage.getItem("qr_payment"),
@@ -122,11 +123,11 @@
               icon: "success",
               text: res.data.transaction_status,
             }).then(() => {
-              localStorage.clear();
+              // localStorage.clear();
               for (var i = 0; i < 100; i++) {
                 window.clearInterval(i);
             }
-              this.$router.push("/eventdetailpage");
+              this.$router.push("/receiptpage/" + this.events_id);
             });
           } else if(res.data.status_code == 201) {
             this.isLoadingAnimation = false;
@@ -164,8 +165,8 @@
               is.isLoadingAnimation = true;
               for (var i = 0; i < 100; i++) {
                 window.clearInterval(i);
+                is.$router.push("/eventdetailpage");
             }
-              is.$router.push("/eventdetailpage");
             });
           } 
         });
@@ -213,7 +214,7 @@
         is.getUrlGateway();
         setInterval(function() { 
           is.check_status();
-        },5000);
+        },10000);
       }
     },
   };

@@ -76,6 +76,11 @@ const router = createRouter({
       name: "paymentstatuspage",
       component: () => import("../components/PaymentStatusPage.vue"),
     },
+    {
+      path: "/receiptpage/:Eventsid",
+      name: "receiptpage",
+      component: () => import("../components/ReceiptPage.vue"),
+    },
   ],
 });
 
