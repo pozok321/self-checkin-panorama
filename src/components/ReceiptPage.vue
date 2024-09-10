@@ -8,14 +8,7 @@
         </div>
         <div class="payment-success col-md-9 m-auto mt-4">
           <div class="row align-center">
-            <div class="col-md-3">
-              <img src="../assets/image/icon-ceklis.png" alt="icon-ceklis" />
-            </div>
-            <div class="col-md-9">
-              <h1 class="text-start py-3">Waiting Payment</h1>
-              <span class="thank-you">Thank you for the purchasing, your ticket has been processed, please check your
-                email immediately</span>
-            </div>
+           
           </div>
         </div>
       </div>
@@ -32,8 +25,10 @@
           event_detail: JSON.parse(localStorage.getItem("event_details")),
           urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
           poster_mobile: localStorage.getItem("poster_mobile"),
-          order_id: localStorage.getItem("order_id"),
+          receipt_data: {
           events_id: this.$route.params.Eventsid,
+          order_id: localStorage.getItem("order_id"),
+         },
           ticket_name: "",
           LoadingButton: false,
           isLoadingAnimation: false,
@@ -53,19 +48,24 @@
         receiptList() {
         this.isLoadingAnimation = true;
         axios({
-          url: "/rsvp/receipt/ticketlist",
+          url: "/rsvp/getpaidticket",
           headers: {
             "Content-Type": "text/plain",
           },
           method: "POST",
-          data: this.form_cancel,
-        }).then(() => {});
+          data: this.form_receipt,
+        }).then(() => {
+          this.isLoadingAnimation = false;
+          console.log(this.form_receipt, "test123");
+        });
       },
       },
   
       mounted() {
         if (this.event_detail === null) {
           this.$router.push("/eventdetailpage");
+        } else {
+          this.receiptList();
         }
       },
     };

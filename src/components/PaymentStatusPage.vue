@@ -42,7 +42,7 @@
 
       <!-- MODAL CANCEL-->
       <div class="modal fade" id="showdetails_modal" role="dialog">
-        <div class="modal-dialog modal-top modal-top-50">
+        <div class="modal-dialog modal-top-100">
           <div class="modal-content border-bottom-navy">
             <div class="modal-body">
               <p class="page text-center">Are You Sure?</p>

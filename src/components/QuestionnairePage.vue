@@ -410,9 +410,9 @@
             if (this.event_detail === null) {
                 this.$router.push("/");
             } else {
-                // if (this.event_detail.rsvp_counter != 'O') {
-                //     this.$router.push("/closed/" + this.form_getQuestion.events_id);
-                // }
+                if (this.event_detail.rsvp_counter != 'O') {
+                    this.$router.push("/closed/" + this.form_getQuestion.events_id);
+                }
                 if (this.getQuestion.order_id != null) {
                     this.$router.push("/registrationpage/" + this.events_id);
                 } else {

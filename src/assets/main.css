@@ -861,6 +861,10 @@ body {
   top: 50px;
 }
 
+.modal-top-100{
+  top: 25%;
+}
+
 .margin-top-50 {
   margin-top: 50pt;
 }
