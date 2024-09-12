@@ -156,6 +156,7 @@ export default {
       addon_ticket: [],
       ticket_ao: [],
       urlGateway: [],
+      evidenc:"",
       checkout_detail: "",
       length_ao: "",
       subtotal: "",
@@ -370,11 +371,13 @@ export default {
         data: this.form_getCheckout,
       }).then((res) => {
         this.checkout_detail = res.data;
+        this.evidenc = this.checkout_detail.evidenc;
         this.urlGateway = this.checkout_detail.urlGateway;
         this.transaction_id = this.urlGateway.transaction_id;
         this.qr = this.urlGateway.qr;
         if (this.checkout_detail.status == 200) {
           localStorage.setItem("transaction_id", this.transaction_id);
+          localStorage.setItem("evidenc", this.evidenc);
           localStorage.setItem("qr_payment", this.qr);
           localStorage.setItem("urlGateway", JSON.stringify(this.urlGateway));
           this.$router.push("/paymentstatuspage/" + this.form_getCheckout.events_id);

@@ -73,8 +73,8 @@ export default {
         method: "POST",
         data: this.form_getevent,
       }).then((res) => {
-        this.getEvent = res.data;
-        this.ticket = this.getEvent.ticket;
+        this.get_event = res.data;
+        this.ticket = this.get_event.ticket;
         this.class_name = this.ticket.class_name;
       });
     },

@@ -3,7 +3,11 @@
     <div class="container">
       <div class="row">
         <div class="d-flex">
-          <img :src="this.qr_payment" alt="banner" class="poster-mobile-img m-auto" />
+          <img
+            :src="this.qr_payment"
+            alt="banner"
+            class="poster-mobile-img m-auto"
+          />
         </div>
       </div>
       <div class="d-flex">
@@ -30,11 +34,22 @@
             <img src="../assets/image/icon-ceklis.png" alt="icon-ceklis" />
           </div>
           <div class="col-md-9">
-            <h1 class="text-start py-3">Waiting Payment</h1>
-            <span class="thank-you">Thank you for the purchasing, your ticket has been processed, please check your email immediately</span>
+            <h1 class="text-start py-3">Waiting for Payment</h1>
+            <span class="thank-you"
+              >Thank you for the purchasing, your ticket has been processed,
+              please check your email immediately</span
+            >
             <div class="form-group">
-              <button data-bs-toggle="modal" data-bs-target="#showdetails_modal" class="btn-done mt-3 mx-1">CANCEL</button>
-              <button class="btn-print mt-3" @click="check_status()">PAYMENT STATUS</button>
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#showdetails_modal"
+                class="btn-done mt-3 mx-1"
+              >
+                CANCEL
+              </button>
+              <button class="btn-print mt-3" @click="check_status()">
+                PAYMENT STATUS
+              </button>
             </div>
           </div>
         </div>
@@ -47,8 +62,19 @@
             <div class="modal-body">
               <p class="page text-center">Are You Sure?</p>
               <div class="btn-wrap text-center">
-                <a class="btn btn-navy-cancel short-btn" data-bs-dismiss="modal"> No </a>
-                <a class="btn btn-navy-cancel short-btn" data-bs-dismiss="modal" @click="payment_cancel()"> Yes </a>
+                <a
+                  class="btn btn-navy-cancel short-btn"
+                  data-bs-dismiss="modal"
+                >
+                  No
+                </a>
+                <a
+                  class="btn btn-navy-cancel short-btn"
+                  data-bs-dismiss="modal"
+                  @click="payment_cancel()"
+                >
+                  Yes
+                </a>
               </div>
               <br />
             </div>
