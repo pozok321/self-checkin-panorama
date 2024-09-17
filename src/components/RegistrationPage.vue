@@ -696,7 +696,6 @@ export default {
             this.data_position_enable.push(this.data_position[i]);
           }
         }
-
         var is = this;
         setTimeout(function () {
           $("#position").on("change", function () {

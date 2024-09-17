@@ -5,7 +5,7 @@
         <div class="formRSVP">
           <h4 class="text-center">Ticket List</h4>
           <div class="order-id text-center">
-            <p>Order ID : test123</p>
+            <p>Order ID </p>
           </div>
           <div class="row guest-wrap">
             <div class="guest-box" v-for="receiptData in receipt">
@@ -19,34 +19,32 @@
                   </div>
                 </div>
                 <div class="col-lg-4 col-sm-4 col-4 text-end">
-                  <button class="btn btn-choose">Show QR</button>
+                  <button class=" btn btn-choose" @click="receiptDetail(receiptData)">detail</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="payment-success col-md-9 m-auto mt-4"></div>
     </div>
   </section>
 </template>
 
 <script>
-  import Swal from "sweetalert2";
   import axios from "axios";
 
   export default {
     data() {
       return {
+        events_id: this.$route.params.Eventsid,
         event_detail: JSON.parse(localStorage.getItem("event_details")),
         urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
         poster_mobile: localStorage.getItem("poster_mobile"),
-       
         receipt_data: {
           events_id: this.$route.params.Eventsid,
           order_id: localStorage.getItem("order_id"),
         },
-        receipt_details: {
+        show_qr: {
           evidenc: localStorage.getItem("evidenc"),
           order_id: localStorage.getItem("order_id"),
           guests_token: localStorage.getItem("token")
@@ -56,10 +54,12 @@
         isLoadingAnimation: false,
         global_url: this.$globalURL,
         ticket_receipt: [],
-        receipt: '',
+        receipt: [],
         isLoading: false,
         isLoadingHeader: false,
         route_name: this.$route.name,
+        ticketlist : false,
+        ticketdetail : false,
       };
     },
     components: {
@@ -80,14 +80,10 @@
           data: this.receipt_data,
         }).then((res) => {
           this.receipt = res.data;
-          this.email = this.receipt.email;
-          this.fullname = this.receipt.fullname;
-          this.ticket_name = this.receipt.ticket_name;
-          this.token = this.receipt.token;
         });
       },
-
-      receiptList() {
+      receiptDetail(receiptData) {
+        this.show_qr.guests_token = receiptData.token;
         this.isLoadingAnimation = true;
         axios({
           url: "/rsvp/receipt/details",
@@ -95,17 +91,12 @@
             "Content-Type": "text/plain",
           },
           method: "POST",
-          data: this.receipt_data,
+          data: this.show_qr,
         }).then((res) => {
-          this.receipt = res.data;
-          this.email = this.receipt.email;
-          this.fullname = this.receipt.fullname;
-          this.ticket_name = this.receipt.ticket_name;
-          this.token = this.receipt.token;
+          this.receipt_details = res.data;
         });
       },
     },
-
     mounted() {
       if (this.event_detail === null) {
         this.$router.push("/eventdetailpage");
