@@ -45,7 +45,6 @@ const router = createRouter({
       name: "ticketlist",
       component: () => import("../components/HomeRegistrationPage.vue"),
     },
-
     {
       path: "/mycart/:Eventsid",
       name: "mycart",
@@ -77,7 +76,7 @@ const router = createRouter({
       component: () => import("../components/PaymentStatusPage.vue"),
     },
     {
-      path: "/receiptpage/:Eventsid",
+      path: "/receiptpage/:Eventsid-:orderid",
       name: "receiptpage",
       component: () => import("../components/ReceiptPage.vue"),
     },

@@ -106,6 +106,7 @@ export default {
       check_payment: "",
       cancel_payment: "",
       order_id: localStorage.getItem("order_id"),
+      evidenc: localStorage.getItem("evidenc"),
       length_ao: "",
       subtotal: "",
       total: "",
@@ -135,6 +136,7 @@ export default {
         method: "POST",
         data: this.form_payment,
       }).then((res) => {
+        
         if (res.data.status_code == 200) {
           this.isLoadingAnimation = false;
           Swal.fire({
@@ -142,11 +144,13 @@ export default {
             icon: "success",
             text: res.data.transaction_status,
           }).then(() => {
+            this.testing = res.data.transaction_status;
+            console.log(this.testing,"test123");
             // localStorage.clear();
             for (var i = 0; i < 100; i++) {
               window.clearInterval(i);
             }
-            this.$router.push("/receiptpage/" + this.events_id);
+            this.$router.push("/receiptpage/" + this.events_id + "-" + this.order_id);
           });
         } else if (res.data.status_code == 201) {
           this.isLoadingAnimation = false;

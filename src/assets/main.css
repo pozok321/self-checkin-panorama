@@ -890,6 +890,21 @@ body {
   border-radius: 50%;
   text-align: center;
 }
+.btn-navy-cancel {
+  width: 100%;
+  padding: 10px;
+  font-size: 14pt;
+  color: #315568;
+  border-radius: 12pt;
+  background: #FFFFFF;
+  border: 1px solid #315568;
+  margin: 7pt 0;
+}
+
+.btn-navy-cancel:hover {
+  color: #315568;
+  border: 1px solid #315568;
+}
 
 .modalcustom {
   /* display: none; */

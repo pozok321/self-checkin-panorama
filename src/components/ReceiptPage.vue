@@ -1,6 +1,6 @@
 <template>
   <section class="vh-100">
-    <div class="content-limit">
+    <div class="content-limit"> 
       <div class="wrap-content bg-white">
         <div class="formRSVP">
           <h4 class="text-center">Ticket List</h4>
@@ -27,16 +27,117 @@
         </div>
       </div>
     </div>
+
+    <div v-if="ticketdetail">
+      <div class="content-limit">
+        <div class="wrap-content bg-white">
+          <div class="formRSVP" v-if="ticketlist">
+            <h4 class="titlepage text-center">
+              <b>Ticket List</b>
+            </h4>
+            <div class="is-loading text-30" v-if="isLoading"></div>
+            <div v-else>
+              <p class="ppage text-center">Order ID : {{event_detail.order_id}}</p>
+            </div>
+
+            
+            <div class="powered text-center" style="padding-top:35px">
+              Powered by
+              <br>
+              <!-- <img src="/src/assets/img/undangin-logo.svg" width="120" alt="Undangin"
+                            style="margin-top:10px;"> -->
+            </div>
+          </div>
+
+          <div class="formRSVP" v-if="receipt_details">
+            <div class="row">
+              <div class="col-8">
+                <h4 class="text-left"><b>Detail Ticket</b></h4>
+                <div>Full Name</div>
+                <div class="is-loading text-30" v-if="isLoading"></div>
+                <div class="mb-2" v-else><b>{{member_detail.fullname}}</b></div>
+
+                <div>Ticket Class</div>
+                <div class="mb-2 text-left">
+                  <ul class="ppage" style="padding-left:15px">
+                    <li class="text-left" v-for="ticket in member_detail.tickets">
+                      <b>{{ticket.ticket_name}}</b>
+                    </li>
+                  </ul>
+                </div>
+                <div>Order ID</div>
+                <div class="is-loading text-30" v-if="isLoading"></div>
+                <div class="mb-2" v-else><b>{{event_detail.order_id}}</b></div>
+              </div>
+              <div class="col-4">
+                <div class="qr-box text-center">
+                  <!-- <div class="is-loading img-height" v-if="isLoading"></div> -->
+                  <div id="qrcode"></div>
+                  <!-- <img :src="member_detail.qrimage" width="100%" :alt="member_detail.fullname" v-else> -->
+                </div>
+
+                <div v-if="isLoading">
+                  <div class="is-loading text-30"></div>
+                  <div class="is-loading text-30"></div>
+                </div>
+                <div v-else>
+                  <!-- {{ member_detail }} -->
+                  <div class="tokencopy-wrap" @click="copy_membertoken()" style="margin-top: 0;">
+                    <input type="text" class="form-control form-custom form-8pt"
+                      style="position: absolute; top: -2000px;" :value="member_detail.guests_token" id="member_token"
+                      readonly>
+                    <button class="btn btn-main font-12ptwhite copy-btn" @click="copy_membertoken()">
+                      Copy Token
+                      <!-- <i class='bx bxs-copy-alt'></i> -->
+                    </button>
+                  </div>
+                </div>
+                <br>
+              </div>
+            </div>
+            <div class="text-center">
+
+            </div>
+            <div style="font-size:12px; margin-top:20px">
+              <!-- <h4 style="font-size:14px; font-weight:bold">Syarat & Ketentuan :</h4> -->
+              <p><b>JANGAN MEMBAGIKAN BARCODE E-TICKET ANDA SECARA ONLINE KARENA ORANG DAPAT MENYALIN DAN
+                  MENGKLAIM TIKET ANDA.</b></p>
+              <ol style="font-size:12px; font-weight:normal; padding-left: 15px;">
+                <li> Kami tidak bertanggung jawab atas kehilangan e-ticket ini</li>
+                <li> E-ticket hanya dapat digunakan oleh 1 orang</li>
+                <li> E-ticket ditukarkan dengan tanda masuk saat di venue</li>
+              </ol>
+            </div>
+            <div class="btn-wrap text-center">
+              <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#showconfirm_modal">
+                Print QR
+              </button>
+              <a class="btn btn-navy-cancel" @click="clear_qr()">
+                Close
+              </a>
+            </div>
+            <br>
+          </div>
+          <button @click="topFunction()" id="myBtn" title="Go to top">
+            <i class='bx bxs-chevron-up'></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
   import axios from "axios";
-
+  import Swal from "sweetalert2";
+  import {
+    Form,
+    Field,
+    ErrorMessage
+  } from 'vee-validate';
   export default {
     data() {
       return {
-        events_id: this.$route.params.Eventsid,
         event_detail: JSON.parse(localStorage.getItem("event_details")),
         urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
         poster_mobile: localStorage.getItem("poster_mobile"),
@@ -50,25 +151,37 @@
           guests_token: localStorage.getItem("token")
         },
         ticket_name: "",
-        LoadingButton: false,
-        isLoadingAnimation: false,
         global_url: this.$globalURL,
         ticket_receipt: [],
         receipt: [],
+        member_data: [],
+        member_detail: [],
+        get_receipt:[],
         isLoading: false,
         isLoadingHeader: false,
+        ticketlist: true,
+        ticketdetail: false,
+        isLoading: false,
+        isLoadingHeader: false,
+        LoadingButton: false,
+        isLoadingAnimation: false,
         route_name: this.$route.name,
-        ticketlist : false,
-        ticketdetail : false,
       };
     },
     components: {
-
+      Form,
+      Field,
+      ErrorMessage,
     },
     methods: {
       getUrlGateway() {
         this.Countdown(this.urlGateway.expiry_time);
       },
+      clear_qr() {
+                $("#qrcode").empty();
+                this.ticketlist = true
+                this.ticketdetail = false
+            },
       receiptList() {
         this.isLoadingAnimation = true;
         axios({
@@ -82,6 +195,60 @@
           this.receipt = res.data;
         });
       },
+      copy_membertoken() {
+                // Get the text field
+                var copyText = document.getElementById("member_token");
+
+                // Select the text field
+                copyText.select();
+                copyText.setSelectionRange(0, 99999); // For mobile devices
+
+                // Copy the text inside the text field
+                navigator.clipboard.writeText(copyText.value);
+
+                // Alert the copied text
+                Swal.fire({
+                        text: "Success, copied token!",
+                        icon: "success",
+                    })
+                    .then((value) => {});
+
+                setTimeout(function () {
+                    $(".swal-button--confirm").click();
+                }, 1000);
+            },
+      getReceipt() {
+        this.isLoadingHeader = true
+        this.isLoading = true;
+        axios({
+            url: "/v1/rsvp/receipt/ticketlist",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            method: "POST",
+            data: this.form_getReceipt,
+          })
+          .then(res => {
+            get_receipt = res.data;
+            this.isLoading = false;
+            this.isLoadingHeader = false
+            if (res.data.status == 201) {
+              Swal.fire({
+                  title: "Warning",
+                  icon: "warning",
+                  html: res.data.msg,
+                })
+                .then((value) => {});
+            } else {
+              this.event_detail = res.data;
+              this.member_data = this.event_detail.guest_list
+              this.setTitle("Receipt - " + this.event_detail.event_title +
+                " - Undangin")
+            }
+            this.topFunction()
+          })
+      },
+
       receiptDetail(receiptData) {
         this.show_qr.guests_token = receiptData.token;
         this.isLoadingAnimation = true;
@@ -94,6 +261,8 @@
           data: this.show_qr,
         }).then((res) => {
           this.receipt_details = res.data;
+          this.ticketdetail = true;
+          this.ticketlist = false
         });
       },
     },
@@ -186,4 +355,146 @@
   .guest-wrap {
     margin: 10px 0 100px;
   }
+
+  .nav-back {
+        font-family: 'Helvetica-Bold';
+        font-size: 20pt;
+        font-weight: bold;
+        color: #315568;
+        margin-bottom: 40px;
+    }
+
+    .nav-back a {
+        font-size: 25pt;
+        color: #315568;
+        vertical-align: middle;
+        margin-right: 10px;
+    }
+
+    .icon-search {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        font-size: 28px;
+    }
+
+    .tokencopy-wrap {
+        position: relative;
+        margin-top: 25px;
+    }
+
+    .tokencopy-wrap input {
+        font-style: italic;
+    }
+
+    .form-8pt {
+        padding: 10px;
+        height: 33px;
+        font-size: 9.5pt;
+    }
+
+    .tokencopy-wrap .btn-customcopy {
+        border: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 8pt;
+        height: 33px;
+        border-radius: 13px;
+        background: #ccc;
+        color: #151515;
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #e9ecef;
+        opacity: 1;
+    }
+
+    .qr-box {
+        padding: 2pt;
+        border-radius: 5pt;
+        box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
+    }
+
+    #qrcode {
+        display: inline-block;
+    }
+
+    .ppage {
+        font-family: 'PlusJakartaSans';
+        font-weight: 500;
+        font-size: 12pt;
+        color: #09303E;
+    }
+
+    .inline-block {
+        display: inline-block;
+    }
+
+    .btn-choose {
+        width: auto;
+        max-width: auto;
+        padding: 8px;
+        font-size: 12px;
+        color: #FFFFFF;
+        border-radius: 20px;
+        background: #315568;
+        margin: 2px;
+    }
+
+    :where([autocomplete=one-time-code]) {
+        --otp-digits: 6;
+        --otp-ls: 2ch;
+        --otp-gap: 1.25;
+
+        /* private consts */
+        --_otp-bgsz: calc(var(--otp-ls) + 1ch);
+        --_otp-digit: 0;
+
+        all: unset;
+        background:
+            linear-gradient(90deg,
+                var(--otp-bg, #BBB) calc(var(--otp-gap) * var(--otp-ls)),
+                transparent 0),
+            linear-gradient(90deg,
+                var(--otp-bg, #EEE) calc(var(--otp-gap) * var(--otp-ls)),
+                transparent 0);
+        background-position: calc(var(--_otp-digit) * var(--_otp-bgsz)) 0, 0 0;
+        background-repeat: no-repeat, repeat-x;
+        background-size: var(--_otp-bgsz) 100%;
+        caret-color: var(--otp-cc, #222);
+        caret-shape: block;
+        clip-path: inset(0% calc(var(--otp-ls) / 2) 0% 0%);
+        font-family: ui-monospace, monospace;
+        font-size: var(--otp-fz, 2.5em);
+        inline-size: calc(var(--otp-digits) * var(--_otp-bgsz));
+        letter-spacing: var(--otp-ls);
+        padding-block: var(--otp-pb, 1ch);
+        padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
+    }
+
+    /* For this demo */
+    label span {
+        display: block;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        font-weight: 500;
+        margin-block-end: 1ch;
+    }
+
+    .form-controlc {
+        padding: 10px 10px 10px 31px;
+        height: 47px;
+        border: 1px solid #91B2C3;
+        border-radius: 10pt;
+    }
+
+    input.padding-100 {
+        padding-left: 125px;
+    }
+
+    .copy-btn {
+        border-radius: 0px 0 5pt 5pt;
+        padding: 5px;
+    }
 </style>
