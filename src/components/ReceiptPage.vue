@@ -1,6 +1,6 @@
 <template>
   <section class="vh-100">
-    <div class="content-limit"> 
+    <div class="content-limit">
       <div class="wrap-content bg-white">
         <div class="formRSVP">
           <h4 class="text-center">Ticket List</h4>
@@ -39,28 +39,20 @@
             <div v-else>
               <p class="ppage text-center">Order ID : {{event_detail.order_id}}</p>
             </div>
-
-            
-            <div class="powered text-center" style="padding-top:35px">
-              Powered by
-              <br>
-              <!-- <img src="/src/assets/img/undangin-logo.svg" width="120" alt="Undangin"
-                            style="margin-top:10px;"> -->
-            </div>
           </div>
 
-          <div class="formRSVP" v-if="receipt_details">
+          <div class="formRSVP" v-if="receipt_details" id="areaprint">
             <div class="row">
               <div class="col-8">
                 <h4 class="text-left"><b>Detail Ticket</b></h4>
                 <div>Full Name</div>
                 <div class="is-loading text-30" v-if="isLoading"></div>
-                <div class="mb-2" v-else><b>{{member_detail.fullname}}</b></div>
+                <div class="mb-2" v-else><b>{{receipt_details.fullname}}</b></div>
 
                 <div>Ticket Class</div>
                 <div class="mb-2 text-left">
                   <ul class="ppage" style="padding-left:15px">
-                    <li class="text-left" v-for="ticket in member_detail.tickets">
+                    <li class="text-left" v-for="ticket in receipt_details.tickets">
                       <b>{{ticket.ticket_name}}</b>
                     </li>
                   </ul>
@@ -71,9 +63,10 @@
               </div>
               <div class="col-4">
                 <div class="qr-box text-center">
-                  <!-- <div class="is-loading img-height" v-if="isLoading"></div> -->
-                  <div id="qrcode"></div>
-                  <!-- <img :src="member_detail.qrimage" width="100%" :alt="member_detail.fullname" v-else> -->
+                  <div class="is-loading img-height" v-if="isLoading">
+                    <div id="qrcode"></div>
+                  </div>
+                  <img :src="member_detail.qrimage" width="100%" :alt="member_detail.fullname" v-else>
                 </div>
 
                 <div v-if="isLoading">
@@ -84,11 +77,11 @@
                   <!-- {{ member_detail }} -->
                   <div class="tokencopy-wrap" @click="copy_membertoken()" style="margin-top: 0;">
                     <input type="text" class="form-control form-custom form-8pt"
-                      style="position: absolute; top: -2000px;" :value="member_detail.guests_token" id="member_token"
+                      style="position: absolute; top: -2000px;" :value="receipt_details.guests_token" id="member_token"
                       readonly>
-                    <button class="btn btn-main font-12ptwhite copy-btn" @click="copy_membertoken()">
+                    <button class="btn btn-print font-12ptwhite copy-btn" @click="copy_membertoken()">
                       Copy Token
-                      <!-- <i class='bx bxs-copy-alt'></i> -->
+                      <i class='bx bxs-copy-alt'></i>
                     </button>
                   </div>
                 </div>
@@ -109,7 +102,7 @@
               </ol>
             </div>
             <div class="btn-wrap text-center">
-              <button class="btn btn-main" data-bs-toggle="modal" data-bs-target="#showconfirm_modal">
+              <button class="btn btn-print" @click="on_print()">
                 Print QR
               </button>
               <a class="btn btn-navy-cancel" @click="clear_qr()">
@@ -130,6 +123,7 @@
 <script>
   import axios from "axios";
   import Swal from "sweetalert2";
+  import $ from "jquery";
   import {
     Form,
     Field,
@@ -156,7 +150,7 @@
         receipt: [],
         member_data: [],
         member_detail: [],
-        get_receipt:[],
+        get_receipt: [],
         isLoading: false,
         isLoadingHeader: false,
         ticketlist: true,
@@ -178,10 +172,10 @@
         this.Countdown(this.urlGateway.expiry_time);
       },
       clear_qr() {
-                $("#qrcode").empty();
-                this.ticketlist = true
-                this.ticketdetail = false
-            },
+        $("#qrcode").empty();
+        this.ticketlist = true
+        this.ticketdetail = false
+      },
       receiptList() {
         this.isLoadingAnimation = true;
         axios({
@@ -196,27 +190,27 @@
         });
       },
       copy_membertoken() {
-                // Get the text field
-                var copyText = document.getElementById("member_token");
+        // Get the text field
+        var copyText = document.getElementById("member_token");
 
-                // Select the text field
-                copyText.select();
-                copyText.setSelectionRange(0, 99999); // For mobile devices
+        // Select the text field
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
 
-                // Copy the text inside the text field
-                navigator.clipboard.writeText(copyText.value);
+        // Copy the text inside the text field
+        navigator.clipboard.writeText(copyText.value);
 
-                // Alert the copied text
-                Swal.fire({
-                        text: "Success, copied token!",
-                        icon: "success",
-                    })
-                    .then((value) => {});
+        // Alert the copied text
+        Swal.fire({
+            text: "Success, copied token!",
+            icon: "success",
+          })
+          .then((value) => {});
 
-                setTimeout(function () {
-                    $(".swal-button--confirm").click();
-                }, 1000);
-            },
+        setTimeout(function () {
+          $(".swal-button--confirm").click();
+        }, 1000);
+      },
       getReceipt() {
         this.isLoadingHeader = true
         this.isLoading = true;
@@ -265,6 +259,33 @@
           this.ticketlist = false
         });
       },
+      on_print() {
+        setTimeout(function () {
+          var contents = document.getElementById("areaprint").innerHTML;
+          var frame1 = document.createElement('iframe');
+          frame1.name = "frame1";
+          frame1.style.position = "absolute";
+          frame1.style.top = "-1000000px";
+          document.body.appendChild(frame1);
+          var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1
+            .contentDocument.document : frame1.contentDocument;
+          frameDoc.document.open();
+          frameDoc.document.write('<html><head><title>DIV Contents</title>');
+          frameDoc.document.write('</head><body>');
+          frameDoc.document.write(contents);
+          frameDoc.document.write('</body></html>');
+          frameDoc.document.close();
+          setTimeout(function () {
+            window.frames["frame1"].focus();
+            window.frames["frame1"].print();
+            document.body.removeChild(frame1);
+          }, 500);
+          window.onload = function () {
+            self.print();
+          }
+          return false;
+        }, 500);
+      },
     },
     mounted() {
       if (this.event_detail === null) {
@@ -300,6 +321,16 @@
     border-radius: 20px;
     background: #315568;
     margin: 2px;
+  }
+
+
+  .btn-print {
+    width: 100%;
+    padding: 10px;
+    font-size: 14pt;
+    color: #fff;
+    border-radius: 12pt;
+    background-color: #315568;
   }
 
   .content-limit {
@@ -357,144 +388,144 @@
   }
 
   .nav-back {
-        font-family: 'Helvetica-Bold';
-        font-size: 20pt;
-        font-weight: bold;
-        color: #315568;
-        margin-bottom: 40px;
-    }
+    font-family: 'Helvetica-Bold';
+    font-size: 20pt;
+    font-weight: bold;
+    color: #315568;
+    margin-bottom: 40px;
+  }
 
-    .nav-back a {
-        font-size: 25pt;
-        color: #315568;
-        vertical-align: middle;
-        margin-right: 10px;
-    }
+  .nav-back a {
+    font-size: 25pt;
+    color: #315568;
+    vertical-align: middle;
+    margin-right: 10px;
+  }
 
-    .icon-search {
-        position: absolute;
-        top: 0;
-        right: 10px;
-        font-size: 28px;
-    }
+  .icon-search {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-size: 28px;
+  }
 
-    .tokencopy-wrap {
-        position: relative;
-        margin-top: 25px;
-    }
+  .tokencopy-wrap {
+    position: relative;
+    margin-top: 25px;
+  }
 
-    .tokencopy-wrap input {
-        font-style: italic;
-    }
+  .tokencopy-wrap input {
+    font-style: italic;
+  }
 
-    .form-8pt {
-        padding: 10px;
-        height: 33px;
-        font-size: 9.5pt;
-    }
+  .form-8pt {
+    padding: 10px;
+    height: 33px;
+    font-size: 9.5pt;
+  }
 
-    .tokencopy-wrap .btn-customcopy {
-        border: none;
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-size: 8pt;
-        height: 33px;
-        border-radius: 13px;
-        background: #ccc;
-        color: #151515;
-    }
+  .tokencopy-wrap .btn-customcopy {
+    border: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 8pt;
+    height: 33px;
+    border-radius: 13px;
+    background: #ccc;
+    color: #151515;
+  }
 
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #e9ecef;
-        opacity: 1;
-    }
+  .form-control:disabled,
+  .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+  }
 
-    .qr-box {
-        padding: 2pt;
-        border-radius: 5pt;
-        box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
-    }
+  .qr-box {
+    padding: 2pt;
+    border-radius: 5pt;
+    box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
+  }
 
-    #qrcode {
-        display: inline-block;
-    }
+  #qrcode {
+    display: inline-block;
+  }
 
-    .ppage {
-        font-family: 'PlusJakartaSans';
-        font-weight: 500;
-        font-size: 12pt;
-        color: #09303E;
-    }
+  .ppage {
+    font-family: 'PlusJakartaSans';
+    font-weight: 500;
+    font-size: 12pt;
+    color: #09303E;
+  }
 
-    .inline-block {
-        display: inline-block;
-    }
+  .inline-block {
+    display: inline-block;
+  }
 
-    .btn-choose {
-        width: auto;
-        max-width: auto;
-        padding: 8px;
-        font-size: 12px;
-        color: #FFFFFF;
-        border-radius: 20px;
-        background: #315568;
-        margin: 2px;
-    }
+  .btn-choose {
+    width: auto;
+    max-width: auto;
+    padding: 8px;
+    font-size: 12px;
+    color: #FFFFFF;
+    border-radius: 20px;
+    background: #315568;
+    margin: 2px;
+  }
 
-    :where([autocomplete=one-time-code]) {
-        --otp-digits: 6;
-        --otp-ls: 2ch;
-        --otp-gap: 1.25;
+  :where([autocomplete=one-time-code]) {
+    --otp-digits: 6;
+    --otp-ls: 2ch;
+    --otp-gap: 1.25;
 
-        /* private consts */
-        --_otp-bgsz: calc(var(--otp-ls) + 1ch);
-        --_otp-digit: 0;
+    /* private consts */
+    --_otp-bgsz: calc(var(--otp-ls) + 1ch);
+    --_otp-digit: 0;
 
-        all: unset;
-        background:
-            linear-gradient(90deg,
-                var(--otp-bg, #BBB) calc(var(--otp-gap) * var(--otp-ls)),
-                transparent 0),
-            linear-gradient(90deg,
-                var(--otp-bg, #EEE) calc(var(--otp-gap) * var(--otp-ls)),
-                transparent 0);
-        background-position: calc(var(--_otp-digit) * var(--_otp-bgsz)) 0, 0 0;
-        background-repeat: no-repeat, repeat-x;
-        background-size: var(--_otp-bgsz) 100%;
-        caret-color: var(--otp-cc, #222);
-        caret-shape: block;
-        clip-path: inset(0% calc(var(--otp-ls) / 2) 0% 0%);
-        font-family: ui-monospace, monospace;
-        font-size: var(--otp-fz, 2.5em);
-        inline-size: calc(var(--otp-digits) * var(--_otp-bgsz));
-        letter-spacing: var(--otp-ls);
-        padding-block: var(--otp-pb, 1ch);
-        padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
-    }
+    all: unset;
+    background:
+      linear-gradient(90deg,
+        var(--otp-bg, #BBB) calc(var(--otp-gap) * var(--otp-ls)),
+        transparent 0),
+      linear-gradient(90deg,
+        var(--otp-bg, #EEE) calc(var(--otp-gap) * var(--otp-ls)),
+        transparent 0);
+    background-position: calc(var(--_otp-digit) * var(--_otp-bgsz)) 0, 0 0;
+    background-repeat: no-repeat, repeat-x;
+    background-size: var(--_otp-bgsz) 100%;
+    caret-color: var(--otp-cc, #222);
+    caret-shape: block;
+    clip-path: inset(0% calc(var(--otp-ls) / 2) 0% 0%);
+    font-family: ui-monospace, monospace;
+    font-size: var(--otp-fz, 2.5em);
+    inline-size: calc(var(--otp-digits) * var(--_otp-bgsz));
+    letter-spacing: var(--otp-ls);
+    padding-block: var(--otp-pb, 1ch);
+    padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
+  }
 
-    /* For this demo */
-    label span {
-        display: block;
-        font-family: ui-sans-serif, system-ui, sans-serif;
-        font-weight: 500;
-        margin-block-end: 1ch;
-    }
+  /* For this demo */
+  label span {
+    display: block;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    margin-block-end: 1ch;
+  }
 
-    .form-controlc {
-        padding: 10px 10px 10px 31px;
-        height: 47px;
-        border: 1px solid #91B2C3;
-        border-radius: 10pt;
-    }
+  .form-controlc {
+    padding: 10px 10px 10px 31px;
+    height: 47px;
+    border: 1px solid #91B2C3;
+    border-radius: 10pt;
+  }
 
-    input.padding-100 {
-        padding-left: 125px;
-    }
+  input.padding-100 {
+    padding-left: 125px;
+  }
 
-    .copy-btn {
-        border-radius: 0px 0 5pt 5pt;
-        padding: 5px;
-    }
+  .copy-btn {
+    border-radius: 0px 0 5pt 5pt;
+    padding: 5px;
+  }
 </style>
