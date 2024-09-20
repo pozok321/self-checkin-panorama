@@ -1,5 +1,5 @@
 <template>
-  <section class="vh-100">
+  <section class="vh-100" v-if="event_detail">
     <div class="content-limit">
       <div class="wrap-content bg-white">
         <div class="formRSVP">
@@ -8,7 +8,7 @@
             <p>Order ID </p>
           </div>
           <div class="row guest-wrap">
-            <div class="guest-box" v-for="receiptData in receipt">
+            <div class="guest-box" v-for="(receiptData , index) in receipt">
               <div class="row">
                 <div class="col-lg-8 col-sm-7 col-7">
                   <div class="fontblack-12pt">
@@ -19,7 +19,7 @@
                   </div>
                 </div>
                 <div class="col-lg-4 col-sm-4 col-4 text-end">
-                  <button class=" btn btn-choose" @click="receiptDetail(receiptData)">detail</button>
+                  <button class=" btn btn-choose" @click="showQr(receiptData)">detail</button>
                 </div>
               </div>
             </div>
@@ -41,14 +41,13 @@
             </div>
           </div>
 
-          <div class="formRSVP" v-if="receipt_details" id="areaprint">
+          <div class="formRSVP" v-if="ticketdetail">
             <div class="row">
               <div class="col-8">
                 <h4 class="text-left"><b>Detail Ticket</b></h4>
                 <div>Full Name</div>
                 <div class="is-loading text-30" v-if="isLoading"></div>
                 <div class="mb-2" v-else><b>{{receipt_details.fullname}}</b></div>
-
                 <div>Ticket Class</div>
                 <div class="mb-2 text-left">
                   <ul class="ppage" style="padding-left:15px">
@@ -62,13 +61,13 @@
                 <div class="mb-2" v-else><b>{{event_detail.order_id}}</b></div>
               </div>
               <div class="col-4">
-                <div class="qr-box text-center">
-                  <div class="is-loading img-height" v-if="isLoading">
-                    <div id="qrcode"></div>
-                  </div>
-                  <img :src="member_detail.qrimage" width="100%" :alt="member_detail.fullname" v-else>
+                <div class="qr-box text-center" id="areaprint">
+                  <div class="is-loading img-height" v-if="isLoading"></div>
+                  <center>
+                  <div id="qrcode"></div>
+                </center>
+                  <!-- <img :src="receipt_details.qrimage" width="100%" :alt="receipt_details.fullname" v-else> -->
                 </div>
-
                 <div v-if="isLoading">
                   <div class="is-loading text-30"></div>
                   <div class="is-loading text-30"></div>
@@ -88,11 +87,8 @@
                 <br>
               </div>
             </div>
-            <div class="text-center">
-
-            </div>
             <div style="font-size:12px; margin-top:20px">
-              <!-- <h4 style="font-size:14px; font-weight:bold">Syarat & Ketentuan :</h4> -->
+              <h4 style="font-size:14px; font-weight:bold">Syarat & Ketentuan :</h4>
               <p><b>JANGAN MEMBAGIKAN BARCODE E-TICKET ANDA SECARA ONLINE KARENA ORANG DAPAT MENYALIN DAN
                   MENGKLAIM TIKET ANDA.</b></p>
               <ol style="font-size:12px; font-weight:normal; padding-left: 15px;">
@@ -114,6 +110,10 @@
           <button @click="topFunction()" id="myBtn" title="Go to top">
             <i class='bx bxs-chevron-up'></i>
           </button>
+
+          <!-- PRINT LABEL AREA-->
+         
+          <!-- PRINT LABEL AREA DONE -->
         </div>
       </div>
     </div>
@@ -132,7 +132,7 @@
   export default {
     data() {
       return {
-        event_detail: JSON.parse(localStorage.getItem("event_details")),
+        event_detail: [],
         urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
         poster_mobile: localStorage.getItem("poster_mobile"),
         receipt_data: {
@@ -155,8 +155,6 @@
         isLoadingHeader: false,
         ticketlist: true,
         ticketdetail: false,
-        isLoading: false,
-        isLoadingHeader: false,
         LoadingButton: false,
         isLoadingAnimation: false,
         route_name: this.$route.name,
@@ -235,7 +233,7 @@
                 .then((value) => {});
             } else {
               this.event_detail = res.data;
-              this.member_data = this.event_detail.guest_list
+              this.member_data = this.event_detail.guest_list;
               this.setTitle("Receipt - " + this.event_detail.event_title +
                 " - Undangin")
             }
@@ -243,7 +241,7 @@
           })
       },
 
-      receiptDetail(receiptData) {
+      showQr(receiptData) {
         this.show_qr.guests_token = receiptData.token;
         this.isLoadingAnimation = true;
         axios({
@@ -257,7 +255,21 @@
           this.receipt_details = res.data;
           this.ticketdetail = true;
           this.ticketlist = false
-        });
+          this.isLoadingHeader = false
+          var is = this
+          setTimeout(function () {
+            is.isLoading = false
+
+            const qrcode = new QRCode(document.getElementById('qrcode'), {
+              text: receiptData.token,
+              width: 80,
+              height: 80,
+              colorDark: '#000',
+              colorLight: '#fff',
+              correctLevel: QRCode.CorrectLevel.H
+            });
+          }, 200);
+        })
       },
       on_print() {
         setTimeout(function () {
@@ -358,6 +370,8 @@
     max-width: 600px;
     padding: 30px 20px;
     position: relative;
+    box-shadow: 0 3px 6px #00000029;
+    border-radius: 20px;
   }
 
   .wrap-content {
