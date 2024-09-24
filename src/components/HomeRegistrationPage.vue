@@ -95,7 +95,9 @@ export default {
       }
     },
   },
+
   mounted() {
+    this.isLoading = true;
     this.form_getevent.events_id = $cookies.get("events_id");
     if (this.event_detail === null) {
       Swal.fire({

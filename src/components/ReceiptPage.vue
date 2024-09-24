@@ -5,7 +5,7 @@
         <div class="formRSVP">
           <h4 class="text-center">Ticket List</h4>
           <div class="order-id text-center">
-            <p>Order ID </p>
+            <p>Order ID</p>
           </div>
           <div class="row guest-wrap">
             <div class="guest-box" v-for="(receiptData , index) in receipt">
@@ -23,6 +23,7 @@
                 </div>
               </div>
             </div>
+            <!-- <button>Done Checkin</button> -->
           </div>
         </div>
       </div>
@@ -64,8 +65,14 @@
                 <div class="qr-box text-center" id="areaprint">
                   <div class="is-loading img-height" v-if="isLoading"></div>
                   <center>
-                  <div id="qrcode"></div>
-                </center>
+                    <div id="qrcode"></div>
+                    <div class="noshow">
+                      <div class="mb-4"><b>{{receipt_details.fullname}}</b></div>
+                      <div class="text-center" v-for="ticket in receipt_details.tickets">
+                        <b>{{ticket.ticket_name}}</b>
+                      </div>
+                    </div>
+                  </center>
                   <!-- <img :src="receipt_details.qrimage" width="100%" :alt="receipt_details.fullname" v-else> -->
                 </div>
                 <div v-if="isLoading">
@@ -112,7 +119,23 @@
           </button>
 
           <!-- PRINT LABEL AREA-->
-         
+          <!-- <div class="printlabel" v-if="on_print()">
+            <center>
+              <div>Full Name</div>
+              <div class="is-loading text-30" v-if="isLoading"></div>
+              <div class="mb-2" v-else><b>{{receipt_details.fullname}}</b></div>
+              <div>Ticket Class</div>
+              <div class="mb-2 text-left">
+                <ul class="ppage" style="padding-left:15px">
+                  <li class="text-left" v-for="ticket in receipt_details.tickets">
+                    <b>{{ticket.ticket_name}}</b>
+                  </li>
+                </ul>
+              </div>
+              <div id="qrcode"></div>
+            </center>
+           
+          </div> -->
           <!-- PRINT LABEL AREA DONE -->
         </div>
       </div>
@@ -132,7 +155,7 @@
   export default {
     data() {
       return {
-        event_detail: [],
+        event_detail: JSON.parse(localStorage.getItem("event_details")),
         urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
         poster_mobile: localStorage.getItem("poster_mobile"),
         receipt_data: {
@@ -146,11 +169,11 @@
         },
         ticket_name: "",
         global_url: this.$globalURL,
-        ticket_receipt: [],
         receipt: [],
+        ticket_list: [],
         member_data: [],
         member_detail: [],
-        get_receipt: [],
+        get_receipt: "",
         isLoading: false,
         isLoadingHeader: false,
         ticketlist: true,
@@ -209,36 +232,12 @@
           $(".swal-button--confirm").click();
         }, 1000);
       },
-      getReceipt() {
-        this.isLoadingHeader = true
-        this.isLoading = true;
-        axios({
-            url: "/v1/rsvp/receipt/ticketlist",
-            headers: {
-              "Content-Type": "text/plain"
-            },
-            method: "POST",
-            data: this.form_getReceipt,
-          })
-          .then(res => {
-            get_receipt = res.data;
-            this.isLoading = false;
-            this.isLoadingHeader = false
-            if (res.data.status == 201) {
-              Swal.fire({
-                  title: "Warning",
-                  icon: "warning",
-                  html: res.data.msg,
-                })
-                .then((value) => {});
-            } else {
-              this.event_detail = res.data;
-              this.member_data = this.event_detail.guest_list;
-              this.setTitle("Receipt - " + this.event_detail.event_title +
-                " - Undangin")
-            }
-            this.topFunction()
-          })
+
+      topFunction() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
       },
 
       showQr(receiptData) {
@@ -259,7 +258,6 @@
           var is = this
           setTimeout(function () {
             is.isLoading = false
-
             const qrcode = new QRCode(document.getElementById('qrcode'), {
               text: receiptData.token,
               width: 80,
@@ -312,6 +310,28 @@
 <style scoped>
   a {
     text-decoration: none;
+  }
+
+  @media print {
+
+    .printable {
+      position: absolute;
+      text-align: center;
+      height: 491px;
+      width: 377px;
+      background-color: #fff;
+      clear: both;
+      font-size: 12px;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+      bottom: 100;
+    }
+  }
+
+  @media print and (width: 58mm) and (height: 80mm) {
+    @page {
+      margin: 1cm;
+    }
   }
 
   h1,
@@ -541,5 +561,15 @@
   .copy-btn {
     border-radius: 0px 0 5pt 5pt;
     padding: 5px;
+  }
+
+  .noshow {
+    display: none;
+  }
+
+  @media print {
+    .noshow {
+      display: inline-block;
+    }
   }
 </style>

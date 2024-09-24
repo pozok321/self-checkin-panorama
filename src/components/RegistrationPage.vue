@@ -467,6 +467,8 @@ export default {
       return true;
     },
     getEvent() {
+      this.isLoadingHeader = true
+      this.isLoading = true;
       this.topFunction();
       // this.getSalutation()
       this.get_codecountry();
@@ -1038,6 +1040,7 @@ export default {
     },
   },
   mounted() {
+    this.isLoading = true;
     if (this.event_detail === null) {
       this.$router.push("/");
     } else {

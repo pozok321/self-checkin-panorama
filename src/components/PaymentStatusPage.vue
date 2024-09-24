@@ -103,16 +103,8 @@ export default {
       urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
       poster_mobile: localStorage.getItem("poster_mobile"),
       qr_payment: localStorage.getItem("qr_payment"),
-      check_payment: "",
-      cancel_payment: "",
       order_id: localStorage.getItem("order_id"),
       evidenc: localStorage.getItem("evidenc"),
-      length_ao: "",
-      subtotal: "",
-      total: "",
-      ticket_name: "",
-      onhold_msg: "",
-      enable_button: true,
       LoadingButton: false,
       isLoadingAnimation: false,
       global_url: this.$globalURL,
@@ -188,8 +180,8 @@ export default {
             is.isLoadingAnimation = true;
             for (var i = 0; i < 100; i++) {
               window.clearInterval(i);
-              is.$router.push("/eventdetailpage");
             }
+            is.$router.push("/eventdetailpage");
           });
         }
       });

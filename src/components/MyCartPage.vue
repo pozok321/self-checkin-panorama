@@ -32,7 +32,7 @@
                 subtotal: '',
                 total: '',
                 onhold_msg: '',
-                class_name:'',
+                class_name: '',
                 route_name: this.$route.name,
                 declare_checkbox: false,
                 LoadingButton: false,
@@ -140,6 +140,7 @@
                 window.onscroll = function () {
                     scrollFunction()
                 };
+
                 function scrollFunction() {
                     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
                         mybutton.style.display = "block";
@@ -167,6 +168,7 @@
                     } else {
                         jQuery('#declare_checkbox').prop('disabled', false);
                     }
+
                     function isScrolledToBottom(el) {
                         var $el = $(el);
                         // console.log("test ", el.scrollHeight - $el.scrollTop() - $el.outerHeight())
@@ -396,6 +398,10 @@
             }
         },
         mounted() {
+            this.isLoading = true;
+            setTimeout(() => {
+                this.isLoading = false
+            }, 500)
             this.form_getDeclare.events_id = $cookies.get("events_id");
             if (this.event_detail === null) {
                 this.$router.push("/");
@@ -408,7 +414,7 @@
 </script>
 
 <template>
-    <section class="vh-100 container-fluid" v-if ="event_detail">
+    <section class="vh-100 container-fluid" v-if="event_detail">
         <div class="row">
             <div class="col-md-8 p-5 vh-100 bg-white">
                 <div class="justify-content-between flex mb-3" name="cart">
