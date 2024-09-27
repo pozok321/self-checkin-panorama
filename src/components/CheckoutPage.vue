@@ -342,13 +342,13 @@ export default {
       }).then((res) => {
         this.isLoadingAnimation = false;
         if (res.data.status == 200) {
-          document.getElementById("close_addCode").click();
-          this.getCart();
           Swal.fire({
             title: "Success",
             icon: "success",
             text: res.data.msg,
-          }).then((value) => {});
+          }).then((value) => {
+            this.isLoadingAnimation = true;
+          });
         } else {
           this.msg_notif = res.data.msg;
           var wording = "<span style='color:red; font-size:14px; font-weight:bold'>" + res.data.msg + "<span>.";

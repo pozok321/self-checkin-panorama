@@ -23,7 +23,7 @@
                 </div>
               </div>
             </div>
-            <!-- <button>Done Checkin</button> -->
+            <button @click="toEventDetailPage()">Done Checkin</button>
           </div>
         </div>
       </div>
@@ -65,6 +65,7 @@
                 <div class="qr-box text-center" id="areaprint">
                   <div class="is-loading img-height" v-if="isLoading"></div>
                   <center>
+                    <div class="margin-div" style="margin-top: 0px;"></div>
                     <div id="qrcode"></div>
                     <div class="noshow">
                       <div class="mb-4"><b>{{receipt_details.fullname}}</b></div>
@@ -72,6 +73,7 @@
                         <b>{{ticket.ticket_name}}</b>
                       </div>
                     </div>
+
                   </center>
                   <!-- <img :src="receipt_details.qrimage" width="100%" :alt="receipt_details.fullname" v-else> -->
                 </div>
@@ -117,26 +119,6 @@
           <button @click="topFunction()" id="myBtn" title="Go to top">
             <i class='bx bxs-chevron-up'></i>
           </button>
-
-          <!-- PRINT LABEL AREA-->
-          <!-- <div class="printlabel" v-if="on_print()">
-            <center>
-              <div>Full Name</div>
-              <div class="is-loading text-30" v-if="isLoading"></div>
-              <div class="mb-2" v-else><b>{{receipt_details.fullname}}</b></div>
-              <div>Ticket Class</div>
-              <div class="mb-2 text-left">
-                <ul class="ppage" style="padding-left:15px">
-                  <li class="text-left" v-for="ticket in receipt_details.tickets">
-                    <b>{{ticket.ticket_name}}</b>
-                  </li>
-                </ul>
-              </div>
-              <div id="qrcode"></div>
-            </center>
-           
-          </div> -->
-          <!-- PRINT LABEL AREA DONE -->
         </div>
       </div>
     </div>
@@ -240,6 +222,30 @@
         });
       },
 
+      toEventDetailPage() {
+        Swal.fire({
+          title: 'Do you want to save the changes?',
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          denyButtonText: 'No',
+          customClass: {
+            actions: 'my-actions',
+            cancelButton: 'order-1 right-gap',
+            confirmButton: 'order-2',
+            denyButton: 'order-3',
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire('Success')
+            localStorage.clear();
+          } else if (result.isDenied) {
+            Swal.fire('Changes are not saved', '', 'info')
+          }
+        });
+        this.$router.push("/eventdetailpage");
+      },
+
       showQr(receiptData) {
         this.show_qr.guests_token = receiptData.token;
         this.isLoadingAnimation = true;
@@ -312,26 +318,8 @@
     text-decoration: none;
   }
 
-  @media print {
-
-    .printable {
-      position: absolute;
-      text-align: center;
-      height: 491px;
-      width: 377px;
-      background-color: #fff;
-      clear: both;
-      font-size: 12px;
-      font-weight: bold;
-      font-family: Arial, Helvetica, sans-serif;
-      bottom: 100;
-    }
-  }
-
-  @media print and (width: 58mm) and (height: 80mm) {
-    @page {
-      margin: 1cm;
-    }
+  #printable {
+    border: 1px solid;
   }
 
   h1,
@@ -343,18 +331,6 @@
     color: #315568;
     font-weight: bold;
   }
-
-  .btn-choose {
-    width: auto;
-    max-width: auto;
-    padding: 8px;
-    font-size: 12px;
-    color: #fff;
-    border-radius: 20px;
-    background: #315568;
-    margin: 2px;
-  }
-
 
   .btn-print {
     width: 100%;
@@ -394,6 +370,26 @@
     border-radius: 20px;
   }
 
+  .my-actions {
+    margin: 2em 2em 0;
+  }
+
+  .order-1 {
+    order: 1;
+  }
+
+  .order-2 {
+    order: 2;
+  }
+
+  .order-3 {
+    order: 3;
+  }
+
+  .right-gap {
+    margin-right: auto;
+  }
+
   .wrap-content {
     position: absolute;
     top: -20px;
@@ -419,28 +415,6 @@
 
   .guest-wrap {
     margin: 10px 0 100px;
-  }
-
-  .nav-back {
-    font-family: 'Helvetica-Bold';
-    font-size: 20pt;
-    font-weight: bold;
-    color: #315568;
-    margin-bottom: 40px;
-  }
-
-  .nav-back a {
-    font-size: 25pt;
-    color: #315568;
-    vertical-align: middle;
-    margin-right: 10px;
-  }
-
-  .icon-search {
-    position: absolute;
-    top: 0;
-    right: 10px;
-    font-size: 28px;
   }
 
   .tokencopy-wrap {
@@ -480,10 +454,6 @@
     padding: 2pt;
     border-radius: 5pt;
     box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
-  }
-
-  #qrcode {
-    display: inline-block;
   }
 
   .ppage {
@@ -539,25 +509,6 @@
     padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
   }
 
-  /* For this demo */
-  label span {
-    display: block;
-    font-family: ui-sans-serif, system-ui, sans-serif;
-    font-weight: 500;
-    margin-block-end: 1ch;
-  }
-
-  .form-controlc {
-    padding: 10px 10px 10px 31px;
-    height: 47px;
-    border: 1px solid #91B2C3;
-    border-radius: 10pt;
-  }
-
-  input.padding-100 {
-    padding-left: 125px;
-  }
-
   .copy-btn {
     border-radius: 0px 0 5pt 5pt;
     padding: 5px;
@@ -567,7 +518,22 @@
     display: none;
   }
 
+  .margin-div {
+    display: none;
+  }
+
   @media print {
+
+    .margin-div {
+      display: inline-block;
+      margin-top: 500px;
+    }
+
+    #qrcode {
+      padding-top: 150px;
+      display: inline-block;
+    }
+
     .noshow {
       display: inline-block;
     }

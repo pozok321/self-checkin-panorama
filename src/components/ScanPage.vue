@@ -1,60 +1,3 @@
-<template>
-  <section class="vh-100 bg-scanpage" style="background-color: #f1f1f1" v-if="checkin_status == false">
-    <div class="d-flex justify-content-center align-items-center h-100">
-      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
-        <div class="bg-white container-border-bottom align-items-center row">
-          <div class="col-md-5">
-            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
-            <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
-            <div class="checkin mb-3">
-              <button class="btn-camera-scanner" disabled>
-                <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg" alt="checkin-icon"></span>Scan the QR
-                Code</button>
-            </div>
-          </div>
-          <div class="col-md-7 border-left">
-            <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
-          </div>
-        </div>
-        <div class="row mt-3">
-          <h4 class="bg-darkblue">Tap Your QR to Scanner</h4>
-          <p>Please wait till your QR show the details information</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="vh-100 bg-guest-detail" style="background-color: #f1f1f1" v-else>
-    <div class="d-flex justify-content-center align-items-center h-100">
-      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
-        <div class="bg-white container-border-bottom align-items-center row">
-          <div class="col-md-6">
-            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
-            <img src="../assets/image/printer2.gif" alt="qr code" width="100%" class="img-qr" />
-          </div>
-          <div class="col-md-6 border-left">
-            <div class="row">
-              <h2 class="mb-3">Welcome {{ scanner_data.guest.fullname }}</h2>
-              <div class="border-bottom mt-1 mb-1"></div>
-              <h3 class="mt-2">"Please wait for your badges to finish printing"</h3>
-            </div>
-          </div>
-          <div class="printable" id="areaprint" style="border: 1px solid;">
-            <center>
-            <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 145px" />
-            <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
-              {{ scanner_data.guest.fullname }}</h4>
-            <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
-              {{ scanner_data.guest.ticketclass_name }}</p>
-            </center>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-</template>
-
 <script>
   import Swal from "sweetalert2";
   import axios from "axios";
@@ -77,6 +20,7 @@
           scanner_name: "A",
           scan_source: "SS",
         },
+        scanner_data:"",
         isLoading: false,
         fullPage: true,
       };
@@ -179,22 +123,12 @@
         }).then((res) => {
           this.on_scanner();
           this.scanner_data = res.data;
-          this.status = res.data.status;
+          this.status = this.scanner_data.status;
           this.guests_token_scan = this.scanner_data.guests_token;
-          if (this.scanner_data.message === "Welcome") {
-            // simulate AJAX
-            setTimeout(() => {
-              // this.isLoading = false
-              this.checkin_status = true;
-            }, 500)
-          }
+          var is = this;
           switch (this.status) {
-            case 200:
-              this.checkin_status = true;
-              this.on_print();
-              finishScan();
-              break;
             case 201:
+            console.log(this.status, "status");
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
@@ -202,6 +136,7 @@
               });
               break;
             case 202:
+            console.log(this.status, "status");
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
@@ -209,6 +144,7 @@
               });
               break;
             case 203:
+            console.log(this.status, "status");
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
@@ -216,11 +152,17 @@
               });
               break;
             default:
-              this.checkin_status = false;
+            console.log(this.status, "status");
+              this.checkin_status = true;
               Swal.fire({
                 title: this.scanner_data.message,
-                icon: "warning",
+                icon: "success",
               });
+              this.on_print();
+              setTimeout(function () {
+                is.isLoading = false
+                is.finishScan();
+              }, 13000);
               break;
           }
         });
@@ -284,6 +226,63 @@
     },
   };
 </script>
+
+<template>
+  <section class="vh-100 bg-scanpage" style="background-color: #f1f1f1" v-if="checkin_status == false">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
+        <div class="bg-white container-border-bottom align-items-center row">
+          <div class="col-md-5">
+            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
+            <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
+            <div class="checkin mb-3">
+              <button class="btn-camera-scanner" disabled>
+                <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg" alt="checkin-icon"></span>Scan the QR
+                Code</button>
+            </div>
+          </div>
+          <div class="col-md-7 border-left">
+            <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
+          </div>
+        </div>
+        <div class="row mt-3">
+          <h4 class="bg-darkblue">Tap Your QR to Scanner</h4>
+          <p>Please wait till your QR show the details information</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="vh-100 bg-guest-detail" style="background-color: #f1f1f1" v-else>
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
+        <div class="bg-white container-border-bottom align-items-center row">
+          <div class="col-md-6">
+            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
+            <img src="../assets/image/printer2.gif" alt="qr code" width="100%" class="img-qr" />
+          </div>
+          <div class="col-md-6 border-left">
+            <div class="row">
+              <h2 class="mb-3">Welcome {{ scanner_data.guest.fullname }}</h2>
+              <div class="border-bottom mt-1 mb-1"></div>
+              <h3 class="mt-2">"Please wait for your badges to finish printing"</h3>
+            </div>
+          </div>
+          <div class="printable" id="areaprint" style="border: 1px solid;">
+            <center>
+              <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 145px" />
+              <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
+                {{ scanner_data.guest.fullname }}</h4>
+              <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
+                {{ scanner_data.guest.ticketclass_name }}</p>
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
 
 <style scoped>
   a {
