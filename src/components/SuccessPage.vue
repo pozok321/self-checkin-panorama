@@ -1,5 +1,6 @@
 <template>
   <section class="vh-100">
+    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     <div class="d-flex">
       <img src="../assets/image/banner.png" alt="banner" width="100%" />
     </div>
@@ -26,22 +27,16 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
+import Loading from 'vue-loading-overlay';
 
 export default {
   data() {
     return {
       url: "",
-      zpl_printer: "",
-      thermal_printer: "",
-      showOnMedia: "",
-      venue_id: "",
-      session_topic: "",
       prev_action: "",
-      ticket_id: "",
-      ticket_list: "",
-      multiple_session_entry: "",
       qr_setting: "",
       ticket: "",
+      isLoading: false,
       global_url: this.$globalURL,
       obj: {
         prev_action: "",
@@ -50,7 +45,9 @@ export default {
       },
     };
   },
-  components: {},
+  components: {
+    Loading
+  },
   methods: {
     ticketList() {
       axios({
@@ -62,11 +59,15 @@ export default {
         },
       }).then((res) => {
         this.ticket = res.data;
-        console.log(this.ticket, "test123");
       });
     },
   },
   mounted() {
+    this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
     this.events_id = $cookies.get("events_id");
     if (this.events_id == null) {
       Swal.fire({

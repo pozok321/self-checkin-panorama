@@ -1,6 +1,7 @@
 <template>
     <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
         <div class="d-flex justify-content-center align-items-center h-100">
+            <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
             <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-if="session.poster != null">
                 <div class="row text-center">
                     <div class="col-sm-6">
@@ -18,7 +19,7 @@
                                 <div class="registration mt-3 mb-5">
                                     <span class="mx-2"><img src="../assets/image/registration.png"
                                             alt="registration-icon"></span>
-                                    <button class="w-50 btn-registration" @click="homeRegistrationPage()"> Registration
+                                    <button class="w-50 btn-registration" @click="homeRegistrationPage()">Registration
                                     </button>
                                 </div>
                             </div>
@@ -58,39 +59,35 @@
 <script>
     import Swal from 'sweetalert2'
     import axios from 'axios'
+    import Loading from 'vue-loading-overlay';
 
     export default {
         data() {
             return {
                 url: '',
-                zpl_printer: "",
-                thermal_printer: "",
                 events_id: "",
-                prime_agenda: "",
-                showOnMedia: "",
                 venue_id: "",
                 agenda_id: "",
                 session_id: "",
                 agenda_name: "",
                 track_id: "",
-                session_topic: "",
                 session: "",
                 agenda: "",
                 track: "",
                 multiple_session_entry: "",
                 qr_setting: "",
                 global_url: this.$globalURL,
-                getWaitingPage:"",
+                getWaitingPage: "",
                 form_getposter: {
                     events_id: "",
                     ip_address: "",
                     prev_action: ""
                 },
-                
+                isLoading: false,
             };
         },
         components: {
-
+            Loading
         },
         methods: {
             createCookie(name, value, day) {
@@ -187,6 +184,11 @@
             },
         },
         mounted() {
+            this.isLoading = true;
+            // simulate AJAX
+            setTimeout(() => {
+                this.isLoading = false
+            }, 500)
             this.form_getposter.events_id = $cookies.get("events_id");
             this.events_id = $cookies.get("events_id");
             this.session_id = $cookies.get("session_id");

@@ -1,5 +1,6 @@
 <template>
   <section class="container-fluid">
+    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     <div class="row">
       <div class="col-12 col-md-8 p-3 p-md-5">
         <div class="d-flex justify-content-between align-items-center mb-3" name="cart">
@@ -114,6 +115,7 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
+import Loading from 'vue-loading-overlay';
 import { Form, Field, ErrorMessage } from "vee-validate";
 
 export default {
@@ -187,6 +189,7 @@ export default {
     Form,
     Field,
     ErrorMessage,
+    Loading
   },
   methods: {
     isRequired(value) {
@@ -416,6 +419,11 @@ export default {
     },
   },
   mounted() {
+    this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
     if (this.event_detail === null) {
       this.$router.push("/eventdetailpage");
     } else {

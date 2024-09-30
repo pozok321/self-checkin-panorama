@@ -1,5 +1,6 @@
 <template>
   <section class="vh-100" v-if="event_detail">
+    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     <img :src="global_url + this.event_detail.poster_mobile" alt="event banner" class="bg-registration-page" />
     <div class="centered container">
       <div class="row m-auto w-50">
@@ -22,6 +23,7 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
+import Loading from 'vue-loading-overlay';
 export default {
   data() {
     return {
@@ -40,9 +42,12 @@ export default {
       poster_mobile: "",
       event_detail: JSON.parse(localStorage.getItem("event_details")),
       route_name: this.$route.name,
+      isLoading : true
     };
   },
-  components: {},
+  components: {
+    Loading
+  },
   methods: {
     createCookie(name, value, day) {
       if (day) {
@@ -98,6 +103,10 @@ export default {
 
   mounted() {
     this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
     this.form_getevent.events_id = $cookies.get("events_id");
     if (this.event_detail === null) {
       Swal.fire({

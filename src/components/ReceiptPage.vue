@@ -1,5 +1,6 @@
 <template>
   <section class="vh-100" v-if="event_detail">
+    <loading v-model:active="isLoading" />
     <div class="content-limit">
       <div class="wrap-content bg-white">
         <div class="formRSVP">
@@ -19,11 +20,19 @@
                   </div>
                 </div>
                 <div class="col-lg-4 col-sm-4 col-4 text-end">
-                  <button class=" btn btn-choose" @click="showQr(receiptData)">detail</button>
+                  <button class="btn btn-choose">Print QR <img src="../assets/image/check-in.png" width="20"
+                      alt="Ticket" style="background-color: #fff"></button>
                 </div>
               </div>
             </div>
-            <button @click="toEventDetailPage()">Done Checkin</button>
+            <div class="row">
+              <div class="w-50">
+                <button class="btn-done-print" @click="toEventDetailPage()">Done Checkin</button>
+              </div>
+              <div class="w-50">
+                <button class="btn-details" @click="details(receiptData)">Detail Ticket</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -129,6 +138,7 @@
   import axios from "axios";
   import Swal from "sweetalert2";
   import $ from "jquery";
+  import Loading from 'vue-loading-overlay';
   import {
     Form,
     Field,
@@ -169,6 +179,7 @@
       Form,
       Field,
       ErrorMessage,
+      Loading
     },
     methods: {
       getUrlGateway() {
@@ -224,29 +235,27 @@
 
       toEventDetailPage() {
         Swal.fire({
-          title: 'Do you want to save the changes?',
-          showDenyButton: true,
+          title: "Are you sure?",
+          text: "You will be directed to Registration Page",
+          icon: "warning",
           showCancelButton: true,
-          confirmButtonText: 'Yes',
-          denyButtonText: 'No',
-          customClass: {
-            actions: 'my-actions',
-            cancelButton: 'order-1 right-gap',
-            confirmButton: 'order-2',
-            denyButton: 'order-3',
-          },
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes"
         }).then((result) => {
           if (result.isConfirmed) {
-            Swal.fire('Success')
-            localStorage.clear();
-          } else if (result.isDenied) {
-            Swal.fire('Changes are not saved', '', 'info')
+            Swal.fire({
+              title: "Success!",
+              text: "You're Success directed to Registration",
+              icon: "success"
+            });
+            // localStorage.clear();
+            this.$router.push("/eventdetailpage");
           }
         });
-        this.$router.push("/eventdetailpage");
       },
 
-      showQr(receiptData) {
+      details(receiptData) {
         this.show_qr.guests_token = receiptData.token;
         this.isLoadingAnimation = true;
         axios({
@@ -304,6 +313,11 @@
       },
     },
     mounted() {
+      this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
       if (this.event_detail === null) {
         this.$router.push("/eventdetailpage");
       } else {
@@ -469,6 +483,29 @@
 
   .btn-choose {
     width: auto;
+    max-width: auto;
+    padding: 8px;
+    font-size: 12px;
+    color: #FFFFFF;
+    border-radius: 20px;
+    background: #315568;
+    margin: 2px;
+  }
+
+
+  .btn-details {
+    width: 100%;
+    max-width: auto;
+    padding: 8px;
+    font-size: 12px;
+    color: #315568;
+    border-radius: 20px;
+    background: #FFFFFF;
+    margin: 2px;
+  }
+
+  .btn-done-print {
+    width: 100%;
     max-width: auto;
     padding: 8px;
     font-size: 12px;

@@ -1,5 +1,6 @@
 <template>
     <section class="vh-100 bg-white">
+        <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
         <div class="container p-5">
             <div class="text-center">
                 <h1>Questionnaire</h1>
@@ -129,10 +130,11 @@
 <script>
     import Swal from 'sweetalert2'
     import axios from 'axios'
+    import Loading from 'vue-loading-overlay'
     import {
         Form,
         Field,
-        ErrorMessage
+        ErrorMessage,
     } from 'vee-validate';
 
     export default {
@@ -174,6 +176,7 @@
             Form,
             Field,
             ErrorMessage,
+            Loading
         },
         methods: {
             backPage() {
@@ -407,6 +410,11 @@
             },
         },
         mounted() {
+            this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
             if (this.event_detail === null) {
                 this.$router.push("/");
             } else {

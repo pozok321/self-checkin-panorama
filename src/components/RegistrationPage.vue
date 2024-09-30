@@ -1,6 +1,7 @@
 <template>
   <section class="vh-100">
     <div class="container" v-if="event_detail">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
       <div class="row">
         <div id="input-data" class="w-75 m-auto">
           <div class="text-center my-5">
@@ -366,6 +367,7 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
+import Loading from 'vue-loading-overlay';
 import "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js";
 import "/src/assets/bootstrap-datepicker.min.js";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -445,7 +447,7 @@ export default {
       },
       data_city: "",
       global_url: this.$globalURL,
-      isLoading: true,
+      isLoading: false,
       LoadingButton: false,
       isLoadingAnimation: false,
       route_name: this.$route.name,
@@ -457,6 +459,7 @@ export default {
     Form,
     Field,
     ErrorMessage,
+    Loading
   },
   methods: {
     isRequired(value) {
@@ -1041,6 +1044,10 @@ export default {
   },
   mounted() {
     this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
     if (this.event_detail === null) {
       this.$router.push("/");
     } else {

@@ -1,5 +1,6 @@
 <template>
   <section class="vh-100">
+    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     <div class="container">
       <div class="row">
         <div class="d-flex">
@@ -88,6 +89,7 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
+import Loading from 'vue-loading-overlay';
 
 export default {
   data() {
@@ -113,7 +115,9 @@ export default {
       route_name: this.$route.name,
     };
   },
-  components: {},
+  components: {
+    Loading
+  },
   methods: {
     getUrlGateway() {
       this.Countdown(this.urlGateway.expiry_time);
@@ -222,6 +226,11 @@ export default {
   },
 
   mounted() {
+    this.isLoading = true;
+      // simulate AJAX
+      setTimeout(() => {
+        this.isLoading = false
+      }, 500)
     if (this.event_detail === null) {
       this.$router.push("/eventdetailpage");
     } else {

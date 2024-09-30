@@ -1,6 +1,7 @@
 <script>
     import Swal from 'sweetalert2'
     import axios from 'axios'
+    import Loading from 'vue-loading-overlay'
 
     export default {
         data() {
@@ -44,7 +45,7 @@
             };
         },
         components: {
-
+            Loading
         },
         methods: {
             createCookie(name, value, day) {
@@ -414,6 +415,7 @@
 </script>
 
 <template>
+    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
     <section class="vh-100 container-fluid" v-if="event_detail">
         <div class="row">
             <div class="col-md-8 p-5 vh-100 bg-white">
