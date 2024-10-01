@@ -141,7 +141,6 @@ export default {
             text: res.data.transaction_status,
           }).then(() => {
             this.testing = res.data.transaction_status;
-            console.log(this.testing,"test123");
             // localStorage.clear();
             for (var i = 0; i < 100; i++) {
               window.clearInterval(i);

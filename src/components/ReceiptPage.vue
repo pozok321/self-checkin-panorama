@@ -1,5 +1,5 @@
 <template>
-  <section class="vh-100" v-if="event_detail">
+  <section class="vh-100">
     <loading v-model:active="isLoading" />
     <div class="content-limit">
       <div class="wrap-content bg-white">
@@ -11,7 +11,7 @@
           <div class="row guest-wrap">
             <div class="guest-box" v-for="(receiptData , index) in receipt">
               <div class="row">
-                <div class="col-lg-8 col-sm-7 col-7">
+                <div class="col-lg-6 col-sm-7 col-7">
                   <div class="fontblack-12pt">
                     {{ receiptData.fullname }}
                   </div>
@@ -19,18 +19,30 @@
                     {{ receiptData.ticket_name}}
                   </div>
                 </div>
-                <div class="col-lg-4 col-sm-4 col-4 text-end">
-                  <button class="btn btn-choose">Print QR <img src="../assets/image/check-in.png" width="20"
-                      alt="Ticket" style="background-color: #fff"></button>
+                <div class="col-lg-6 col-sm-4 col-4 text-end">
+                  <button class="btn btn-choose" @click="details(receiptData)">Detail ticket</button>
+                  <button class="btn btn-choose" @click="select_details(receiptData)">Print QR <img
+                      src="../assets/image/check-in.png" width="15" alt="Ticket"
+                      style="background-color: #fff"></button>
                 </div>
               </div>
             </div>
+            <div class="qr-box text-center noshow" id="areaprint" v-if="printarea">
+              <div class="is-loading img-height" v-if="isLoading"></div>
+              <center>
+                <div class="margin-div" style="margin-top: 0px;"></div>
+                <div id="qrcode"></div>
+                <div class="">
+                  <div class="mb-4"><b>{{receipt_details.fullname}}</b></div>
+                  <div class="text-center">
+                    <b>{{receipt_details.ticket_name}}</b>
+                  </div>
+                </div>
+              </center>
+            </div>
             <div class="row">
-              <div class="w-50">
+              <div class="w-100">
                 <button class="btn-done-print" @click="toEventDetailPage()">Done Checkin</button>
-              </div>
-              <div class="w-50">
-                <button class="btn-details" @click="details(receiptData)">Detail Ticket</button>
               </div>
             </div>
           </div>
@@ -50,8 +62,7 @@
               <p class="ppage text-center">Order ID : {{event_detail.order_id}}</p>
             </div>
           </div>
-
-          <div class="formRSVP" v-if="ticketdetail">
+          <div class="formRSVP">
             <div class="row">
               <div class="col-8">
                 <h4 class="text-left"><b>Detail Ticket</b></h4>
@@ -82,9 +93,7 @@
                         <b>{{ticket.ticket_name}}</b>
                       </div>
                     </div>
-
                   </center>
-                  <!-- <img :src="receipt_details.qrimage" width="100%" :alt="receipt_details.fullname" v-else> -->
                 </div>
                 <div v-if="isLoading">
                   <div class="is-loading text-30"></div>
@@ -116,9 +125,9 @@
               </ol>
             </div>
             <div class="btn-wrap text-center">
-              <button class="btn btn-print" @click="on_print()">
+              <!-- <button class="btn btn-print" @click="on_print()">
                 Print QR
-              </button>
+              </button> -->
               <a class="btn btn-navy-cancel" @click="clear_qr()">
                 Close
               </a>
@@ -165,6 +174,7 @@
         ticket_list: [],
         member_data: [],
         member_detail: [],
+        receipt_details: [],
         get_receipt: "",
         isLoading: false,
         isLoadingHeader: false,
@@ -173,6 +183,7 @@
         LoadingButton: false,
         isLoadingAnimation: false,
         route_name: this.$route.name,
+        printarea: false
       };
     },
     components: {
@@ -283,6 +294,23 @@
             });
           }, 200);
         })
+      },
+      select_details(receipt_data) {
+        $("#qrcode").empty();
+        this.printarea = true
+        this.receipt_details = receipt_data
+        var is = this
+        setTimeout(function () {
+          const qrcode = new QRCode(document.getElementById('qrcode'), {
+            text: receipt_data.token,
+            width: 80,
+            height: 80,
+            colorDark: '#000',
+            colorLight: '#fff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        }, 200);
+        this.on_print()
       },
       on_print() {
         setTimeout(function () {
