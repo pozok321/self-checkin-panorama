@@ -764,7 +764,7 @@
 
     .span-total-ticket {
         color: #DD7223;
-        font-size: 7px;
+        font-size: 12px;
         font-style: italic;
     }
 
@@ -786,7 +786,7 @@
     }
 
     .p-ticket {
-        line-height: 10px;
+        line-height: 15px;
         margin: auto;
     }
 

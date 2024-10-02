@@ -245,23 +245,36 @@
       },
 
       toEventDetailPage() {
-        Swal.fire({
+        const swalWithBootstrapButtons = Swal.mixin({
+          customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+          },
+          buttonsStyling: false
+        });
+        swalWithBootstrapButtons.fire({
           title: "Are you sure?",
           text: "You will be directed to Registration Page",
           icon: "warning",
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes"
+          confirmButtonText: "Yes!",
+          cancelButtonText: "No, cancel!",
+          reverseButtons: true
         }).then((result) => {
           if (result.isConfirmed) {
-            Swal.fire({
-              title: "Success!",
-              text: "You're Success directed to Registration",
+            swalWithBootstrapButtons.fire({
+              title: "Success",
+              text: "You're Success directed to Registration/Checkin Page",
               icon: "success"
             });
-            // localStorage.clear();
             this.$router.push("/eventdetailpage");
+          } else if (
+            result.dismiss === Swal.DismissReason.cancel
+          ) {
+            swalWithBootstrapButtons.fire({
+              title: "Cancelled",
+              icon: "error"
+            });
           }
         });
       },
@@ -277,8 +290,8 @@
           method: "POST",
           data: this.show_qr,
         }).then((res) => {
-          this.receipt_details = res.data;
-          this.ticketdetail = true;
+          this.receipt_details = res.data
+          this.ticketdetail = true
           this.ticketlist = false
           this.isLoadingHeader = false
           var is = this
@@ -588,7 +601,6 @@
   }
 
   @media print {
-
     .margin-div {
       display: inline-block;
       margin-top: 500px;

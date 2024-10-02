@@ -138,17 +138,19 @@ export default {
           Swal.fire({
             title: "Payment Success",
             icon: "success",
-            text: res.data.transaction_status,
           }).then(() => {
             this.testing = res.data.transaction_status;
-            // localStorage.clear();
-            for (var i = 0; i < 100; i++) {
-              window.clearInterval(i);
-            }
+            // for (var i = 0; i < 100; i++) {
+            //   window.clearInterval(i);
+            // }
             this.$router.push("/receiptpage/" + this.events_id + "-" + this.order_id);
           });
         } else if (res.data.status_code == 201) {
           this.isLoadingAnimation = false;
+          Swal.fire({
+            title: "Pending Payment",
+            icon: "warning",
+          });
         } else if (res.data.status_code == 407) {
           this.isLoadingAnimation = false;
           Swal.fire({
@@ -157,9 +159,9 @@ export default {
             text: res.data.transaction_status,
           });
           this.$router.push("/eventdetailpage");
-          for (var i = 0; i < 100; i++) {
-            window.clearInterval(i);
-          }
+          // for (var i = 0; i < 100; i++) {
+          //   window.clearInterval(i);
+          // }
         }
       });
     },
@@ -181,9 +183,9 @@ export default {
             text: res.data.status_message,
           }).then((value) => {
             is.isLoadingAnimation = true;
-            for (var i = 0; i < 100; i++) {
-              window.clearInterval(i);
-            }
+            // for (var i = 0; i < 100; i++) {
+            //   window.clearInterval(i);
+            // }
             is.$router.push("/eventdetailpage");
           });
         }
@@ -235,9 +237,9 @@ export default {
     } else {
       var is = this;
       is.getUrlGateway();
-      setInterval(function () {
-        is.check_status();
-      }, 10000);
+      // setInterval(function () {
+      //   is.check_status();
+      // }, 10000);
     }
   },
 };

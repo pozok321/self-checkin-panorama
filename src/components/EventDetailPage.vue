@@ -3,6 +3,7 @@
         <div class="d-flex justify-content-center align-items-center h-100">
             <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
             <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-if="session.poster != null">
+                
                 <div class="row text-center">
                     <div class="col-sm-6">
                         <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">

@@ -20,9 +20,10 @@
           scanner_name: "A",
           scan_source: "SS",
         },
-        scanner_data:"",
+        scanner_data: "",
         isLoading: false,
         fullPage: true,
+        printarea: false
       };
     },
     components: {
@@ -74,6 +75,24 @@
         }).then((res) => {
           this.session = res.data;
         });
+      },
+
+      select_details(scanner_data) {
+        $("#qrcode").empty();
+        this.printarea = true
+        this.scanner_data = scanner_data
+        var is = this
+        setTimeout(function () {
+          const qrcode = new QRCode(document.getElementById('qrcode'), {
+            text: scanner_data.token,
+            width: 80,
+            height: 80,
+            colorDark: '#000',
+            colorLight: '#fff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        }, 200);
+        this.on_print()
       },
 
       on_scanner() {
@@ -128,7 +147,6 @@
           var is = this;
           switch (this.status) {
             case 201:
-            console.log(this.status, "status");
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
@@ -136,7 +154,6 @@
               });
               break;
             case 202:
-            console.log(this.status, "status");
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
@@ -144,7 +161,6 @@
               });
               break;
             case 203:
-            console.log(this.status, "status");
               this.checkin_status = false;
               Swal.fire({
                 title: this.scanner_data.message,
@@ -152,7 +168,6 @@
               });
               break;
             default:
-            console.log(this.status, "status");
               this.checkin_status = true;
               Swal.fire({
                 title: this.scanner_data.message,
@@ -199,7 +214,10 @@
           return false;
         }, 500);
       },
-
+      
+      backToEventDetail(){
+                this.$router.push("eventdetailpage")
+            },
     },
 
     mounted() {
@@ -232,6 +250,9 @@
     <div class="d-flex justify-content-center align-items-center h-100">
       <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
       <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
+        <div class="button-back" @click="backToEventDetail()">
+          <button>test123</button>
+        </div>
         <div class="bg-white container-border-bottom align-items-center row">
           <div class="col-md-5">
             <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
@@ -269,13 +290,15 @@
               <h3 class="mt-2">"Please wait for your badges to finish printing"</h3>
             </div>
           </div>
-          <div class="printable" id="areaprint" style="border: 1px solid;">
+          <div class="printable qr-box img-height" id="areaprint" style="margin-top: 0px;">
             <center>
-              <img :src=" global_url + scanner_data.guest.guest_qr" width="40%" alt="guest" style="margin-top: 145px" />
-              <h4 class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 16px">
-                {{ scanner_data.guest.fullname }}</h4>
-              <p class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 15px">
-                {{ scanner_data.guest.ticketclass_name }}</p>
+              <img :src=" global_url + scanner_data.guest.guest_qr" width="80" height="80" alt="guest"/>
+              <div class="lh">
+              <p class="text-center mb-4 lh">
+                <b>{{ scanner_data.guest.fullname }}</b></p>
+              <p class="text-center lh">
+               <b>{{ scanner_data.guest.ticketclass_name }}</b></p>
+              </div>
             </center>
           </div>
         </div>
@@ -302,6 +325,11 @@
     color: #fff;
   }
 
+  .qr-box {
+    padding: 2pt;
+    border-radius: 5pt;
+    box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
+  }
   .email {
     font-size: 10px;
     color: #fff;
@@ -354,6 +382,11 @@
     margin: auto;
   }
 
+  .button-back {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
   .thankyou {
     color: #315568;
     font-size: 18pt;
@@ -386,6 +419,10 @@
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
+  }
+
+  .lh{
+    line-height: 1pt;
   }
 
   .button-finish {
@@ -484,24 +521,18 @@
   }
 
   @media print {
-
-    .printable {
-      position: absolute;
-      text-align: center;
-      height: 491px;
-      width: 377px;
-      background-color: #fff;
-      clear: both;
-      font-size: 12px;
-      font-weight: bold;
-      font-family: Arial, Helvetica, sans-serif;
-      bottom: 100;
+    .margin-div {
+      display: inline-block;
+      margin-top: 500px;
     }
-  }
 
-  @media print and (width: 58mm) and (height: 80mm) {
-    @page {
-      margin: 1cm;
+    #qrcode {
+      padding-top: 150px;
+      display: inline-block;
+    }
+
+    .noshow {
+      display: inline-block;
     }
   }
 </style>
