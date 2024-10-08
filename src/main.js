@@ -13,10 +13,10 @@ import "bootstrap/dist/js/bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "./assets/main.css";
 
-axios.defaults.baseURL = "https://apidev.undangin.com/v1/";
+axios.defaults.baseURL = "https://apicorp.undangin.com/v1/";
 
 const app = createApp(App);
 app.component(VueCountdown.name, VueCountdown);
-app.config.globalProperties.$globalURL = "https://corpdev.undangin.com/"
+app.config.globalProperties.$globalURL = "https://corp.undangin.com/"
 app.use(router);
 app.mount("#app");

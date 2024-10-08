@@ -17,12 +17,12 @@
                                             alt="checkin-icon"></span>
                                     <button class="w-50 btn-checkin" @click="checkinPage()">Check in</button>
                                 </div>
-                                <div class="registration mt-3 mb-5">
+                                <!-- <div class="registration mt-3 mb-5">
                                     <span class="mx-2"><img src="../assets/image/registration.png"
                                             alt="registration-icon"></span>
                                     <button class="w-50 btn-registration" @click="homeRegistrationPage()">Registration
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -42,12 +42,12 @@
                                             alt="checkin-icon"></span>
                                     <button class="w-50 btn-checkin" @click="checkinPage()">Check in</button>
                                 </div>
-                                <div class="registration mt-3 mb-5">
+                                <!-- <div class="registration mt-3 mb-5">
                                     <span class="mx-2"><img src="../assets/image/registration.png"
                                             alt="registration-icon"></span>
                                     <button class="w-50 btn-registration" @click="homeRegistrationPage()">Registration
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>

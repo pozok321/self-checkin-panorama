@@ -214,10 +214,10 @@
           return false;
         }, 500);
       },
-      
-      backToEventDetail(){
-                this.$router.push("eventdetailpage")
-            },
+
+      backToEventDetail() {
+        this.$router.push("eventdetailpage")
+      },
     },
 
     mounted() {
@@ -251,7 +251,7 @@
       <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
       <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
         <div class="button-back" @click="backToEventDetail()">
-          <button>test123</button>
+          <img src="../assets/image/left-arrow.svg" alt="back" width="50" />
         </div>
         <div class="bg-white container-border-bottom align-items-center row">
           <div class="col-md-5">
@@ -292,12 +292,12 @@
           </div>
           <div class="printable qr-box img-height" id="areaprint" style="margin-top: 0px;">
             <center>
-              <img :src=" global_url + scanner_data.guest.guest_qr" width="80" height="80" alt="guest"/>
+              <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest" />
               <div class="lh">
-              <p class="text-center mb-4 lh">
-                <b>{{ scanner_data.guest.fullname }}</b></p>
-              <p class="text-center lh">
-               <b>{{ scanner_data.guest.ticketclass_name }}</b></p>
+                <p class="text-center mb-4 lh">
+                  <b>{{ scanner_data.guest.fullname }}</b></p>
+                <p class="text-center lh">
+                  <b>{{ scanner_data.guest.ticketclass_name }}</b></p>
               </div>
             </center>
           </div>
@@ -330,6 +330,7 @@
     border-radius: 5pt;
     box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
   }
+
   .email {
     font-size: 10px;
     color: #fff;
@@ -383,10 +384,12 @@
   }
 
   .button-back {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
   .thankyou {
     color: #315568;
     font-size: 18pt;
@@ -421,7 +424,7 @@
     align-items: stretch;
   }
 
-  .lh{
+  .lh {
     line-height: 1pt;
   }
 
