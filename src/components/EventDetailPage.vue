@@ -81,7 +81,7 @@
                 getWaitingPage: "",
                 form_getposter: {
                     events_id: "",
-                    ip_address: "",
+                    ip_address: "10.10.10.10",
                     prev_action: ""
                 },
                 isLoading: false,

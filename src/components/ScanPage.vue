@@ -144,40 +144,75 @@
           this.scanner_data = res.data;
           this.status = this.scanner_data.status;
           this.guests_token_scan = this.scanner_data.guests_token;
-          var is = this;
-          switch (this.status) {
-            case 201:
-              this.checkin_status = false;
+
+          // if (this.status == 200) {
+          //   this.checkin_status = true;
+          //   Swal.fire({
+          //     title: this.scanner_data.message,
+          //     icon: "success",
+          //   });
+          //   this.on_print();
+          //   setTimeout(function () {
+          //     this.isLoading = false
+          //     this.finishScan();
+          //   }, 11000);
+          // } else if (this.status == 201) {
+          //   this.checkin_status = false;
+          //   Swal.fire({
+          //     title: this.scanner_data.message,
+          //     icon: "info",
+          //   });
+          // } else if (this.status == 202) {
+          //   this.checkin_status = false;
+          //   Swal.fire({
+          //     title: this.scanner_data.message,
+          //     icon: "info",
+          //   });
+          // } else{
+          //   this.checkin_status = false;
+          //   Swal.fire({
+          //     title: this.scanner_data.message,
+          //     icon: "warning",
+          //   });
+          // }
+          var is = this
+          switch (is.status) {
+            case "200":
+              is.checkin_status = true;
               Swal.fire({
-                title: this.scanner_data.message,
-                icon: "info",
-              });
-              break;
-            case 202:
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "info",
-              });
-              break;
-            case 203:
-              this.checkin_status = false;
-              Swal.fire({
-                title: this.scanner_data.message,
-                icon: "warning",
-              });
-              break;
-            default:
-              this.checkin_status = true;
-              Swal.fire({
-                title: this.scanner_data.message,
+                title: is.scanner_data.message,
                 icon: "success",
-              });
-              this.on_print();
+              }, 5000);
+              is.on_print();
               setTimeout(function () {
                 is.isLoading = false
                 is.finishScan();
-              }, 13000);
+              }, 10000);
+              break;
+            case "201":
+              is.checkin_status = false;
+              Swal.fire({
+                title: is.scanner_data.message,
+                icon: "info",
+              });
+              break;
+            case "202":
+              is.checkin_status = "202";
+              Swal.fire({
+                title: is.scanner_data.message,
+                icon: "info",
+              },5000);
+              setTimeout(function () {
+                is.isLoading = false
+                // is.finishScan();
+              },25000);
+              break;
+            case "203":
+              is.checkin_status = false;
+              Swal.fire({
+                title: is.scanner_data.message,
+                icon: "warning",
+              });
               break;
           }
         });
@@ -215,8 +250,17 @@
         }, 500);
       },
 
+      rePrint() {
+        this.on_print();
+      },
+
       backToEventDetail() {
-        this.$router.push("eventdetailpage")
+        this.$router.push("/eventdetailpage");
+      },
+
+      backToScan() {
+        this.$router.push("/scanpage");
+        console.log("backToScan");
       },
     },
 
@@ -274,6 +318,45 @@
       </div>
     </div>
   </section>
+  <section class="vh-100 bg-guest-detail" style="background-color: #f1f1f1" v-else-if="checkin_status == 202">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
+        <div class="button-reprint" @click="rePrint()">
+          <img src="../assets/image/printer.png" alt="back" width="50" />
+          <span style="color:black">Re-Print</span>
+        </div>
+        <div class="bg-white container-border-bottom align-items-center row">
+          <div class="col-md-6">
+            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
+            <img src="../assets/image/printer2.gif" alt="qr code" width="100%" class="img-qr" />
+          </div>
+          <div class="col-md-6 border-left">
+            <div class="row">
+              <h2 class="mb-3">Hello Again {{ scanner_data.guest.fullname }}</h2>
+              <div class="border-bottom mt-1 mb-1"></div>
+              <h3 class="mt-2">"Please wait for your badges to finish printing"</h3>
+            </div>
+          </div>
+          <div class="printable qr-box img-height" id="areaprint" style="margin-top: 0px;">
+            <center>
+              <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest"
+                style="margin-top: 150px" />
+              <div class="lh">
+                <p class="text-center mb-4 lh">
+                  <b>{{ scanner_data.guest.fullname }}</b></p>
+                <p class="text-center lh">
+                  <b>{{ scanner_data.guest.ticketclass_name }}</b></p>
+              </div>
+            </center>
+          </div>
+        </div>
+        <div class="row text-center m-auto">
+          <button class="w-100 btn-checkin" @click="backToScan()">Done</button>
+        </div>
+      </div>
+    </div>
+  </section>
   <section class="vh-100 bg-guest-detail" style="background-color: #f1f1f1" v-else>
     <div class="d-flex justify-content-center align-items-center h-100">
       <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
@@ -292,7 +375,8 @@
           </div>
           <div class="printable qr-box img-height" id="areaprint" style="margin-top: 0px;">
             <center>
-              <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest" />
+              <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest"
+                style="margin-top: 160px" />
               <div class="lh">
                 <p class="text-center mb-4 lh">
                   <b>{{ scanner_data.guest.fullname }}</b></p>
@@ -314,6 +398,20 @@
 
   #printable {
     border: 1px solid;
+  }
+
+  .btn-checkin {
+    background-color: #25516B;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 20px;
+    align-items: center;
+    text-align: center;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    margin: auto;
+    margin-top: 24px;
   }
 
   span {
@@ -388,6 +486,13 @@
     position: absolute;
     top: 0;
     left: 0;
+  }
+
+  .button-reprint {
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 50px;
   }
 
   .thankyou {
