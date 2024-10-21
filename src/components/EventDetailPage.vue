@@ -1,9 +1,9 @@
 <template>
     <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
         <div class="d-flex justify-content-center align-items-center h-100">
-            <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+            <loading v-model:active="isLoading" :can-cancel="false" />
             <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-if="session.poster != null">
-                
+
                 <div class="row text-center">
                     <div class="col-sm-6">
                         <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
@@ -50,6 +50,22 @@
                                 </div> -->
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-setting" data-bs-toggle="modal" data-bs-target="#showdetails_modal">
+                <img src="../assets/image/setting.png" alt="back" width="50" />
+            </div>
+        </div>
+        <div class="modal fade" id="showdetails_modal">
+            <div class="modal-dialog modal-top modal-top-50">
+                <div class="modal-content border-bottom-navy">
+                    <div class="modal-body">
+                        <h4>Edit Scanner Name</h4>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="fullname" placeholder="Scanner Name"></input>
+                        </div>
+                        <button class="btn-save">Save</button>
                     </div>
                 </div>
             </div>
@@ -224,6 +240,13 @@
         text-align: center;
     }
 
+    .button-setting {
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
     .bg-white {
         background-color: #fff;
     }
@@ -250,6 +273,14 @@
         border: none;
         padding: 10px;
         font-weight: bold;
+    }
+
+    .btn-save{
+        background-color: #315568;
+        color: #fff;
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
     }
 
     .btn-registration {
