@@ -12,7 +12,7 @@
             </div>
             <div class="input-group mt-3">
               <select class="form-select" id="selectAgenda" v-model="agenda_id" @change="getTrack()">
-                <option v-for="agendaData in agenda" v-bind:value="agendaData.id">
+                <option v-for="agendaData in form_agenda" v-bind:value="agendaData.id">
                   {{ agendaData.agenda_name }}
                 </option>
               </select>
@@ -25,8 +25,8 @@
               </div>
             </div>
             <div class="input-group mt-3">
-              <select class="form-select" id="selectTrack" v-model="track_id" @change="getSession()">
-                <option v-for="trackData in track" v-bind:value="trackData.id">
+              <select class="form-select" id="selectTrack" v-model="track_id" @change="getSession()" :disabled="agenda_id == ''">
+                <option v-for="trackData in form_track" v-bind:value="trackData.id">
                   {{ trackData.track_name }}
                 </option>
               </select>
@@ -39,8 +39,8 @@
               </div>
             </div>
             <div class="input-group mt-3">
-              <select class="form-select" id="selectSession" v-model="session_id">
-                <option v-for="sessionData in session" v-bind:value="sessionData.id">
+              <select class="form-select" id="selectSession" v-model="session_id" :disabled="track_id == ''">
+                <option v-for="sessionData in form_session" v-bind:value="sessionData.id">
                   {{ sessionData.session_topic }}
                 </option>
               </select>
@@ -60,22 +60,33 @@
   import axios from "axios";
   import Loading from 'vue-loading-overlay';
   import 'vue-loading-overlay/dist/css/index.css';
+  import {
+    toHandlers
+  } from "vue";
   export default {
     data() {
       return {
-        events_id: "",
+        form_agenda: {
+          events_id: $cookies.get("events_id")
+        },
+        form_track: {
+          events_id: $cookies.get("events_id"),
+          agenda_id: ""
+        },
+        form_session: {
+          events_id: $cookies.get("events_id"),
+          agenda_id: "",
+          track_id: ""
+        },
+        track_id:"",
         agenda_id: "",
         session_id: "",
-        track_id: "",
         track_name: "",
         agenda_name: "",
         session_topic: "",
         session: "",
-        agenda: "",
-        track: "",
         token: "",
         events_key: "",
-        multiple_session_entry: "",
         isLoading: false,
         fullPage: true,
       };
@@ -108,72 +119,61 @@
 
       getAgenda() {
         axios({
-          method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda",
+          method: "POST",
+          url: "/selfsvc/getagenda",
           headers: {
             "Content-Type": "text/plain",
             "x-api-key": this.token,
           },
+          data: this.form_agenda
         }).then((res) => {
-          this.agenda = res.data;
+          this.form_agenda = res.data;
         });
       },
 
       getTrack() {
+        this.form_track.agenda_id = this.agenda_id
         axios({
-          method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track",
+          method: "POST",
+          url: "/selfsvc/gettrack",
           headers: {
             "Content-Type": "text/plain",
             "x-api-key": this.token,
           },
+          data: this.form_track
         }).then((res) => {
-          this.track = res.data;
+          this.form_track = res.data;
         });
-
       },
 
       getSession() {
+        this.form_session.agenda_id = this.agenda_id
+        this.form_session.track_id = this.track_id
         axios({
-          method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id +
-            "/session",
+          method: "POST",
+          url: "/selfsvc/getsession",
           headers: {
             "Content-Type": "text/plain",
             "x-api-key": this.token,
           },
+          data: this.form_session
         }).then((res) => {
-          this.session = res.data;
+          this.form_session = res.data;
         });
       },
 
       confirmAgendaSession() {
-        axios({
-          method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this.track_id +
-            "/session",
-          headers: {
-            "Content-Type": "text/plain",
-          },
-        }).then((res) => {
-          if (this.track_id == "" || this.session_id == "" || this.agenda_id == "") {
-            Swal.fire({
-              title: "Please Select the Agenda/Track/Session",
-              text: res.data.msg,
-              icon: "warning",
-            });
-          } else {
-            this.isLoading = true;
-            var is = this
-            setTimeout(() => {
-              is.createCookie("track_id", this.track_id);
-              is.createCookie("session_id", this.session_id);
-              is.createCookie("agenda_id", this.agenda_id);
-              is.$router.push("/eventdetailpage");
-              is.isLoading = false
-            }, 1000)
-          }
-        });
+        if (this.track_id == "" || this.session_id == "" || this.agenda_id == "") {
+          Swal.fire({
+            title: "Please Select the Agenda/Track/Session",
+            icon: "warning",
+          });
+        } else {
+          this.createCookie("track_id", this.track_id);
+          this.createCookie("session_id", this.session_id);
+          this.createCookie("agenda_id", this.agenda_id);
+          this.$router.push("/eventdetailpage");
+        }
       },
     },
     mounted() {

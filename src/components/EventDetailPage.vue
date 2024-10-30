@@ -63,9 +63,9 @@
                     <div class="modal-body">
                         <h4>Edit Scanner Name</h4>
                         <div class="form-group">
-                            <input type="text" class="form-control" name="fullname" placeholder="Scanner Name"></input>
+                            <input type="text" class="form-control" name="fullname" placeholder="Scanner Name" v-model="set_tablet.scanner_name"></input>
                         </div>
-                        <button class="btn-save">Save</button>
+                        <button class="btn-save" @click="setTabletName()">Save</button>
                     </div>
                 </div>
             </div>
@@ -101,6 +101,10 @@
                     prev_action: ""
                 },
                 isLoading: false,
+                set_tablet:{
+                    events_id: $cookies.get("events_id"),
+                    scanner_name: localStorage.getItem("scanner_name"),
+                }
             };
         },
         components: {
@@ -135,46 +139,37 @@
                 localStorage.setItem('event_details', JSON.stringify(this.getPoster));
                 this.$router.push("/homeregistrationpage");
             },
-            getAgenda() {
-                axios({
-                        method: "GET",
-                        url: "/selfsvc/event/" + this.events_id + "/agenda",
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                    })
-                    .then(res => {
-                        this.agenda = res.data;
-                    })
-            },
-            getTrack() {
-                axios({
-                    method: "GET",
-                    url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track",
-                    headers: {
-                        "Content-Type": "text/plain",
-                        "x-api-key": this.token,
-                    },
-                }).then((res) => {
-                    this.track = res.data;
-                });
 
+            getTabletName(){
+                localStorage.getItem("scanner_name");
             },
-            getSession() {
+            setTabletName(){
                 axios({
-                        method: "GET",
-                        url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track/" + this
-                            .track_id + "/session/" + this.session_id,
+                        method: "POST",
+                        url: "/checkin/settablet",
                         headers: {
                             "Content-Type": "text/plain"
                         },
+                        data: this.set_tablet,
                     })
                     .then(res => {
-                        this.session = res.data;
-                        this.multiple_session_entry = this.session.multiple_session_entry;
-                        this.qr_setting = this.session.qr_setting;
-                        this.createCookie("multiple_session_entry", this.multiple_session_entry);
-                        this.createCookie("qr_setting", this.qr_setting);
+                        if (res.data.status == "200") {
+                            localStorage.setItem("scanner_name", this.set_tablet.scanner_name);
+                            Swal.fire({
+                                title: "Success",
+                                icon: "success",
+                                text: res.data.msg,
+                            }).then((value) => {
+                                location.reload();
+                            });
+                           
+                        } else{
+                            Swal.fire({
+                                title: "Warning",
+                                icon: "warning",
+                                text: res.data.msg,
+                            })
+                        }
                     })
             },
             getPoster() {
@@ -221,8 +216,9 @@
             } else {
                 this.getCookie();
             }
-            this.getSession();
+            // this.getSession();
             this.getPoster();
+            this.getTabletName();
         },
     };
 </script>
