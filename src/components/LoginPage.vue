@@ -43,7 +43,7 @@
         otp5: "",
         otp6: "",
         obj: {
-          events_id: "",
+          events_key: "",
         },
       };
     },
@@ -130,6 +130,8 @@
               });
               this.createCookie("token", res.data.token);
               this.createCookie("events_id", res.data.events_id);
+              localStorage.setItem("poster", JSON.stringify(res.data.poster));
+              localStorage.setItem("poster_mobile", JSON.stringify(res.data.poster_mobile));
               var is = this
               setTimeout(() => {
                 is.$router.push("/agendapage");

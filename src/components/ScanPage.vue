@@ -17,13 +17,15 @@
           track_id: "",
           session_id: "",
           guests_token: "",
-          scanner_name: "A",
+          scanner_name: localStorage.getItem("scanner_name"),
           scan_source: "SS",
+          
         },
         scanner_data: "",
         isLoading: false,
         fullPage: true,
-        printarea: false
+        printarea: false,
+        
       };
     },
     components: {
@@ -77,14 +79,13 @@
         });
       },
 
-      select_details(scanner_data) {
+      select_details(guests_token) {
         $("#qrcode").empty();
-        this.printarea = true
-        this.scanner_data = scanner_data
-        var is = this
+        this.printarea = true;
+        var is = this;
         setTimeout(function () {
           const qrcode = new QRCode(document.getElementById('qrcode'), {
-            text: scanner_data.token,
+            text: guests_token,
             width: 80,
             height: 80,
             colorDark: '#000',
@@ -92,10 +93,10 @@
             correctLevel: QRCode.CorrectLevel.H
           });
         }, 200);
-        this.on_print()
       },
 
       on_scanner() {
+        this.obj.guests_token = "";
         setTimeout(function () {
           $("#scanner").trigger("focus");
         }, 500);
@@ -113,8 +114,7 @@
             input.addEventListener("keypress", function (e) {
               // setTimeout(function () {
               if (e.keyCode == 13) {
-                // console.log("count", this_is.obj.guests_token_scan, input.value)
-                if (input.value != this_is.obj.guests_token_scan) {
+                if (input.value != this_is.obj.guests_token) {
                   this_is.checkin_withScanner(input.value);
                 }
                 input.select();
@@ -130,6 +130,7 @@
         });
       },
 
+
       checkin_withScanner(value) {
         this.obj.guests_token = value;
         axios({
@@ -140,10 +141,11 @@
             "Content-Type": "text/plain",
           },
         }).then((res) => {
+          this.select_details(this.obj.guests_token);
+          console.log(this.obj.guests_token, "this.obj.guests_token");
           this.on_scanner();
           this.scanner_data = res.data;
           this.status = this.scanner_data.status;
-          this.guests_token_scan = this.scanner_data.guests_token;
           var is = this;
           switch (is.status) {
             case "200":
@@ -151,37 +153,33 @@
               Swal.fire({
                 title: is.scanner_data.message,
                 icon: "success",
-              }, 8000);
+              });
               is.on_print();
               setTimeout(function () {
                 is.isLoading = false
                 is.finishScan();
-              }, 25000);
+              },25000);
               break;
             case "201":
               is.checkin_status = false;
               Swal.fire({
                 title: is.scanner_data.message,
                 icon: "info",
-              },8000);
+              }, 8000);
               break;
             case "202":
               is.checkin_status = false;
               Swal.fire({
                 title: is.scanner_data.message,
                 icon: "info",
-              },8000);
-              // setTimeout(function () {
-              //   is.isLoading = false
-              //   is.finishScan();
-              // });
+              }, 8000);
               break;
             case "203":
               is.checkin_status = false;
               Swal.fire({
                 title: is.scanner_data.message,
                 icon: "warning",
-              },8000);
+              }, 8000);
               break;
           }
         });
@@ -219,8 +217,8 @@
         }, 500);
       },
 
-      rePrint() {
-        this.on_print();
+      toCheckin() {
+        this.$router.go("/scanpage");
       },
 
       backToEventDetail() {
@@ -229,7 +227,7 @@
 
       backToScan() {
         this.$router.push("/scanpage");
-        console.log("backToScan");
+       
       },
     },
 
@@ -253,6 +251,7 @@
         this.$router.push("/");
       } else {
         this.on_scanner();
+        
       }
     },
   };
@@ -305,8 +304,9 @@
           </div>
           <div class="printable qr-box img-height" id="areaprint" style="margin-top: 0px;">
             <center>
-              <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest"
-                style="margin-top: 160px" />
+              <!-- <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest"
+                style="margin-top: 170px"/> -->
+              <div id="qrcode" style="margin-top:190px;"></div>
               <div class="lh">
                 <p class="text-center mb-4 lh">
                   <b>{{ scanner_data.guest.fullname }}</b></p>
@@ -315,6 +315,9 @@
               </div>
             </center>
           </div>
+        </div>
+        <div class="form-group">
+          <button class="button-done mt-4" @click="toCheckin()">Done Print</button>
         </div>
       </div>
     </div>
@@ -351,6 +354,18 @@
 
   .h4 {
     color: #fff;
+  }
+
+  .button-done {
+    width: 100%;
+    background-color: #163c56;
+    color: #fff;
+    font-family: Helvetica;
+    border-radius: 50px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 16pt;
+    font-weight: bold;
   }
 
   .qr-box {

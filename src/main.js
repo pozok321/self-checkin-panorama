@@ -13,7 +13,7 @@ import "bootstrap/dist/js/bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "./assets/main.css";
 
-axios.defaults.baseURL = "https://apicorp.undangin.com/v1/";
+axios.defaults.baseURL = "https://apidev2.undangin.id/v1/";
 
 const app = createApp(App);
 app.component(VueCountdown.name, VueCountdown);
