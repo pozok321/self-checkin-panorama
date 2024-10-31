@@ -1,6 +1,6 @@
 <template>
   <section class="vh-100" v-if="event_detail">
-    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+    <loading v-model:active="isLoading" :can-cancel="false" />
     <img :src="global_url + this.event_detail.poster_mobile" alt="event banner" class="bg-registration-page" />
     <div class="centered container">
       <div class="row m-auto w-50">
@@ -23,7 +23,7 @@
 <script>
 import Swal from "sweetalert2";
 import axios from "axios";
-import Loading from 'vue-loading-overlay';
+import Loading from "vue-loading-overlay";
 export default {
   data() {
     return {
@@ -38,15 +38,16 @@ export default {
         events_id: "",
         ticket_level: "MT",
         prev_action: "p1home",
+        queue_id: "123456",
       },
       poster_mobile: "",
       event_detail: JSON.parse(localStorage.getItem("event_details")),
       route_name: this.$route.name,
-      isLoading : true
+      isLoading: true,
     };
   },
   components: {
-    Loading
+    Loading,
   },
   methods: {
     createCookie(name, value, day) {
@@ -80,7 +81,8 @@ export default {
       }).then((res) => {
         this.get_event = res.data;
         this.ticket = this.get_event.ticket;
-        this.class_name = this.ticket.class_name;
+        // this.class_name = this.ticket.class_name;
+        console.log(this.get_event, "event");
       });
     },
     add_to_cart(ticket) {
@@ -103,10 +105,10 @@ export default {
 
   mounted() {
     this.isLoading = true;
-      // simulate AJAX
-      setTimeout(() => {
-        this.isLoading = false
-      }, 500)
+    // simulate AJAX
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 500);
     this.form_getevent.events_id = $cookies.get("events_id");
     if (this.event_detail === null) {
       Swal.fire({
