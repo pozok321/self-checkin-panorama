@@ -31,7 +31,7 @@
             <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-else>
                 <div class="row text-center">
                     <div class="col-sm-6">
-                        <img src="../assets/image/default.png" alt="event banner" width="100%" height="100%">
+                        <img :src="this.poster" alt="event banner" width="100%" height="100%">
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
                         <div class="card-body">
@@ -93,6 +93,7 @@
                 track: "",
                 multiple_session_entry: "",
                 qr_setting: "",
+                poster: JSON.parse(localStorage.getItem("poster")),
                 global_url: this.$globalURL,
                 getWaitingPage: "",
                 form_getposter: {
@@ -172,21 +173,6 @@
                         }
                     })
             },
-            getPoster() {
-                axios({
-                        url: "/rsvp/p1home",
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                        method: "POST",
-                        data: this.form_getposter
-                    })
-                    .then(res => {
-                        this.getPoster = res.data;
-                        this.poster_mobile = this.getPoster.poster_mobile;
-                        localStorage.setItem("poster_mobile", this.poster_mobile);
-                    })
-            },
             get_ipaddress() {
                 var this_ = this
                 $.getJSON('https://jsonip.com/', function (data) {
@@ -217,7 +203,6 @@
                 this.getCookie();
             }
             // this.getSession();
-            this.getPoster();
             this.getTabletName();
         },
     };
