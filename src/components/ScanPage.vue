@@ -2,34 +2,36 @@
   import Swal from "sweetalert2";
   import axios from "axios";
   import $ from "jquery";
-  import Loading from 'vue-loading-overlay';
-  import 'vue-loading-overlay/dist/css/index.css';
+  import Loading from "vue-loading-overlay";
+  import "vue-loading-overlay/dist/css/index.css";
 
   export default {
     data() {
       return {
         checkin_status: false,
-        session: "",
+        poster: JSON.parse(localStorage.getItem("poster")),
         global_url: this.$globalURL,
+        get_agenda: "",
+        get_track: "",
+        get_session: "",
         obj: {
-          events_id: "",
-          agenda_id: "",
-          track_id: "",
-          session_id: "",
+          events_id: $cookies.get("events_id"),
+          agenda_id: $cookies.get("agenda_id"),
+          track_id: $cookies.get("track_id"),
+          session_id: $cookies.get("session_id"),
           guests_token: "",
           scanner_name: localStorage.getItem("scanner_name"),
           scan_source: "SS",
-          
         },
         scanner_data: "",
         isLoading: false,
         fullPage: true,
         printarea: false,
-        
+        number_var: ""
       };
     },
     components: {
-      Loading
+      Loading,
     },
     methods: {
       getCookie(name) {
@@ -44,53 +46,59 @@
       },
       getAgenda() {
         axios({
-          method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda",
+          method: "POST",
+          url: "/selfsvc/getagenda",
           headers: {
             "Content-Type": "text/plain",
+            "x-api-key": this.token,
           },
+          data: this.get_agenda,
         }).then((res) => {
-          this.agenda = res.data;
+          this.get_agenda = res.data;
         });
       },
 
       getTrack() {
+        this.form_track.agenda_id = this.agenda_id;
         axios({
-          method: "GET",
-          url: "/selfsvc/event/" + this.events_id + "/agenda/" + this.agenda_id + "/track",
+          method: "POST",
+          url: "/selfsvc/gettrack",
           headers: {
             "Content-Type": "text/plain",
+            "x-api-key": this.token,
           },
+          data: this.get_track,
         }).then((res) => {
-          this.track = res.data;
+          this.get_track = res.data;
         });
       },
 
       getSession() {
+        this.form_session.agenda_id = this.agenda_id;
+        this.form_session.track_id = this.track_id;
         axios({
-          method: "GET",
-          url: "/selfsvc/event/" + this.obj.events_id + "/agenda/" + this.obj.agenda_id + "/track/" + this.obj
-            .track_id + "/session/" + this.obj.session_id,
+          method: "POST",
+          url: "/selfsvc/getsession",
           headers: {
             "Content-Type": "text/plain",
+            "x-api-key": this.token,
           },
+          data: this.get_session,
         }).then((res) => {
-          this.session = res.data;
+          this.get_session = res.data;
         });
       },
-
       select_details(guests_token) {
         $("#qrcode").empty();
         this.printarea = true;
-        var is = this;
         setTimeout(function () {
-          const qrcode = new QRCode(document.getElementById('qrcode'), {
+          var qrcode = new QRCode(document.getElementById("qrcode"), {
             text: guests_token,
             width: 80,
             height: 80,
-            colorDark: '#000',
-            colorLight: '#fff',
-            correctLevel: QRCode.CorrectLevel.H
+            colorDark: "#000",
+            colorLight: "#fff",
+            correctLevel: QRCode.CorrectLevel.H,
           });
         }, 200);
       },
@@ -103,8 +111,8 @@
         this.isLoading = true;
         // simulate AJAX
         setTimeout(() => {
-          this.isLoading = false
-        }, 500)
+          this.isLoading = false;
+        }, 500);
         let is_event = false; // for check just one event declaration
         let input = document.getElementById("scanner");
         var this_is = this;
@@ -130,7 +138,6 @@
         });
       },
 
-
       checkin_withScanner(value) {
         this.obj.guests_token = value;
         axios({
@@ -142,10 +149,11 @@
           },
         }).then((res) => {
           this.select_details(this.obj.guests_token);
-          console.log(this.obj.guests_token, "this.obj.guests_token");
           this.on_scanner();
           this.scanner_data = res.data;
           this.status = this.scanner_data.status;
+          this.guest = this.scanner_data.guest;
+          this.number_var = this.guest.number_var;
           var is = this;
           switch (is.status) {
             case "200":
@@ -156,30 +164,36 @@
               });
               is.on_print();
               setTimeout(function () {
-                is.isLoading = false
-                is.finishScan();
-              },25000);
+                is.isLoading = false;
+                // is.finishScan();
+              });
               break;
             case "201":
               is.checkin_status = false;
               Swal.fire({
-                title: is.scanner_data.message,
-                icon: "info",
-              }, 8000);
+                  title: is.scanner_data.message,
+                  icon: "info",
+                },
+                8000
+              );
               break;
             case "202":
               is.checkin_status = false;
               Swal.fire({
-                title: is.scanner_data.message,
-                icon: "info",
-              }, 8000);
+                  title: is.scanner_data.message,
+                  icon: "info",
+                },
+                8000
+              );
               break;
             case "203":
               is.checkin_status = false;
               Swal.fire({
-                title: is.scanner_data.message,
-                icon: "warning",
-              }, 8000);
+                  title: is.scanner_data.message,
+                  icon: "warning",
+                },
+                8000
+              );
               break;
           }
         });
@@ -192,7 +206,7 @@
       on_print() {
         setTimeout(function () {
           var contents = document.getElementById("areaprint").innerHTML;
-          var frame1 = document.createElement('iframe');
+          var frame1 = document.createElement("iframe");
           frame1.name = "frame1";
           frame1.style.position = "absolute";
           frame1.style.top = "-1000000px";
@@ -200,10 +214,10 @@
           var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1
             .contentDocument.document : frame1.contentDocument;
           frameDoc.document.open();
-          frameDoc.document.write('<html><head><title>DIV Contents</title>');
-          frameDoc.document.write('</head><body>');
+          frameDoc.document.write("<html><head><title>DIV Contents</title>");
+          frameDoc.document.write("</head><body>");
           frameDoc.document.write(contents);
-          frameDoc.document.write('</body></html>');
+          frameDoc.document.write("</body></html>");
           frameDoc.document.close();
           setTimeout(function () {
             window.frames["frame1"].focus();
@@ -212,7 +226,7 @@
           }, 500);
           window.onload = function () {
             self.print();
-          }
+          };
           return false;
         }, 500);
       },
@@ -227,21 +241,16 @@
 
       backToScan() {
         this.$router.push("/scanpage");
-       
       },
     },
 
     mounted() {
+      this.number_var = 0;
       this.isLoading = true;
       // simulate AJAX
       setTimeout(() => {
-        this.isLoading = false
-      }, 500)
-      this.obj.events_id = $cookies.get("events_id");
-      this.obj.session_id = $cookies.get("session_id");
-      this.obj.agenda_id = $cookies.get("agenda_id");
-      this.obj.track_id = $cookies.get("track_id");
-      this.getSession();
+        this.isLoading = false;
+      }, 500);
       if (this.obj.events_id == null) {
         Swal.fire({
           title: "Your Session is Expired!",
@@ -251,7 +260,6 @@
         this.$router.push("/");
       } else {
         this.on_scanner();
-        
       }
     },
   };
@@ -271,12 +279,43 @@
             <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
             <div class="checkin mb-3">
               <button class="btn-camera-scanner" disabled>
-                <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg" alt="checkin-icon"></span>Scan the QR
-                Code</button>
+                <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg" alt="checkin-icon" /></span>Scan the
+                QR Code
+              </button>
             </div>
           </div>
           <div class="col-md-7 border-left">
-            <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
+            <img :src='this.poster' alt="event banner" width="100%" height="100%" />
+          </div>
+        </div>
+        <div class="row mt-3">
+          <h4 class="bg-darkblue">Tap Your QR to Scanner</h4>
+          <p>Please wait till your QR show the details information</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="vh-100 bg-scanpage" style="background-color: #f1f1f1"
+    v-else-if="checkin_status == false && this.poster == ''">
+    <div class="d-flex justify-content-center align-items-center h-100">
+      <loading v-model:active="isLoading" :can-cancel="false" />
+      <div class="col-12 col-md-6 col-lg-8 col-xl-8 text-center">
+        <div class="button-back" @click="backToEventDetail()">
+          <img src="../assets/image/left-arrow.svg" alt="back" width="50" />
+        </div>
+        <div class="bg-white container-border-bottom align-items-center row">
+          <div class="col-md-5">
+            <input type="text" id="scanner" class="text-none" autofocus="autofocus" />
+            <img src="../assets/image/qr-code.gif" alt="qr code" width="100%" class="img-qr" />
+            <div class="checkin mb-3">
+              <button class="btn-camera-scanner" disabled>
+                <span class="mx-3"><img src="../assets/image/ionic-ios-camera.svg" alt="checkin-icon" /></span>Scan the
+                QR Code
+              </button>
+            </div>
+          </div>
+          <div class="col-md-7 border-left">
+            <img :src="global_url + '../assets/image/default.png'" alt="event banner" width="100%" height="100%" />
           </div>
         </div>
         <div class="row mt-3">
@@ -302,16 +341,51 @@
               <h3 class="mt-2">"Please wait for your badges to finish printing"</h3>
             </div>
           </div>
-          <div class="printable qr-box img-height" id="areaprint" style="margin-top: 0px;">
+          <div class="printable qr-box" id="areaprint" style="margin-top:300px" v-if="this.number_var == 3">
             <center>
               <!-- <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest"
                 style="margin-top: 170px"/> -->
-              <div id="qrcode" style="margin-top:190px;"></div>
+              <div id="qrcode" class="page-break"></div>
               <div class="lh">
                 <p class="text-center mb-4 lh">
-                  <b>{{ scanner_data.guest.fullname }}</b></p>
-                <p class="text-center lh">
-                  <b>{{ scanner_data.guest.ticketclass_name }}</b></p>
+                  <p>{{ scanner_data.guest.var1 }}</p>
+                  <p>{{ scanner_data.guest.var2 }}</p>
+                  <p>{{ scanner_data.guest.var3 }}</p>
+                </p>
+                <!-- <p class="text-center lh">
+                  <b>{{ scanner_data.guest.ticketclass_name }}</b>
+                </p> -->
+              </div>
+            </center>
+          </div>
+          <div class="printable qr-box" id="areaprint" style="margin-top:300px" v-else-if="this.number_var == 2">
+            <center>
+              <!-- <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest"
+                style="margin-top: 170px"/> -->
+              <div id="qrcode" class="page-break"></div>
+              <div class="lh">
+                <p class="text-center mb-4 lh">
+                  <b>{{ scanner_data.guest.var1 }}</b>
+                  <b>{{ scanner_data.guest.var2 }}</b>
+                </p>
+                <!-- <p class="text-center lh">
+                  <b>{{ scanner_data.guest.ticketclass_name }}</b>
+                </p> -->
+              </div>
+            </center>
+          </div>
+          <div class="printable qr-box" style="margin-top:300px" id="areaprint" v-else>
+            <center>
+              <!-- <img :src=" global_url + scanner_data.guest.guest_qr" width="120" height="120" alt="guest"
+                style="margin-top: 170px"/> -->
+              <div id="qrcode" class="page-break"></div>
+              <div class="lh">
+                <p class="text-center mb-4 lh">
+                  <b>{{ scanner_data.guest.var1 }}</b>
+                </p>
+                <!-- <p class="text-center lh">
+                  <b>{{ scanner_data.guest.ticketclass_name }}</b>
+                </p> -->
               </div>
             </center>
           </div>
@@ -334,7 +408,7 @@
   }
 
   .btn-checkin {
-    background-color: #25516B;
+    background-color: #25516b;
     color: #fff;
     border-radius: 20px;
     font-size: 20px;
@@ -392,7 +466,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background: url(../assets/image/bg-agenda-session.png)
+    background: url(../assets/image/bg-agenda-session.png);
   }
 
   .text-none {
@@ -404,8 +478,8 @@
   }
 
   .btn-camera-scanner {
-    background-color: #EBEBEB;
-    color: #25516B;
+    background-color: #ebebeb;
+    color: #25516b;
     border-radius: 10px;
     font-size: 15px;
     align-items: center;
@@ -450,7 +524,7 @@
   }
 
   .bg-darkblue {
-    color: #25516B;
+    color: #25516b;
   }
 
   .container-border-bottom {
@@ -474,8 +548,8 @@
     align-items: stretch;
   }
 
-  .lh {
-    line-height: 1pt;
+  .lh p {
+    line-height: 0.5px;
   }
 
   .button-finish {
@@ -574,13 +648,32 @@
   }
 
   @media print {
-    .margin-div {
-      display: inline-block;
-      margin-top: 500px;
+
+    @page {
+      size: A4 portrait;
+      margin: 2cm 3cm;
+    }
+
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      background-color: red;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .avoid-break {
+      page-break-inside: avoid;
     }
 
     #qrcode {
-      padding-top: 150px;
+      padding-top: 110px;
       display: inline-block;
     }
 

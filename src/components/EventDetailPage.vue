@@ -2,11 +2,10 @@
     <section class="vh-100 bg-agenda-session" style="background-color:#F1F1F1">
         <div class="d-flex justify-content-center align-items-center h-100">
             <loading v-model:active="isLoading" :can-cancel="false" />
-            <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-if="session.poster != null">
-
+            <div class="col-12 col-md-6 col-lg-6 col-xl-8">
                 <div class="row text-center">
                     <div class="col-sm-6">
-                        <img :src=" global_url + session.poster" alt="event banner" width="100%" height="100%">
+                        <img :src='this.poster' alt="event banner" width="100%" height="100%" />
                     </div>
                     <div class="col-sm-6 bg-white border-dash">
                         <div class="card-body">
@@ -17,37 +16,12 @@
                                             alt="checkin-icon"></span>
                                     <button class="w-50 btn-checkin" @click="checkinPage()">Check in</button>
                                 </div>
-                                <!-- <div class="registration mt-3 mb-5">
+                                <div class="registration mt-3 mb-5">
                                     <span class="mx-2"><img src="../assets/image/registration.png"
                                             alt="registration-icon"></span>
                                     <button class="w-50 btn-registration" @click="homeRegistrationPage()">Registration
                                     </button>
-                                </div> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-6 col-xl-8" v-else>
-                <div class="row text-center">
-                    <div class="col-sm-6">
-                        <img src="../assets/image/default.png" alt="event banner" width="100%" height="100%">
-                    </div>
-                    <div class="col-sm-6 bg-white border-dash">
-                        <div class="card-body">
-                            <h3 class="mt-5">you can choose for check in or registration</h3>
-                            <div class="row">
-                                <div class="checkin mt-5 mb-3">
-                                    <span class="mx-2"><img src="../assets/image/check-in.png"
-                                            alt="checkin-icon"></span>
-                                    <button class="w-50 btn-checkin" @click="checkinPage()">Check in</button>
                                 </div>
-                                <!-- <div class="registration mt-3 mb-5">
-                                    <span class="mx-2"><img src="../assets/image/registration.png"
-                                            alt="registration-icon"></span>
-                                    <button class="w-50 btn-registration" @click="homeRegistrationPage()">Registration
-                                    </button>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -63,7 +37,8 @@
                     <div class="modal-body">
                         <h4>Edit Scanner Name</h4>
                         <div class="form-group">
-                            <input type="text" class="form-control" name="fullname" placeholder="Scanner Name" v-model="set_tablet.scanner_name"></input>
+                            <input type="text" class="form-control" name="fullname" placeholder="Scanner Name"
+                                v-model="set_tablet.scanner_name"></input>
                         </div>
                         <button class="btn-save" @click="setTabletName()">Save</button>
                     </div>
@@ -77,10 +52,16 @@
     import Swal from 'sweetalert2'
     import axios from 'axios'
     import Loading from 'vue-loading-overlay';
-
+    import {
+        uuid
+    } from 'vue-uuid';
+    const NAMESPACE = "65f9af5d-f23f-4065-ac85-da725569fdcd";
     export default {
         data() {
             return {
+                NAMESPACE,
+                uuid: uuid.v1(),
+                v1: this.$uuid.v1(),
                 url: '',
                 events_id: "",
                 venue_id: "",
@@ -91,17 +72,18 @@
                 session: "",
                 agenda: "",
                 track: "",
+                poster: JSON.parse(localStorage.getItem("poster")),
                 multiple_session_entry: "",
                 qr_setting: "",
                 global_url: this.$globalURL,
                 getWaitingPage: "",
-                form_getposter: {
-                    events_id: "",
-                    ip_address: "10.10.10.10",
-                    prev_action: ""
-                },
+                // form_getposter: {
+                //     events_id: "",
+                //     ip_address: "10.10.10.10",
+                //     prev_action: ""
+                // },
                 isLoading: false,
-                set_tablet:{
+                set_tablet: {
                     events_id: $cookies.get("events_id"),
                     scanner_name: localStorage.getItem("scanner_name"),
                 }
@@ -135,15 +117,18 @@
                 this.$router.push("/scanpage");
             },
             homeRegistrationPage() {
-                this.get_ipaddress();
-                localStorage.setItem('event_details', JSON.stringify(this.getPoster));
+                if (localStorage.getItem('queue_id') == null || localStorage.getItem('queue_id') == "") {
+                    localStorage.setItem('queue_id', JSON.stringify(this.$uuid.v1()));
+                }
                 this.$router.push("/homeregistrationpage");
             },
 
-            getTabletName(){
+           
+
+            getTabletName() {
                 localStorage.getItem("scanner_name");
             },
-            setTabletName(){
+            setTabletName() {
                 axios({
                         method: "POST",
                         url: "/checkin/settablet",
@@ -162,8 +147,8 @@
                             }).then((value) => {
                                 location.reload();
                             });
-                           
-                        } else{
+
+                        } else {
                             Swal.fire({
                                 title: "Warning",
                                 icon: "warning",
@@ -172,28 +157,26 @@
                         }
                     })
             },
-            getPoster() {
-                axios({
-                        url: "/rsvp/p1home",
-                        headers: {
-                            "Content-Type": "text/plain"
-                        },
-                        method: "POST",
-                        data: this.form_getposter
-                    })
-                    .then(res => {
-                        this.getPoster = res.data;
-                        this.poster_mobile = this.getPoster.poster_mobile;
-                        localStorage.setItem("poster_mobile", this.poster_mobile);
-                    })
-            },
-            get_ipaddress() {
-                var this_ = this
-                $.getJSON('https://jsonip.com/', function (data) {
-                    this_.ip_address = data.ip
-                    localStorage.setItem('ip_address', this_.ip_address)
-                });
-            },
+            // getPoster() {
+            //     axios({
+            //             url: "/rsvp/p1home",
+            //             headers: {
+            //                 "Content-Type": "text/plain"
+            //             },
+            //             method: "POST",
+            //             data: this.form_getposter
+            //         })
+            //         .then(res => {
+            //             this.getPoster = res.data;
+            //         })
+            // },
+            // get_ipaddress() {
+            //     var this_ = this
+            //     $.getJSON('https://jsonip.com/', function (data) {
+            //         this_.ip_address = data.ip
+            //         localStorage.setItem('ip_address', this_.ip_address)
+            //     });
+            // },
         },
         mounted() {
             this.isLoading = true;
@@ -201,7 +184,7 @@
             setTimeout(() => {
                 this.isLoading = false
             }, 500)
-            this.form_getposter.events_id = $cookies.get("events_id");
+            // this.form_getposter.events_id = $cookies.get("events_id");
             this.events_id = $cookies.get("events_id");
             this.session_id = $cookies.get("session_id");
             this.agenda_id = $cookies.get("agenda_id");
@@ -217,8 +200,9 @@
                 this.getCookie();
             }
             // this.getSession();
-            this.getPoster();
+            // this.getPoster();
             this.getTabletName();
+            
         },
     };
 </script>
@@ -271,7 +255,7 @@
         font-weight: bold;
     }
 
-    .btn-save{
+    .btn-save {
         background-color: #315568;
         color: #fff;
         padding: 10px;
