@@ -10,14 +10,15 @@
                     events_id: this.$route.params.Eventsid,
                     ticketid: JSON.parse(localStorage.getItem("mt_id")),
                     ticket_qty: localStorage.getItem("ticket_qty"),
-                    ip_address: localStorage.getItem("ip_address"),
-                    prev_action: "ticketlist"
+                    queue_id : JSON.parse(localStorage.getItem("queue_id")),
                 },
                 form_getDeclare: {
                     events_id: this.$route.params.Eventsid,
+                    queue_id: JSON.parse(localStorage.getItem("queue_id")),
                 },
                 form_getticketSession: {
                     events_id: this.$route.params.Eventsid,
+                    queue_id : JSON.parse(localStorage.getItem("queue_id")),
                     ticket_id: '',
                 },
                 url: '',
@@ -415,8 +416,8 @@
 </script>
 
 <template>
-    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
-    <section class="vh-100 container-fluid" v-if="event_detail">
+    <loading v-model:active="isLoading" :can-cancel="false" />
+    <section class="vh-100 container-fluid" v-if="this.event_detail">
         <div class="row">
             <div class="col-md-8 p-5 vh-100 bg-white">
                 <div class="justify-content-between flex mb-3" name="cart">
@@ -431,7 +432,7 @@
                 </div>
                 <div class="border-bottom mb-2"></div>
                 <div class="row">
-                    <div class="col-md-4"><img :src="global_url + this.event_detail.poster_mobile" alt="cart"
+                    <div class="col-md-4"><img :src="this.event_detail.poster_mobile" alt="cart"
                             width="100%" height="100%"></div>
                     <div class="col-md-6 top-50 start-0 m-auto">
                         <div class="ticket-title">
@@ -577,7 +578,7 @@
                     </div>
                     <div class="total-payment bottom-0 end-0">
                         <div class="row">
-                            <div class="col-lg-12 col-sm-12 col-12">
+                            <div class="col-lg-12 col-sm-12 col-12" v-if="this.event_detail">
                                 <button class="btn btn-purchase" :disabled="declare_checkbox == false"
                                     @click="update_mycart()">
                                     <span v-if="LoadingButton">

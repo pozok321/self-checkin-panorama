@@ -1,7 +1,7 @@
 <template>
   <section class="vh-100">
     <div class="container" v-if="event_detail">
-      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+      <loading v-model:active="isLoading" :can-cancel="false"/>
       <div class="row">
         <div id="input-data" class="w-75 m-auto">
           <div class="text-center my-5">
@@ -384,10 +384,10 @@ export default {
         events_id: this.$route.params.Eventsid,
         ticketid: JSON.parse(localStorage.getItem("mt_id")),
         ticket_qty: localStorage.getItem("ticket_qty"),
-        ip_address: localStorage.getItem("ip_address"),
-        prev_action: "declareget",
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       form_Reg: {
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
         events_id: this.$route.params.Eventsid,
         ticketid: JSON.parse(localStorage.getItem("mt_id")),
         ticket_qty: localStorage.getItem("ticket_qty"),

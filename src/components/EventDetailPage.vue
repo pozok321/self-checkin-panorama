@@ -122,9 +122,6 @@
                 }
                 this.$router.push("/homeregistrationpage");
             },
-
-           
-
             getTabletName() {
                 localStorage.getItem("scanner_name");
             },

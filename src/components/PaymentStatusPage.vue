@@ -97,9 +97,11 @@ export default {
       event_detail: JSON.parse(localStorage.getItem("event_details")),
       form_payment: {
         transaction_id: localStorage.getItem("transaction_id"),
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       form_cancel: {
         transaction_id: localStorage.getItem("transaction_id"),
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       events_id: this.$route.params.Eventsid,
       urlGateway: JSON.parse(localStorage.getItem("urlGateway")),

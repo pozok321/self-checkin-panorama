@@ -144,7 +144,7 @@
                 form_getQuestion: {
                     events_id: this.$route.params.Eventsid,
                     order_id: localStorage.getItem("order_id"),
-                    prev_action: "addguest"
+                    queue_id : JSON.parse(localStorage.getItem("queue_id")),
                 },
                 form_sendAnswer: {
                     events_id: this.$route.params.Eventsid,
@@ -152,7 +152,7 @@
                     order_id: localStorage.getItem("order_id"),
                     cbAnswer_id: [],
                     ip_address: localStorage.getItem("ip_address"),
-                    prev_action: "questget"
+                    queue_id : JSON.parse(localStorage.getItem("queue_id")),
                 },
                 question_data: [],
                 answer_checked: [],

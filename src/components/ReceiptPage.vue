@@ -162,11 +162,13 @@
         receipt_data: {
           events_id: this.$route.params.Eventsid,
           order_id: localStorage.getItem("order_id"),
+          queue_id : JSON.parse(localStorage.getItem("queue_id")),
         },
         show_qr: {
           evidenc: localStorage.getItem("evidenc"),
           order_id: localStorage.getItem("order_id"),
-          guests_token: localStorage.getItem("token")
+          guests_token: localStorage.getItem("token"),
+          queue_id : JSON.parse(localStorage.getItem("queue_id")),
         },
         ticket_name: "",
         global_url: this.$globalURL,

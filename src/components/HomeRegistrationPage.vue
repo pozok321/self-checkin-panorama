@@ -1,13 +1,13 @@
 <template>
   <section class="vh-100">
     <loading v-model:active="isLoading" />
-     <img :src='this.poster' alt="event banner" width="100%" height="100%" />
+    <img :src='this.poster' alt="event banner" width="100%" height="100%" />
     <div class="centered container">
       <div class="row m-auto w-50">
         <h4 class="text-white">PLEASE CHOOSE TICKET DAY</h4>
         <div class="input-group mt-3 text-center">
           <select class="form-select" id="selectTicket" v-model="ticket_id">
-            <option v-for="ticketData in ticket" v-bind:value="ticketData.id">
+            <option v-for="ticketData in ticket" v-bind:value="ticketData.ticket_id">
               {{ ticketData.class_name }}
             </option>
           </select>
@@ -24,22 +24,21 @@
   import Swal from "sweetalert2";
   import axios from "axios";
   import Loading from 'vue-loading-overlay';
-  import withUUID from "vue-uuid";
   const NAMESPACE = "65f9af5d-f23f-4065-ac85-da725569fdcd";
   export default {
     data() {
       return {
         url: "",
-        ticket_id: "",
+        ticket_id: '',
         ticket_list: "",
         ticket: [],
         poster: JSON.parse(localStorage.getItem("poster")),
         class_name: "",
         form_p1home: {
-                events_id : $cookies.get("events_id"),
-                queue_id : JSON.parse(localStorage.getItem("queue_id")),
-                },
-                p1home: "",
+          events_id: $cookies.get("events_id"),
+          queue_id: JSON.parse(localStorage.getItem("queue_id")),
+        },
+        p1home: "",
         global_url: this.$globalURL,
         form_getevent: {
           events_id: $cookies.get("events_id"),
@@ -76,21 +75,20 @@
       },
 
       getEventDetails() {
-                axios({
-                    url: "/rsvp/p1home",
-                    headers: {
-                        "Content-Type": "text/plain",
-                    },
-                    method: "POST",
-                    data: this.form_p1home,
-                }).then((res) => {
-                    this.p1home = res.data;
-                    localStorage.setItem("event_details", JSON.stringify(this.p1home));
-                });
-            },
+        axios({
+          url: "/rsvp/p1home",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          method: "POST",
+          data: this.form_p1home,
+        }).then((res) => {
+          this.p1home = res.data;
+          localStorage.setItem("event_details", JSON.stringify(this.p1home));
+        });
+      },
 
-      
-      getEvent() {
+      getTicket() {
         axios({
           url: "/rsvp/ticketlist",
           headers: {
@@ -103,8 +101,8 @@
           this.ticket = this.get_event.ticket;
         });
       },
-      add_to_cart(ticket) {
-        if (ticket == "") {
+      add_to_cart(ticket_id) {
+        if (this.ticket_id == "") {
           Swal.fire({
             title: "Select Your Ticket!",
             icon: "warning",
@@ -112,7 +110,7 @@
         } else {
           this.LoadingButton = true;
           var ticketid = [];
-          ticketid.push(ticket);
+          ticketid.push(this.ticket_id);
           localStorage.setItem("mt_id", JSON.stringify(ticketid));
           localStorage.setItem("ticket_qty", 1);
           var data = JSON.parse(localStorage.getItem("mt_id"));
@@ -138,7 +136,7 @@
       } else {
         this.getCookie();
       }
-      this.getEvent();
+      this.getTicket();
       this.getEventDetails();
     },
   };

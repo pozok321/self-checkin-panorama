@@ -1,6 +1,6 @@
 <template>
   <section class="container-fluid">
-    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+    <loading v-model:active="isLoading" :can-cancel="false" />
     <div class="row">
       <div class="col-12 col-md-8 p-3 p-md-5">
         <div class="d-flex justify-content-between align-items-center mb-3" name="cart">
@@ -16,7 +16,7 @@
         <div class="border-bottom mb-3"></div>
         <div class="row">
           <div class="col-12 col-md-6 mb-3 mb-md-0">
-            <img :src="global_url + event_detail.poster_mobile" alt="cart" class="img-fluid" />
+            <img :src="event_detail.poster_mobile" alt="cart" class="img-fluid" />
           </div>
           <div class="col-12 col-md-6">
             <div class="ticket-title">
@@ -127,6 +127,7 @@ export default {
         ticketid: JSON.parse(localStorage.getItem("mt_id")),
         ticket_qty: localStorage.getItem("ticket_qty"),
         order_id: localStorage.getItem("order_id"),
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       form_getgetFree: {
         events_id: this.$route.params.Eventsid,
@@ -134,6 +135,7 @@ export default {
         ticket_qty: localStorage.getItem("ticket_qty"),
         order_id: localStorage.getItem("order_id"),
         promo_id: "",
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       form_promoApply: {
         events_id: this.$route.params.Eventsid,
@@ -141,16 +143,19 @@ export default {
         ticket_qty: localStorage.getItem("ticket_qty"),
         order_id: localStorage.getItem("order_id"),
         coupon: "",
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       form_promoDelete: {
         events_id: this.$route.params.Eventsid,
         order_id: localStorage.getItem("order_id"),
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       form_getCheckout: {
         events_id: this.$route.params.Eventsid,
         ticketid: JSON.parse(localStorage.getItem("mt_id")),
         ticket_qty: localStorage.getItem("ticket_qty"),
         order_id: localStorage.getItem("order_id"),
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       order_id: localStorage.getItem("order_id"),
       cart_detail: [],
@@ -173,6 +178,7 @@ export default {
       form_getticketSession: {
         events_id: this.$route.params.Eventsid,
         ticket_id: "",
+        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       ticket_details: [],
       ticket_session: [],
