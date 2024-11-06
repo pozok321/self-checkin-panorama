@@ -1,6 +1,6 @@
 <template>
   <section class="vh-100">
-    <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+    <loading v-model:active="isLoading" :can-cancel="false" />
     <div class="container">
       <div class="row">
         <div class="d-flex">
@@ -97,11 +97,9 @@ export default {
       event_detail: JSON.parse(localStorage.getItem("event_details")),
       form_payment: {
         transaction_id: localStorage.getItem("transaction_id"),
-        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       form_cancel: {
         transaction_id: localStorage.getItem("transaction_id"),
-        queue_id : JSON.parse(localStorage.getItem("queue_id")),
       },
       events_id: this.$route.params.Eventsid,
       urlGateway: JSON.parse(localStorage.getItem("urlGateway")),
@@ -134,7 +132,6 @@ export default {
         method: "POST",
         data: this.form_payment,
       }).then((res) => {
-        
         if (res.data.status_code == 200) {
           this.isLoadingAnimation = false;
           Swal.fire({

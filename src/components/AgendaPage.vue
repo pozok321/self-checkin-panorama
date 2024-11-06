@@ -1,7 +1,7 @@
 <template>
   <section class="vh-100 bg-agenda-session" style="background-color: #f1f1f1">
     <div class="d-flex justify-content-center align-items-center h-100">
-      <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage" />
+      <loading v-model:active="isLoading" :can-cancel="false" />
       <div class="col-12 col-md-6 col-lg-6 col-xl-8">
         <div class="row text-center">
           <div class="col-sm-4">

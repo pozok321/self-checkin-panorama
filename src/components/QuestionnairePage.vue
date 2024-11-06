@@ -151,7 +151,6 @@
                     guests_id: '',
                     order_id: localStorage.getItem("order_id"),
                     cbAnswer_id: [],
-                    ip_address: localStorage.getItem("ip_address"),
                     queue_id : JSON.parse(localStorage.getItem("queue_id")),
                 },
                 question_data: [],

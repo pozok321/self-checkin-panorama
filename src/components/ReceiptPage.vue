@@ -9,7 +9,7 @@
             <p>Order ID</p>
           </div>
           <div class="row guest-wrap">
-            <div class="guest-box" v-for="(receiptData , index) in receipt">
+            <div class="guest-box" v-for="(receiptData , index) in receipt" :key="index">
               <div class="row">
                 <div class="col-lg-6 col-sm-7 col-7">
                   <div class="fontblack-12pt">
@@ -21,7 +21,7 @@
                 </div>
                 <div class="col-lg-6 col-sm-4 col-4 text-end">
                   <button class="btn btn-choose" @click="details(receiptData)">Detail ticket</button>
-                  <button class="btn btn-choose" @click="select_details(receiptData)">Print QR <img
+                  <button class="btn btn-choose" @click="select_details(receiptData)">Print QR<img
                       src="../assets/image/check-in.png" width="15" alt="Ticket"
                       style="background-color: #fff"></button>
                 </div>
@@ -30,13 +30,13 @@
             <div class="qr-box text-center noshow" id="areaprint" v-if="printarea">
               <div class="is-loading img-height" v-if="isLoading"></div>
               <center>
-                <div class="margin-div" style="margin-top: 0px;"></div>
+                <div class="margin-div"></div>
                 <div id="qrcode"></div>
                 <div class="">
-                  <div class="mb-4"><b>{{receipt_details.fullname}}</b></div>
-                  <div class="text-center">
-                    <b>{{receipt_details.ticket_name}}</b>
-                  </div>
+                  <div class="mb-4"><b>{{receipt_details}}</b></div>
+                  <!-- <div class="text-center">
+                    <b>{{receipt_details}}</b>
+                  </div> -->
                 </div>
               </center>
             </div>
@@ -72,8 +72,8 @@
                 <div>Ticket Class</div>
                 <div class="mb-2 text-left">
                   <ul class="ppage" style="padding-left:15px">
-                    <li class="text-left" v-for="ticket in receipt_details.tickets">
-                      <b>{{ticket.ticket_name}}</b>
+                    <li class="text-left">
+                      <b>{{receipt_details.tickets.ticket_name}}</b>
                     </li>
                   </ul>
                 </div>
@@ -85,12 +85,12 @@
                 <div class="qr-box text-center" id="areaprint">
                   <div class="is-loading img-height" v-if="isLoading"></div>
                   <center>
-                    <div class="margin-div" style="margin-top: 0px;"></div>
+                    <div class="margin-div"></div>
                     <div id="qrcode"></div>
                     <div class="noshow">
                       <div class="mb-4"><b>{{receipt_details.fullname}}</b></div>
-                      <div class="text-center" v-for="ticket in receipt_details.tickets">
-                        <b>{{ticket.ticket_name}}</b>
+                      <div class="text-center">
+                        <b>{{receipt_details.ticket_name}}</b>
                       </div>
                     </div>
                   </center>
@@ -168,7 +168,7 @@
           evidenc: localStorage.getItem("evidenc"),
           order_id: localStorage.getItem("order_id"),
           guests_token: localStorage.getItem("token"),
-          queue_id : JSON.parse(localStorage.getItem("queue_id")),
+
         },
         ticket_name: "",
         global_url: this.$globalURL,
@@ -310,6 +310,7 @@
           }, 200);
         })
       },
+
       select_details(receipt_data) {
         $("#qrcode").empty();
         this.printarea = true
