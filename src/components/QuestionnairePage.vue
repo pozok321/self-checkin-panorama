@@ -178,6 +178,27 @@
             Loading
         },
         methods: {
+            createCookie(name, value, day) {
+        if (day) {
+          let currentDate = new Date();
+          currentDate.setTime(currentDate.getTime() + day * 24 * 60 * 60 * 1000);
+          var expires = "expires=" + currentDate.toGMTString();
+        } else {
+          var expires = "";
+        }
+        document.cookie = name + "=" + value + ";" + expires + "; path=/";
+      },
+
+      getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(";");
+        for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      },
             backPage() {
                 $("#btn_back").click();
                 this.$router.push("/registrationpage/" + this.form_getQuestion.events_id);

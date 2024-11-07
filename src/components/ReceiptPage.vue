@@ -9,19 +9,19 @@
             <p>Order ID</p>
           </div>
           <div class="row guest-wrap">
-            <div class="guest-box" v-for="(receiptData , index) in receipt" :key="index">
+            <div class="guest-box" v-for="showReceiptData in receipt">
               <div class="row">
                 <div class="col-lg-6 col-sm-7 col-7">
                   <div class="fontblack-12pt">
-                    {{ receiptData.fullname }}
+                    {{ showReceiptData.fullname }}
                   </div>
                   <div class="fontgrey-12pt">
-                    {{ receiptData.ticket_name}}
+                    {{ showReceiptData.ticket_name}}
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-4 col-4 text-end">
-                  <button class="btn btn-choose" @click="details(receiptData)">Detail ticket</button>
-                  <button class="btn btn-choose" @click="select_details(receiptData)">Print QR<img
+                  <button class="btn btn-choose" @click="details(showReceiptData)">Detail ticket</button>
+                  <button class="btn btn-choose" @click="select_details(showReceiptData)">Print QR<img
                       src="../assets/image/check-in.png" width="15" alt="Ticket"
                       style="background-color: #fff"></button>
                 </div>
@@ -33,10 +33,18 @@
                 <div class="margin-div"></div>
                 <div id="qrcode"></div>
                 <div class="">
-                  <div class="mb-4"><b>{{receipt_details}}</b></div>
-                  <!-- <div class="text-center">
-                    <b>{{receipt_details}}</b>
-                  </div> -->
+                  <div class="mb-4" v-if="this.receipt.var_number == 3">
+                    <p>{{this.receipt.var1}}</p>
+                    <p>{{this.receipt.var2}}</p>
+                    <p>{{this.receipt.var3}}</p>
+                  </div>
+                  <div class="mb-4" v-else-if="this.receipt.var_number == 2">
+                    <p>{{this.receipt.var1}}</p>
+                    <p>{{this.receipt.var2}}</p>
+                  </div>
+                  <div class="mb-4" v-else>
+                    <p>{{this.receipt.var1}}</p>
+                  </div>
                 </div>
               </center>
             </div>
@@ -59,7 +67,7 @@
             </h4>
             <div class="is-loading text-30" v-if="isLoading"></div>
             <div v-else>
-              <p class="ppage text-center">Order ID : {{event_detail.order_id}}</p>
+              <p class="ppage text-center">Order ID : {{this.show_qr.order_id}}</p>
             </div>
           </div>
           <div class="formRSVP">
@@ -79,7 +87,7 @@
                 </div>
                 <div>Order ID</div>
                 <div class="is-loading text-30" v-if="isLoading"></div>
-                <div class="mb-2" v-else><b>{{event_detail.order_id}}</b></div>
+                <div class="mb-2" v-else><b>{{this.show_qr.order_id}}</b></div>
               </div>
               <div class="col-4">
                 <div class="qr-box text-center" id="areaprint">
@@ -168,7 +176,6 @@
           evidenc: localStorage.getItem("evidenc"),
           order_id: localStorage.getItem("order_id"),
           guests_token: localStorage.getItem("token"),
-
         },
         ticket_name: "",
         global_url: this.$globalURL,
@@ -177,7 +184,6 @@
         member_data: [],
         member_detail: [],
         receipt_details: [],
-        get_receipt: "",
         isLoading: false,
         isLoadingHeader: false,
         ticketlist: true,
@@ -195,6 +201,27 @@
       Loading
     },
     methods: {
+      createCookie(name, value, day) {
+        if (day) {
+          let currentDate = new Date();
+          currentDate.setTime(currentDate.getTime() + day * 24 * 60 * 60 * 1000);
+          var expires = "expires=" + currentDate.toGMTString();
+        } else {
+          var expires = "";
+        }
+        document.cookie = name + "=" + value + ";" + expires + "; path=/";
+      },
+
+      getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(";");
+        for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == " ") c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      },
       getUrlGateway() {
         this.Countdown(this.urlGateway.expiry_time);
       },
@@ -269,6 +296,11 @@
               text: "You're Success directed to Registration/Checkin Page",
               icon: "success"
             });
+            localStorage.clear();
+            setTimeout(function () {
+              var is = this
+              localStorage.settItem("scanner_name",is.scanner_name);
+           }, 5000);
             this.$router.push("/eventdetailpage");
           } else if (
             result.dismiss === Swal.DismissReason.cancel
@@ -315,7 +347,6 @@
         $("#qrcode").empty();
         this.printarea = true
         this.receipt_details = receipt_data
-        var is = this
         setTimeout(function () {
           const qrcode = new QRCode(document.getElementById('qrcode'), {
             text: receipt_data.token,
@@ -615,7 +646,7 @@
     }
 
     .noshow {
-      display: inline-block;
+      display: inline-block;  
     }
   }
 </style>

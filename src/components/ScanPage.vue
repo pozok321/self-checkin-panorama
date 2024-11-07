@@ -9,7 +9,7 @@
     data() {
       return {
         checkin_status: false,
-        poster: JSON.parse(localStorage.getItem("poster")),
+        poster: JSON.parse($cookies.get("poster")),
         global_url: this.$globalURL,
         get_agenda: "",
         get_track: "",

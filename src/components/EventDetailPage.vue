@@ -72,7 +72,7 @@
                 session: "",
                 agenda: "",
                 track: "",
-                poster: JSON.parse(localStorage.getItem("poster")),
+                poster: JSON.parse($cookies.get("poster")),
                 multiple_session_entry: "",
                 qr_setting: "",
                 global_url: this.$globalURL,
@@ -85,7 +85,7 @@
                 isLoading: false,
                 set_tablet: {
                     events_id: $cookies.get("events_id"),
-                    scanner_name: localStorage.getItem("scanner_name"),
+                    scanner_name: $cookies.get("scanner_name"),
                 }
             };
         },
@@ -123,7 +123,7 @@
                 this.$router.push("/homeregistrationpage");
             },
             getTabletName() {
-                localStorage.getItem("scanner_name");
+                $cookies.get("scanner_name");
             },
             setTabletName() {
                 axios({
@@ -136,7 +136,7 @@
                     })
                     .then(res => {
                         if (res.data.status == "200") {
-                            localStorage.setItem("scanner_name", this.set_tablet.scanner_name);
+                            this.createCookie("scanner_name", this.set_tablet.scanner_name);
                             Swal.fire({
                                 title: "Success",
                                 icon: "success",

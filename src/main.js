@@ -17,6 +17,7 @@ import "./assets/main.css";
 axios.defaults.baseURL = "https://apidev2.undangin.id/v1/";
 
 const app = withUUID(createApp(App));
+app.config.compilerOptions.isCustomElement = (tag) => tag === 'center';
 app.component(VueCountdown.name, VueCountdown);
 app.config.globalProperties.$globalURL = "https://corp.undangin.com/"
 app.use(router);

@@ -560,8 +560,6 @@ body {
   background-color: red;
 }
 
-
-
 .btn-remove-promo i {
   margin-right: 0;
 }
@@ -901,6 +899,19 @@ body {
   border: 1px solid #315568;
   margin: 7pt 0;
 }
+
+.btn-navy-yes {
+  width: 100%;
+  padding: 10px;
+  font-size: 14pt;
+  color: #fff;
+  border-radius: 12pt;
+  background: #315568;
+  border: 1px solid #315568;
+  margin: 7pt 0;
+}
+
+
 
 .btn-navy-cancel:hover {
   color: #315568;

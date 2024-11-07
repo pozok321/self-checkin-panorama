@@ -32,7 +32,7 @@
         ticket_id: '',
         ticket_list: "",
         ticket: [],
-        poster: JSON.parse(localStorage.getItem("poster")),
+        poster: JSON.parse($cookies.get("poster")),
         class_name: "",
         form_p1home: {
           events_id: $cookies.get("events_id"),
