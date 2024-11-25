@@ -9,7 +9,7 @@
             <p>Order ID</p>
           </div>
           <div class="row guest-wrap">
-            <div class="guest-box" v-for="showReceiptData in receipt">
+            <div class="guest-box" v-for=" showReceiptData in guestList">
               <div class="row">
                 <div class="col-lg-6 col-sm-7 col-7">
                   <div class="fontblack-12pt">
@@ -170,20 +170,26 @@
         receipt_data: {
           events_id: this.$route.params.Eventsid,
           order_id: localStorage.getItem("order_id"),
-          queue_id : JSON.parse(localStorage.getItem("queue_id")),
+          queue_id : JSON.parse(localStorage.getItem("queue_id"))
         },
         show_qr: {
           evidenc: localStorage.getItem("evidenc"),
           order_id: localStorage.getItem("order_id"),
-          guests_token: localStorage.getItem("token"),
+          guests_token: localStorage.getItem("token")
+        },
+        ticket_data: {
+          evidenc: localStorage.getItem("evidenc"),
+          order_id: localStorage.getItem("order_id")
         },
         ticket_name: "",
         global_url: this.$globalURL,
-        receipt: [],
+        receipt: "",
         ticket_list: [],
+        getTicketData: "",
         member_data: [],
         member_detail: [],
         receipt_details: [],
+        receipt: [],
         isLoading: false,
         isLoadingHeader: false,
         ticketlist: true,
@@ -313,6 +319,20 @@
         });
       },
 
+      getTicketList(){
+        axios({
+          url: "/rsvp/receipt/ticketlist",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          method: "POST",
+          data: this.ticket_data
+        }).then((res) => {
+          this.getTicketData = res.data
+          this.guestList = this.getTicketData.guest_list;
+        })
+      },
+
       details(receiptData) {
         this.show_qr.guests_token = receiptData.token;
         this.isLoadingAnimation = true;
@@ -342,6 +362,7 @@
           }, 200);
         })
       },
+      
 
       select_details(receipt_data) {
         $("#qrcode").empty();
@@ -397,6 +418,7 @@
         this.$router.push("/eventdetailpage");
       } else {
         this.receiptList();
+        this.getTicketList();
       }
     },
   };

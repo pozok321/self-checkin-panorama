@@ -357,8 +357,8 @@
                         data: this.form_getCart,
                     })
                     .then(res => {
-                        this.isLoading = false;
-                        this.isLoadingHeader = false
+                        // this.isLoading = false;
+                        // this.isLoadingHeader = false
                         if (res.data.status == 201) {
                             Swal.fire({
                                 title: "Warning",
@@ -436,7 +436,7 @@
                             width="100%" height="100%"></div>
                     <div class="col-md-6 top-50 start-0 m-auto">
                         <div class="ticket-title">
-                            <h4 class="text-start">Ticket : {{this.class_name}}</h4>
+                            <h4 class="text-start">Ticket : {{main_ticket.ticket_name}}</h4>
                         </div>
                         <div class="border-bottom my-2"></div>
                         <div class="justify-content-between flex">

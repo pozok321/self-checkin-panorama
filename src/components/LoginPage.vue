@@ -45,6 +45,7 @@
         obj: {
           events_key: "",
         },
+        loginData: "",
       };
     },
     components: {
@@ -122,31 +123,30 @@
               "Content-Type": "text/plain",
             },
           }).then((res) => {
-            if (res.data != false) {
+            this.loginData = res.data;
+            if (this.loginData.status == "200") {
               Swal.fire({
                 title: "Login Success!",
                 text: res.data.msg,
                 icon: "success",
               });
-              this.createCookie("token", res.data.token);
-              this.createCookie("events_id", res.data.events_id);
-              this.createCookie("poster", JSON.stringify(res.data.poster));
-              this.createCookie("poster_mobile", JSON.stringify(res.data.poster_mobile))
+              this.createCookie("token", this.loginData.data.token);
+              this.createCookie("events_id", this.loginData.data.events_id);
+              this.createCookie("poster", JSON.stringify(this.loginData.data.poster));
+              this.createCookie("poster_mobile", JSON.stringify(this.loginData.data.poster_mobile))
               var is = this
               setTimeout(() => {
                 is.$router.push("/agendapage");
                 // this.isLoading = false
               }, 500)
               this.toggle_full_screen();
-            } else if (res.data == "") {
-            setTimeout(() => {
-                this.isLoading = false
-              }, 500)
+            } else{
+              this.isLoading = false
               Swal.fire({
                 title: "Incorrect Event Key / Event ID",
                 text: res.data.msg,
-                icon: "warning",
-              });
+                icon: "error",
+              },500);
             }
           });
         }

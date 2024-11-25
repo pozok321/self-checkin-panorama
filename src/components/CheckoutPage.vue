@@ -224,7 +224,7 @@ export default {
             icon: "warning",
             text: res.data.msg,
           }).then((value) => {
-            this.$router.push("/ticketlist/" + this.form_getCart.events_id);
+            location.replace("/ticketlist/" + this.form_getCart.events_id);
           });
         } else {
           this.cart_detail = res.data;

@@ -122,7 +122,7 @@
               icon: "success",
             }).then(() => {
               this.testing = res.data.transaction_status;
-              this.$router.push("/receiptpage/" + this.events_id + "-" + this.order_id);
+              location.replace("/receiptpage/" + this.events_id + "-" + this.order_id);
             });
           } else if (res.data.status_code == 201) {
             this.isLoadingAnimation = false;
