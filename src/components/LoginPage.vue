@@ -5,7 +5,7 @@
       <div class="col-12 col-md-6 col-lg-6 col-xl-4">
         <div class="card">
           <div class="justify-content-center d-flex">
-            <img src="../assets/image/logo-undangin-blue.svg" alt="logo undangin" class="logo-undangin" />
+            <img src="../assets/image/logo-undangin-blue.svg" alt="logo undangin blue" class="logo-undangin" />
             <img src="../assets/image/line1.svg" alt="line 1" width="2" class="spacing-line" />
             <p class="login">Log in</p>
           </div>
